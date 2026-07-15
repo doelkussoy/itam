@@ -12,18 +12,29 @@ class Employee extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'employee_id', 'name', 'email', 'phone', 'department_id', 'position_id', 
-        'status', 'supervisor_id', 'location_id', 'extension', 'anydesk_id', 'anydesk_password'
+        'employee_id', 'name', 'email', 'phone', 'department_id', 
+        'status', 'supervisor_id', 'location_id', 'anydesk_id', 'anydesk_password',
+        'login_username', 'login_password'
     ];
+
+    protected function loginPassword(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: function ($value) {
+                if (empty($value)) return null;
+                try {
+                    return \Illuminate\Support\Facades\Crypt::decryptString($value);
+                } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                    return '[Decryption Failed]';
+                }
+            },
+            set: fn ($value) => empty($value) ? null : \Illuminate\Support\Facades\Crypt::encryptString($value),
+        );
+    }
 
     public function department()
     {
         return $this->belongsTo(Department::class);
-    }
-
-    public function position()
-    {
-        return $this->belongsTo(Position::class);
     }
 
     public function supervisor()

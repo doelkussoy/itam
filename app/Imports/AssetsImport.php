@@ -55,7 +55,7 @@ class AssetsImport implements ToModel, WithHeadingRow
 
         // Check if asset already exists by asset_tag to update instead of duplicate
         $asset = Asset::where('asset_tag', $row['asset_code'])->first();
-        
+
         if ($asset) {
             $asset->update([
                 'name' => $row['name'],

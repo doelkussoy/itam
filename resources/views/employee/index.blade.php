@@ -16,10 +16,10 @@
                     @endforeach
                 </select>
 
-                <select name="position_id" class="form-control select2 theme-input" style="width: 200px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff;" onchange="this.form.submit()" >
-                    <option value="" style="color: #000;">All {{ __('messages.position') }}</option>
-                    @foreach($positions as $pos)
-                        <option value="{{ $pos->id }}" style="color: #000;" {{ request('position_id') == $pos->id ? 'selected' : '' }}>{{ $pos->name }}</option>
+                <select name="supervisor_id" class="form-control select2 theme-input" style="width: 200px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff;" onchange="this.form.submit()" >
+                    <option value="" style="color: #000;">All {{ __('messages.supervisor') ?? 'Supervisor' }}</option>
+                    @foreach($supervisors as $sup)
+                        <option value="{{ $sup->id }}" style="color: #000;" {{ request('supervisor_id') == $sup->id ? 'selected' : '' }}>{{ $sup->name }}</option>
                     @endforeach
                 </select>
 
@@ -30,7 +30,7 @@
                 </select>
 
                 <button class="btn btn-outline-info" type="submit" ><i class="fas fa-search"></i></button>
-                @if(request('search') || request('department_id') || request('position_id') || request('status'))
+                @if(request('search') || request('department_id') || request('supervisor_id') || request('status'))
                     <a href="{{ route('employees.index') }}" class="btn btn-outline-secondary" ><i class="fas fa-times"></i></a>
                 @endif
             </div>
@@ -72,8 +72,8 @@
                         <th>{{ __('messages.nik') }}</th>
                         <th>{{ __('messages.name') }}</th>
                         <th>{{ __('messages.email') }}</th>
-                        <th>{{ __('messages.department') }}</th>
-                        <th>{{ __('messages.position') }}</th>
+                        <th>{{ __('messages.anydesk_id') ?? 'AnyDesk ID' }}</th>
+                        <th>PC Username</th>
                         <th>{{ __('messages.status') }}</th>
                         <th width="150" class="text-center">{{ __('messages.actions') }}</th>
                     </tr>
@@ -85,8 +85,8 @@
                         <td class="text-info font-weight-bold">{{ $emp->employee_id }}</td>
                         <td class="theme-text"><a href="{{ route('employees.show', $emp) }}" class="text-info font-weight-bold">{{ $emp->name }}</a></td>
                         <td class="theme-text">{{ $emp->email ?? '-' }}</td>
-                        <td class="theme-text">{{ $emp->department->name ?? '-' }}</td>
-                        <td class="theme-text">{{ $emp->position->name ?? '-' }}</td>
+                        <td class="theme-text text-success font-weight-bold"><code>{{ $emp->anydesk_id ?? '-' }}</code></td>
+                        <td class="theme-text text-warning font-weight-bold"><code>{{ $emp->login_username ?? '-' }}</code></td>
                         <td class="theme-text">
                             @if($emp->status == 'Active')
                                 <span class="badge badge-success" style="box-shadow: 0 0 8px rgba(40,167,69,0.5);">{{ __('messages.active') }}</span>

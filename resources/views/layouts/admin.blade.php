@@ -390,7 +390,6 @@
                   <p>{{ __('messages.department') }}</p>
                 </a>
               </li>
-              <li class="nav-item"><a href="{{ route('positions.index') }}" class="nav-link {{ request()->routeIs('positions.*') ? 'active' : '' }}"><i class="far fa-circle nav-icon text-sm"></i><p>{{ __('messages.position') }}</p></a></li>
               <li class="nav-item"><a href="{{ route('brands.index') }}" class="nav-link {{ request()->routeIs('brands.*') ? 'active' : '' }}"><i class="far fa-circle nav-icon text-sm"></i><p>{{ __('messages.brand') }}</p></a></li>
               <li class="nav-item"><a href="{{ route('locations.index') }}" class="nav-link {{ request()->routeIs('locations.*') ? 'active' : '' }}"><i class="far fa-circle nav-icon text-sm"></i><p>{{ __('messages.location') }}</p></a></li>
               <li class="nav-item">
@@ -423,10 +422,10 @@
               <li class="nav-item"><a href="{{ route('assets.index') }}" class="nav-link {{ request()->routeIs('assets.index') && !request('category') && !request('status') ? 'active' : '' }}"><i class="far fa-circle nav-icon text-xs"></i><p>{{ __('messages.all_assets') }}</p></a></li>
               <li class="nav-item"><a href="{{ route('assets.index', ['category' => 'Komputer']) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == 'Komputer' ? 'active' : '' }}"><i class="far fa-circle nav-icon text-xs"></i><p>{{ __('messages.computer') }}</p></a></li>
               <li class="nav-item"><a href="{{ route('assets.index', ['category' => 'Laptop']) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == 'Laptop' ? 'active' : '' }}"><i class="far fa-circle nav-icon text-xs"></i><p>{{ __('messages.laptop') }}</p></a></li>
+              <li class="nav-item"><a href="{{ route('assets.index', ['category' => 'Mini PC']) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == 'Mini PC' ? 'active' : '' }}"><i class="far fa-circle nav-icon text-xs"></i><p>Mini PC</p></a></li>
               <li class="nav-item"><a href="{{ route('assets.index', ['category' => 'Printer']) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == 'Printer' ? 'active' : '' }}"><i class="far fa-circle nav-icon text-xs"></i><p>{{ __('messages.printer') }}</p></a></li>
-              <li class="nav-item"><a href="{{ route('assets.index', ['category' => 'CCTV']) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == 'CCTV' ? 'active' : '' }}"><i class="far fa-circle nav-icon text-xs"></i><p>{{ __('messages.cctv') }}</p></a></li>
-              <li class="nav-item"><a href="{{ route('assets.index', ['category' => 'Switch']) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == 'Switch' ? 'active' : '' }}"><i class="far fa-circle nav-icon text-xs"></i><p>{{ __('messages.switch_network') }}</p></a></li>
-              <li class="nav-item"><a href="{{ route('assets.index', ['category' => 'Access Point']) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == 'Access Point' ? 'active' : '' }}"><i class="far fa-circle nav-icon text-xs"></i><p>{{ __('messages.access_point') }}</p></a></li>
+              <li class="nav-item"><a href="{{ route('assets.index', ['category' => 'Switch']) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == 'Switch' ? 'active' : '' }}"><i class="far fa-circle nav-icon text-xs"></i><p>Switch</p></a></li>
+              <li class="nav-item"><a href="{{ route('assets.index', ['category' => 'Wifi']) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == 'Wifi' ? 'active' : '' }}"><i class="far fa-circle nav-icon text-xs"></i><p>Wifi</p></a></li>
             </ul>
           </li>
           

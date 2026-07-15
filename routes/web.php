@@ -24,10 +24,6 @@ Route::middleware('auth')->group(function () {
         Route::get('departments/export', [App\Http\Controllers\DepartmentController::class, 'exportExcel'])->name('departments.export');
         Route::resource('departments', App\Http\Controllers\DepartmentController::class);
         
-        Route::post('positions/import', [App\Http\Controllers\PositionController::class, 'importExcel'])->name('positions.import');
-        Route::get('positions/export', [App\Http\Controllers\PositionController::class, 'exportExcel'])->name('positions.export');
-        Route::resource('positions', App\Http\Controllers\PositionController::class);
-        
         Route::resource('vendors', App\Http\Controllers\VendorController::class);
         
         Route::post('brands/import', [App\Http\Controllers\BrandController::class, 'importExcel'])->name('brands.import');
@@ -60,6 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:Super Admin|Admin|User'])->group(function () {
         Route::post('assets/import', [App\Http\Controllers\AssetController::class, 'importExcel'])->name('assets.import');
         Route::get('assets/export', [App\Http\Controllers\AssetController::class, 'exportExcel'])->name('assets.export');
+        Route::get('assets/generate-tag', [App\Http\Controllers\AssetController::class, 'generateTag'])->name('assets.generate-tag');
         Route::resource('assets', App\Http\Controllers\AssetController::class);
 
         Route::post('assignments/{assignment}/return', [App\Http\Controllers\AssetAssignmentController::class, 'returnAsset'])->name('assignments.return');

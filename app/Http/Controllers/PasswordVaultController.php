@@ -32,7 +32,8 @@ class PasswordVaultController extends Controller
 
     public function create()
     {
-        return view('password_vaults.create');
+        $categories = PasswordVault::select('category')->distinct()->pluck('category');
+        return view('password_vaults.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -61,7 +62,8 @@ class PasswordVaultController extends Controller
 
     public function edit(PasswordVault $passwordVault)
     {
-        return view('password_vaults.edit', compact('passwordVault'));
+        $categories = PasswordVault::select('category')->distinct()->pluck('category');
+        return view('password_vaults.edit', compact('passwordVault', 'categories'));
     }
 
     public function update(Request $request, PasswordVault $passwordVault)

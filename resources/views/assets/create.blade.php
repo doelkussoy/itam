@@ -5,8 +5,41 @@
 @section('content')
 
 <div class="asset-form-card">
+    @if(session('error'))
+        <div class="alert alert-danger mx-3 mt-3 mb-0" style="background: rgba(220,53,69,0.2); border: 1px solid rgba(220,53,69,0.5); color: #ff6b6b; border-radius: 10px;">
+            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="alert alert-danger mx-3 mt-3 mb-0" style="background: rgba(220,53,69,0.2); border: 1px solid rgba(220,53,69,0.5); color: #ff6b6b; border-radius: 10px;">
+            <i class="fas fa-exclamation-triangle"></i> Terjadi kesalahan:
+            <ul class="mb-0 mt-1">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form action="{{ route('assets.store') }}" method="POST">
         @csrf
+
+        @if(session('error'))
+            <div class="alert alert-danger mx-4 mt-4 mb-0" style="background: rgba(220,53,69,0.2); border: 1px solid rgba(220,53,69,0.5); color: #ff6b6b; border-radius: 10px;">
+                <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert alert-danger mx-4 mt-4 mb-0" style="background: rgba(220,53,69,0.2); border: 1px solid rgba(220,53,69,0.5); color: #ff6b6b; border-radius: 10px;">
+                <i class="fas fa-exclamation-triangle"></i> Terjadi kesalahan:
+                <ul class="mb-0 mt-1">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         {{-- ===== BASIC INFORMATION ===== --}}
         <div class="form-section">
@@ -586,7 +619,10 @@ $(document).ready(function () {
     };
 
     $('select[name="category_id"]').on('change', function () {
-        var selected = $(this).find('option:selected').text().trim().toLowerCase();
+        var selectedOpt = $(this).find('option:selected');
+        var selected = selectedOpt.text().trim().toLowerCase();
+        var categoryId = $(this).val();
+
         $('.spec-group').hide();
         $('#specifications-section').hide();
 
@@ -595,6 +631,37 @@ $(document).ready(function () {
             $('#specifications-section').slideDown(200);
             $('#spec-' + group).show();
         }
+
+        // Generate asset tag automatically based on category
+        // Only fetch if triggered by user (isTrigger will be undefined) or if asset_tag is empty
+        var currentTag = $('input[name="asset_tag"]').val();
+        
+        if (categoryId && (!currentTag || $(this).data('user-changed'))) {
+            $.ajax({
+                url: '{{ route("assets.generate-tag") }}',
+                type: 'GET',
+                data: { category_id: categoryId },
+                success: function(response) {
+                    if (response.tag) {
+                        $('input[name="asset_tag"]').val(response.tag);
+                    }
+                },
+                error: function() {
+                    console.error('Failed to fetch generated tag');
+                }
+            });
+        } else if (!categoryId && $(this).data('user-changed')) {
+            $('input[name="asset_tag"]').val('');
+        }
+        
+        // Reset the flag
+        $(this).data('user-changed', false);
+    });
+
+    // Mark as user changed when actually clicked/changed by user
+    $('select[name="category_id"]').on('select2:select select2:clear', function () {
+        $(this).data('user-changed', true);
+        $(this).trigger('change');
     });
 
     $('select[name="category_id"]').trigger('change');

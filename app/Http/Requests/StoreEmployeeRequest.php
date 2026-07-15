@@ -28,12 +28,12 @@ class StoreEmployeeRequest extends FormRequest
             'email' => 'nullable|email|unique:employees',
             'phone' => 'nullable|string',
             'department_id' => 'nullable|exists:departments,id',
-            'position_id' => 'nullable|exists:positions,id',
             'supervisor_id' => 'nullable|exists:employees,id',
             'location_id' => 'nullable|exists:locations,id',
-            'extension' => 'nullable|string|max:50',
             'anydesk_id' => 'nullable|string|max:50',
-            'anydesk_password' => 'nullable|string|max:100',
+            'anydesk_password' => 'nullable|string|max:255',
+            'login_username' => 'nullable|string|max:255',
+            'login_password' => 'nullable|string',
             'status' => 'required|in:Active,Inactive',
         ];
     }

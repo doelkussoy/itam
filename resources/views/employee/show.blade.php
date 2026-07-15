@@ -26,7 +26,6 @@
                 
                 <div class="text-left">
                     <p class="theme-text mb-2"><strong>{{ __('messages.department') }}:</strong> <span class="float-right text-info">{{ $employee->department->name ?? '-' }}</span></p>
-                    <p class="theme-text mb-2"><strong>{{ __('messages.position') }}:</strong> <span class="float-right text-info">{{ $employee->position->name ?? '-' }}</span></p>
                     <p class="theme-text mb-2"><strong>{{ __('messages.location') }}:</strong> <span class="float-right text-info">{{ $employee->location->name ?? '-' }}</span></p>
                     <p class="theme-text mb-2"><strong>{{ __('messages.supervisor') }}:</strong> <span class="float-right text-purple font-weight-bold">{{ $employee->supervisor->name ?? '-' }}</span></p>
                     <p class="theme-text mb-2"><strong>{{ __('messages.email') }}:</strong> <span class="float-right text-info" style="font-size: 13px;">{{ $employee->email ?? '-' }}</span></p>
@@ -45,19 +44,31 @@
                 <h5 class="card-title m-0 theme-text"><i class="fas fa-desktop text-purple mr-2"></i> {{ __('messages.tech_connection_params') ?? 'Tech Connection Parameters' }}</h5>
             </div>
             <div class="card-body">
-                <p class="theme-text mb-2"><strong>{{ __('messages.anydesk_id') }}:</strong> <span class="float-right text-success font-weight-bold"><code>{{ $employee->anydesk_id ?? '-' }}</code></span></p>
+                <p class="theme-text mb-2"><strong>{{ __('messages.anydesk_id') ?? 'AnyDesk ID' }}:</strong> <span class="float-right text-success font-weight-bold"><code>{{ $employee->anydesk_id ?? '-' }}</code></span></p>
                 <p class="theme-text mb-2">
-                    <strong>{{ __('messages.anydesk_password') }}:</strong> 
+                    <strong>{{ __('messages.anydesk_password') ?? 'AnyDesk Password' }}:</strong> 
                     <span class="float-right font-weight-bold">
                         @if($employee->anydesk_password)
-                            <input type="password" value="{{ $employee->anydesk_password }}" id="emp-anydesk-pass" class="border-0 bg-transparent text-white text-right" readonly style="outline:none; width: 100px;">
+                            <input type="password" value="{{ $employee->anydesk_password }}" id="emp-anydesk-pass" class="border-0 bg-transparent theme-text text-right" readonly style="outline:none; width: 100px;">
                             <button class="btn btn-xs btn-outline-info toggle-anydesk-btn" type="button" style="padding: 1px 5px;"><i class="fas fa-eye"></i></button>
                         @else
                             -
                         @endif
                     </span>
                 </p>
-                <p class="theme-text mb-2"><strong>{{ __('messages.telephone_extension') }}:</strong> <span class="float-right text-success font-weight-bold">{{ $employee->extension ?? '-' }}</span></p>
+                <hr style="border-top: 1px solid var(--tech-border);">
+                <p class="theme-text mb-2"><strong>PC Username:</strong> <span class="float-right text-warning font-weight-bold"><code>{{ $employee->login_username ?? '-' }}</code></span></p>
+                <p class="theme-text mb-2">
+                    <strong>PC Password:</strong> 
+                    <span class="float-right font-weight-bold">
+                        @if($employee->login_password)
+                            <input type="password" value="{{ $employee->login_password }}" id="emp-login-pass" class="border-0 bg-transparent theme-text text-right" readonly style="outline:none; width: 100px;">
+                            <button class="btn btn-xs btn-outline-warning toggle-login-btn" type="button" style="padding: 1px 5px;"><i class="fas fa-eye"></i></button>
+                        @else
+                            -
+                        @endif
+                    </span>
+                </p>
             </div>
         </div>
     </div>
@@ -198,6 +209,18 @@
 $(document).ready(function() {
     $('.toggle-anydesk-btn').click(function() {
         var input = $('#emp-anydesk-pass');
+        var icon = $(this).find('i');
+        if (input.attr('type') === 'password') {
+            input.attr('type', 'text');
+            icon.removeClass('fa-eye').addClass('fa-eye-slash');
+        } else {
+            input.attr('type', 'password');
+            icon.removeClass('fa-eye-slash').addClass('fa-eye');
+        }
+    });
+
+    $('.toggle-login-btn').click(function() {
+        var input = $('#emp-login-pass');
         var icon = $(this).find('i');
         if (input.attr('type') === 'password') {
             input.attr('type', 'text');

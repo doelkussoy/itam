@@ -17,7 +17,20 @@ class PasswordVault extends Model
         'notes'
     ];
 
-    protected $casts = [
-        'encrypted_password' => 'encrypted'
-    ];
+    protected $casts = [];
+
+    protected function encryptedPassword(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: function ($value) {
+                if (empty($value)) return null;
+                try {
+                    return \Illuminate\Support\Facades\Crypt::decryptString($value);
+                } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                    return '[Decryption Failed - Invalid Key]';
+                }
+            },
+            set: fn ($value) => \Illuminate\Support\Facades\Crypt::encryptString($value),
+        );
+    }
 }

@@ -43,18 +43,6 @@
                     @error('department_id') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-6 form-group">
-                    <label  class="theme-text">{{ __('messages.position') }}</label>
-                    <select name="position_id" class="form-control @error('position_id') is-invalid @enderror" >
-                        <option value="" style="color: #000;">Select {{ __('messages.position') }}</option>
-                        @foreach($positions as $pos)
-                            <option value="{{ $pos->id }}" style="color: #000;" {{ old('position_id', $employee->position_id) == $pos->id ? 'selected' : '' }}>{{ $pos->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('position_id') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.supervisor') ?? 'Supervisor' }}</label>
                     <select name="supervisor_id" class="form-control select2 @error('supervisor_id') is-invalid @enderror" >
                         <option value="" style="color: #000;">Select {{ __('messages.supervisor') ?? 'Supervisor' }}</option>
@@ -76,20 +64,34 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4 form-group">
-                    <label  class="theme-text">{{ __('messages.telephone_extension') ?? 'Telephone Extension' }}</label>
-                    <input type="text" name="extension" class="form-control @error('extension') is-invalid @enderror" value="{{ old('extension', $employee->extension) }}" placeholder="e.g. 102">
-                    @error('extension') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
-                <div class="col-md-4 form-group">
+                <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.anydesk_id') ?? 'AnyDesk ID' }}</label>
                     <input type="text" name="anydesk_id" class="form-control @error('anydesk_id') is-invalid @enderror" value="{{ old('anydesk_id', $employee->anydesk_id) }}" placeholder="e.g. 123456789">
                     @error('anydesk_id') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
-                <div class="col-md-4 form-group">
+                <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.anydesk_password') ?? 'AnyDesk Password' }}</label>
                     <input type="text" name="anydesk_password" class="form-control @error('anydesk_password') is-invalid @enderror" value="{{ old('anydesk_password', $employee->anydesk_password) }}" placeholder="AnyDesk Pwd">
                     @error('anydesk_password') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label class="theme-text">PC Username</label>
+                    <input type="text" name="login_username" class="form-control @error('login_username') is-invalid @enderror" value="{{ old('login_username', $employee->login_username) }}" placeholder="Domain / Local Username">
+                    @error('login_username') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+                <div class="col-md-6 form-group">
+                    <label class="theme-text">PC Password</label>
+                    <div class="input-group">
+                        <input type="password" id="login_password" name="login_password" class="form-control @error('login_password') is-invalid @enderror" value="{{ old('login_password', $employee->login_password) }}" placeholder="PC/Login Password">
+                        <div class="input-group-append">
+                            <span class="input-group-text cursor-pointer" onclick="togglePassword('login_password', this)">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+                    @error('login_password') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
             </div>
             <div class="row">
@@ -102,6 +104,22 @@
                     @error('status') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
             </div>
+
+            <script>
+                function togglePassword(inputId, iconSpan) {
+                    const input = document.getElementById(inputId);
+                    const icon = iconSpan.querySelector('i');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                }
+            </script>
         </div>
         <div class="card-footer bg-transparent border-0">
             <button type="submit" class="btn btn-primary" ><i class="fas fa-save"></i> {{ __('messages.update') }}</button>

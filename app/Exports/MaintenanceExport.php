@@ -32,7 +32,7 @@ class MaintenanceExport implements FromCollection, WithHeadings, WithMapping
             $maintenance->id,
             $maintenance->asset ? $maintenance->asset->name : '-',
             $maintenance->description,
-            $maintenance->maintenance_date,
+            $maintenance->start_date . ($maintenance->end_date ? ' - ' . $maintenance->end_date : ''),
             $maintenance->cost,
             $maintenance->status,
         ];

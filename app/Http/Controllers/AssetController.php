@@ -37,6 +37,45 @@ class AssetController extends Controller
         return Excel::download(new AssetsExport, 'assets_' . date('Ymd_His') . '.xlsx');
     }
 
+    public function generateTag(Request $request)
+    {
+        $categoryId = $request->category_id;
+        if (!$categoryId) {
+            return response()->json(['tag' => '']);
+        }
+
+        $category = Category::find($categoryId);
+        if (!$category) {
+            return response()->json(['tag' => '']);
+        }
+
+        // Generate prefix, e.g., "LAP" for Laptop, "PRI" for Printer
+        $words = explode(' ', trim(str_replace('-', ' ', $category->name)));
+        if (count($words) >= 2) {
+            $prefix = strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 2));
+        } else {
+            $prefix = strtoupper(substr($category->name, 0, 3));
+        }
+
+        $year = date('Y');
+        
+        $latestAsset = Asset::where('asset_tag', 'like', $prefix . '-' . $year . '-%')
+            ->orderBy('asset_tag', 'desc')
+            ->first();
+
+        $sequence = 1;
+        if ($latestAsset) {
+            $parts = explode('-', $latestAsset->asset_tag);
+            if (count($parts) === 3) {
+                $sequence = (int)$parts[2] + 1;
+            }
+        }
+
+        $tag = sprintf("%s-%s-%03d", $prefix, $year, $sequence);
+
+        return response()->json(['tag' => $tag]);
+    }
+
     public function index(Request $request)
     {
         $query = Asset::with(['category', 'brand', 'location']);
@@ -135,7 +174,7 @@ class AssetController extends Controller
                     'location_id' => $request->location_id,
                     'date_received' => $request->date_received,
                     'delivery_order_number' => $request->delivery_order_number,
-                    'warranty_months' => $request->warranty_months,
+                    'warranty_months' => $request->warranty_months ?? 0,
                     'status' => $request->status,
                     'notes' => $request->notes,
                 ]);
@@ -169,7 +208,9 @@ class AssetController extends Controller
     public function update(\App\Http\Requests\UpdateAssetRequest $request, Asset $asset)
     {
         try {
-            $asset->update($request->all());
+            $data = $request->all();
+            $data['warranty_months'] = $request->warranty_months ?? 0;
+            $asset->update($data);
             $this->saveSpecifications($asset, $request);
             return redirect()->route('assets.index')->with('success', __('messages.updated_success'));
         } catch (\Exception $e) {

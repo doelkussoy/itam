@@ -32,17 +32,17 @@
 
             <div class="form-group">
                 <label class="theme-text">{{ __('messages.category') }} *</label>
-                <select name="category" class="form-control theme-input @error('category') is-invalid @enderror" required>
+                <select name="category" class="form-control theme-input select2-tags @error('category') is-invalid @enderror" required>
                     <option value="" style="color: #000;">{{ __('messages.select_category') ?? 'Select Category' }}</option>
-                    <option value="AnyDesk" style="color: #000;">AnyDesk</option>
-                    <option value="Windows" style="color: #000;">Windows</option>
-                    <option value="Email" style="color: #000;">Email</option>
-                    <option value="CCTV" style="color: #000;">CCTV</option>
-                    <option value="Switch" style="color: #000;">Switch</option>
-                    <option value="Printer" style="color: #000;">Printer</option>
-                    <option value="SAP" style="color: #000;">SAP</option>
-                    <option value="Other" style="color: #000;">Other</option>
+                    @php
+                        $defaultCategories = ['AnyDesk', 'Windows', 'Email', 'CCTV', 'Switch', 'Printer', 'SAP'];
+                        $allCategories = collect($defaultCategories)->merge($categories ?? [])->unique()->sort();
+                    @endphp
+                    @foreach($allCategories as $cat)
+                        <option value="{{ $cat }}" style="color: #000;" {{ old('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                    @endforeach
                 </select>
+                <small class="form-text text-muted" style="font-size: 11px;">Select an existing category or type a new one and press Enter.</small>
                 @error('category') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
@@ -73,6 +73,13 @@ $(document).ready(function() {
             input.attr('type', 'password');
             icon.removeClass('fa-eye-slash').addClass('fa-eye');
         }
+    });
+
+    $('.select2-tags').select2({
+        tags: true,
+        placeholder: "Select or type to create a new category",
+        allowClear: true,
+        width: '100%'
     });
 });
 </script>
