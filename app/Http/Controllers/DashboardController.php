@@ -20,29 +20,23 @@ class DashboardController extends Controller
         $used_ips = \App\Models\IpAddress::where('status', 'Used')->count();
 
         // Specific Category Counts for Dashboard Widgets
-        $computers_count = Asset::whereHas('category', function($q) {
-            $q->whereIn('name', ['Komputer', 'Laptop', 'Mini PC', 'Thin Client', 'Server']);
+        $pc_count = Asset::whereHas('category', function($q) {
+            $q->whereIn('name', ['Komputer', 'PC']);
+        })->count();
+        $laptop_count = Asset::whereHas('category', function($q) {
+            $q->where('name', 'Laptop');
+        })->count();
+        $mini_pc_count = Asset::whereHas('category', function($q) {
+            $q->where('name', 'Mini PC');
         })->count();
         $printers_count = Asset::whereHas('category', function($q) {
             $q->where('name', 'Printer');
         })->count();
-        $cctvs_count = Asset::whereHas('category', function($q) {
-            $q->where('name', 'CCTV');
-        })->count();
         $switches_count = Asset::whereHas('category', function($q) {
             $q->where('name', 'Switch');
         })->count();
-        $ap_count = Asset::whereHas('category', function($q) {
-            $q->where('name', 'Access Point');
-        })->count();
-        $tv_count = Asset::whereHas('category', function($q) {
-            $q->where('name', 'TV');
-        })->count();
-        $projector_count = Asset::whereHas('category', function($q) {
-            $q->where('name', 'Projector');
-        })->count();
-        $fingerprint_count = Asset::whereHas('category', function($q) {
-            $q->where('name', 'Fingerprint');
+        $wifi_count = Asset::whereHas('category', function($q) {
+            $q->whereIn('name', ['Access Point', 'WIFI', 'WiFi']);
         })->count();
 
         // Expiring Warranties (Disabled)
@@ -68,9 +62,9 @@ class DashboardController extends Controller
         });
 
         // 2. Assets by Location
-        $locations_data = Asset::join('locations', 'assets.location_id', '=', 'locations.id')
-            ->select('locations.name', \DB::raw('count(*) as count'))
-            ->groupBy('locations.name')
+        $locations_data = Asset::leftJoin('locations', 'assets.location_id', '=', 'locations.id')
+            ->select(\DB::raw('COALESCE(locations.name, "Unassigned") as name'), \DB::raw('count(*) as count'))
+            ->groupBy(\DB::raw('COALESCE(locations.name, "Unassigned")'))
             ->get();
 
         // 3. OS Distribution
@@ -116,14 +110,12 @@ class DashboardController extends Controller
             'open_tickets',
             'used_ips',
             'recent_activities',
-            'computers_count',
+            'pc_count',
+            'laptop_count',
+            'mini_pc_count',
             'printers_count',
-            'cctvs_count',
             'switches_count',
-            'ap_count',
-            'tv_count',
-            'projector_count',
-            'fingerprint_count',
+            'wifi_count',
             'expiring_warranty_count',
             'age_buckets',
             'locations_data',

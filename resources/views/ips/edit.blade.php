@@ -25,11 +25,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6 form-group">
-                    <label  class="theme-text">MAC Address</label>
-                    <input type="text" name="mac_address" class="form-control @error('mac_address') is-invalid @enderror" value="{{ old('mac_address', $ip->mac_address) }}" placeholder="e.g. AA:BB:CC:DD:EE:FF" >
-                    @error('mac_address') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
+
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">VLAN</label>
                     <select name="vlan_id" class="form-control select2 @error('vlan_id') is-invalid @enderror" >

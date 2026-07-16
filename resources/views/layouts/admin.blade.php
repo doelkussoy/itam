@@ -334,10 +334,11 @@
         </a>
       </li>
       
+      @auth
       <!-- User Info -->
       <li class="nav-item">
         <span class="nav-link theme-text d-flex align-items-center" style="height: 38px; gap: 8px; font-weight: 500; font-size: 14px; padding: 0 10px;">
-          <i class="far fa-user" style="opacity: 0.8;"></i> {{ Auth::user()->name ?? 'Super Admin' }}
+          <i class="far fa-user" style="opacity: 0.8;"></i> {{ Auth::user()?->name ?? 'Guest' }}
         </span>
       </li>
 
@@ -350,6 +351,13 @@
           </a>
         </form>
       </li>
+      @else
+      <li class="nav-item">
+        <a href="{{ route('login') }}" class="nav-link theme-text d-flex align-items-center" style="height: 38px; gap: 8px; font-weight: 500; font-size: 14px; padding: 0 10px;">
+          <i class="fas fa-sign-in-alt" style="opacity: 0.8;"></i> Login
+        </a>
+      </li>
+      @endauth
     </ul>
   </nav>
   <!-- /.navbar -->

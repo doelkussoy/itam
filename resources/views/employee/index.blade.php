@@ -138,7 +138,7 @@
                     <label class="custom-file-label" for="customFile" style="background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1;" class="theme-text">Choose file...</label>
                 </div>
                 <small class="form-text text-muted mt-2">
-                    Ensure columns: <b>nik, nama, email, telepon, departemen, jabatan, status</b> exist in the header row.
+                    Ensure columns: <b>nik, nama, email, telepon, divisi, jabatan, status</b> exist in the header row.
                 </small>
             </div>
         </div>

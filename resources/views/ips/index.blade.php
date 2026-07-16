@@ -38,10 +38,9 @@
                     <tr>
                         <th width="50">No</th>
                         <th>{{ __('messages.ip_address') }}</th>
-                        <th>{{ __('messages.mac_address') }}</th>
+                        <th>{{ __('messages.assigned_asset') }}</th>
                         <th>{{ __('messages.vlans') }}</th>
                         <th>{{ __('messages.assigned_employee') }}</th>
-                        <th>{{ __('messages.assigned_asset') }}</th>
                         <th>{{ __('messages.status') }}</th>
                         <th width="180" class="text-center">{{ __('messages.actions') }}</th>
                     </tr>
@@ -51,7 +50,15 @@
                     <tr>
                         <td class="theme-text">{{ ($ips->currentPage() - 1) * $ips->perPage() + $loop->iteration }}</td>
                         <td class="font-weight-bold" ><i class="fas fa-network-wired text-muted"></i> {{ $ip->ip_address }}</td>
-                        <td class="theme-text"><code>{{ $ip->mac_address ?? '-' }}</code></td>
+                        <td class="theme-text">
+                            @if($ip->asset)
+                                <a href="{{ route('assets.show', $ip->asset_id) }}" class="text-info font-weight-bold">{{ $ip->asset->name }}</a><br><small class="text-muted">{{ $ip->asset->asset_tag }}</small>
+                            @elseif($ip->notes)
+                                <span class="theme-text">{{ $ip->notes }}</span>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
                         <td class="theme-text">
                             @if($ip->vlan)
                                 <span class="badge badge-info">VLAN {{ $ip->vlan->vlan_number }}</span>
@@ -62,15 +69,6 @@
                         <td class="theme-text">
                             @if($ip->employee)
                                 <a href="{{ route('employees.show', $ip->employee_id) }}" class="text-info font-weight-bold">{{ $ip->employee->name }}</a>
-                            @else
-                                <span class="text-muted">-</span>
-                            @endif
-                        </td>
-                        <td class="theme-text">
-                            @if($ip->asset)
-                                <a href="{{ route('assets.show', $ip->asset_id) }}" class="text-info font-weight-bold">{{ $ip->asset->name }}</a><br><small class="text-muted">{{ $ip->asset->asset_tag }}</small>
-                            @elseif($ip->notes)
-                                <span class="theme-text">{{ $ip->notes }}</span>
                             @else
                                 <span class="text-muted">-</span>
                             @endif

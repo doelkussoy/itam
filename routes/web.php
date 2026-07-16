@@ -13,6 +13,9 @@ Route::get('/dashboard/activities', [App\Http\Controllers\DashboardController::c
 Route::get('lang/{lang}', [App\Http\Controllers\LanguageController::class, 'switchLang'])->name('lang.switch');
 Route::get('theme/{theme}', [App\Http\Controllers\ThemeController::class, 'switchTheme'])->name('theme.switch');
 
+// Public route for viewing asset details (e.g. from QR code)
+Route::get('assets/{asset}', [App\Http\Controllers\AssetController::class, 'show'])->name('assets.show');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -57,7 +60,7 @@ Route::middleware('auth')->group(function () {
         Route::post('assets/import', [App\Http\Controllers\AssetController::class, 'importExcel'])->name('assets.import');
         Route::get('assets/export', [App\Http\Controllers\AssetController::class, 'exportExcel'])->name('assets.export');
         Route::get('assets/generate-tag', [App\Http\Controllers\AssetController::class, 'generateTag'])->name('assets.generate-tag');
-        Route::resource('assets', App\Http\Controllers\AssetController::class);
+        Route::resource('assets', App\Http\Controllers\AssetController::class)->except(['show']);
 
         Route::post('assignments/{assignment}/return', [App\Http\Controllers\AssetAssignmentController::class, 'returnAsset'])->name('assignments.return');
         Route::resource('assignments', App\Http\Controllers\AssetAssignmentController::class);

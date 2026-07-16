@@ -49,8 +49,10 @@
                 </div>
             </div>
             <div class="px-3">
+                @auth
                 <a href="{{ route('assets.edit', $asset) }}" class="btn btn-block btn-info mb-2"><i class="fas fa-edit"></i> Edit Asset</a>
                 <a href="{{ route('assets.index') }}" class="btn btn-block btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Catalog</a>
+                @endauth
             </div>
         </div>
 
@@ -435,7 +437,7 @@ $(document).ready(function() {
     var qrElement = document.getElementById("qrcode");
     if(qrElement) {
         new QRCode(qrElement, {
-            text: "{{ route('assets.show', $asset) }}",
+            text: "https://itam.cbapabrik.com/assets/{{ $asset->id }}",
             width: 130,
             height: 130,
             colorDark : "#111827",

@@ -32,7 +32,7 @@ return [
     'brand' => 'Merek',
     'location' => 'Lokasi',
     'vendor' => 'Pemasok',
-    'department' => 'Departemen',
+    'department' => 'Divisi',
     'position' => 'Jabatan',
 
     // Asset Specific

@@ -135,9 +135,26 @@
             <a href="{{ route('assets.index', ['category' => 'Komputer']) }}" style="text-decoration: none; display: block;"
                 class="h-100">
                 <div class="card cat-mini-card p-3 text-center h-100">
-                    <h3 class="text-info font-weight-bold mb-1">{{ $computers_count }}</h3>
-                    <span class="text-muted" style="font-size: 12px; font-weight: 500;">{{ __('messages.computer') }} /
-                        {{ __('messages.laptop') }}</span>
+                    <h3 class="text-info font-weight-bold mb-1">{{ $pc_count }}</h3>
+                    <span class="text-muted" style="font-size: 12px; font-weight: 500;">PC</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-2 col-md-3 col-6 mb-3">
+            <a href="{{ route('assets.index', ['category' => 'Laptop']) }}" style="text-decoration: none; display: block;"
+                class="h-100">
+                <div class="card cat-mini-card p-3 text-center h-100">
+                    <h3 class="text-info font-weight-bold mb-1">{{ $laptop_count }}</h3>
+                    <span class="text-muted" style="font-size: 12px; font-weight: 500;">Laptop</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-2 col-md-3 col-6 mb-3">
+            <a href="{{ route('assets.index', ['category' => 'Mini PC']) }}" style="text-decoration: none; display: block;"
+                class="h-100">
+                <div class="card cat-mini-card p-3 text-center h-100">
+                    <h3 class="text-info font-weight-bold mb-1">{{ $mini_pc_count }}</h3>
+                    <span class="text-muted" style="font-size: 12px; font-weight: 500;">Mini PC</span>
                 </div>
             </a>
         </div>
@@ -146,16 +163,7 @@
                 class="h-100">
                 <div class="card cat-mini-card p-3 text-center h-100">
                     <h3 class="text-info font-weight-bold mb-1">{{ $printers_count }}</h3>
-                    <span class="text-muted" style="font-size: 12px; font-weight: 500;">{{ __('messages.printer') }}</span>
-                </div>
-            </a>
-        </div>
-        <div class="col-lg-2 col-md-3 col-6 mb-3">
-            <a href="{{ route('assets.index', ['category' => 'CCTV']) }}" style="text-decoration: none; display: block;"
-                class="h-100">
-                <div class="card cat-mini-card p-3 text-center h-100">
-                    <h3 class="text-info font-weight-bold mb-1">{{ $cctvs_count }}</h3>
-                    <span class="text-muted" style="font-size: 12px; font-weight: 500;">{{ __('messages.cctv') }}</span>
+                    <span class="text-muted" style="font-size: 12px; font-weight: 500;">Printer</span>
                 </div>
             </a>
         </div>
@@ -164,8 +172,7 @@
                 class="h-100">
                 <div class="card cat-mini-card p-3 text-center h-100">
                     <h3 class="text-info font-weight-bold mb-1">{{ $switches_count }}</h3>
-                    <span class="text-muted"
-                        style="font-size: 12px; font-weight: 500;">{{ __('messages.switch_network') }}</span>
+                    <span class="text-muted" style="font-size: 12px; font-weight: 500;">Switch</span>
                 </div>
             </a>
         </div>
@@ -173,19 +180,9 @@
             <a href="{{ route('assets.index', ['category' => 'Access Point']) }}"
                 style="text-decoration: none; display: block;" class="h-100">
                 <div class="card cat-mini-card p-3 text-center h-100">
-                    <h3 class="text-info font-weight-bold mb-1">{{ $ap_count }}</h3>
+                    <h3 class="text-info font-weight-bold mb-1">{{ $wifi_count }}</h3>
                     <span class="text-muted"
-                        style="font-size: 12px; font-weight: 500;">{{ __('messages.access_point') }}</span>
-                </div>
-            </a>
-        </div>
-        <div class="col-lg-2 col-md-3 col-6 mb-3">
-            <a href="{{ route('assets.index', ['category' => 'Fingerprint']) }}"
-                style="text-decoration: none; display: block;" class="h-100">
-                <div class="card cat-mini-card p-3 text-center h-100">
-                    <h3 class="text-info font-weight-bold mb-1">{{ $fingerprint_count }}</h3>
-                    <span class="text-muted"
-                        style="font-size: 12px; font-weight: 500;">{{ __('messages.fingerprint') }}</span>
+                        style="font-size: 12px; font-weight: 500;">WIFI</span>
                 </div>
             </a>
         </div>

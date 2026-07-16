@@ -32,7 +32,7 @@ return [
     'brand' => 'Brand',
     'location' => 'Location',
     'vendor' => 'Vendor',
-    'department' => 'Department',
+    'department' => 'Division',
     'position' => 'Position',
     
     // Asset Specific
