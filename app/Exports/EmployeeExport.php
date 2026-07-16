@@ -14,7 +14,7 @@ class EmployeeExport implements FromCollection, WithHeadings, WithMapping
     */
     public function collection()
     {
-        return Employee::with(['department', 'position'])->get();
+        return Employee::with(['department'])->get();
     }
 
     public function headings(): array
@@ -38,7 +38,7 @@ class EmployeeExport implements FromCollection, WithHeadings, WithMapping
             $employee->email,
             $employee->phone,
             $employee->department ? $employee->department->name : '-',
-            $employee->position ? $employee->position->name : '-',
+            '-', // Jabatan (Position is removed)
             $employee->status
         ];
     }
