@@ -190,7 +190,7 @@ return [
     // User Management
     'manage_users' => 'Kelola Pengguna',
     'user_management' => 'Manajemen User',
-    'search_user' => 'Cari Nama atau Email...',
+    'search_user' => 'Cari Nama, Username atau Email...',
     'add_user' => 'Tambah Pengguna',
     'role' => 'Peran (Role)',
     'add_new_user' => 'Tambah Pengguna Baru',

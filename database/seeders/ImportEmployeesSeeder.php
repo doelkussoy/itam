@@ -11,7 +11,13 @@ class ImportEmployeesSeeder extends Seeder
 {
     public function run()
     {
-        $json = file_get_contents(base_path('employees.json'));
+        $filePath = base_path('employees.json');
+        if (!file_exists($filePath)) {
+            echo "Warning: employees.json not found. Skipping employees import.\n";
+            return;
+        }
+
+        $json = file_get_contents($filePath);
         $data = json_decode($json, true);
 
         $count = 0;

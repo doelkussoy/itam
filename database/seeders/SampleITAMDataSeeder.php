@@ -324,7 +324,15 @@ class SampleITAMDataSeeder extends Seeder
 
         // 6. Seed IP Addresses linked to VLANs and Assets
         $emp1 = Employee::first();
-        $empId = $emp1 ? $emp1->id : null;
+        if (!$emp1) {
+            $defaultDepartment = \App\Models\Department::firstOrCreate(['name' => 'General'], ['description' => 'General Department']);
+            $emp1 = Employee::create([
+                'employee_id' => 'EMP-DEFAULT',
+                'name' => 'Default Employee',
+                'status' => 'Active'
+            ]);
+        }
+        $empId = $emp1->id;
         
         IpAddress::firstOrCreate(['ip_address' => '192.168.2.10'], [
             'mac_address' => 'AA:BB:CC:11:22:33',

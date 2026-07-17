@@ -189,7 +189,7 @@ return [
     // User Management
     'manage_users' => 'Manage Users',
     'user_management' => 'User Management',
-    'search_user' => 'Search by Name or Email...',
+    'search_user' => 'Search by Name, Username or Email...',
     'add_user' => 'Add User',
     'role' => 'Role',
     'add_new_user' => 'Add New User',

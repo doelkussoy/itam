@@ -62,6 +62,7 @@ class RolePermissionSeeder extends Seeder
             'email' => 'superadmin@cba.co.id'
         ], [
             'name' => 'Super Admin',
+            'username' => 'superadmin',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
         ]);
@@ -71,6 +72,7 @@ class RolePermissionSeeder extends Seeder
             'email' => 'admin@cba.co.id'
         ], [
             'name' => 'Admin',
+            'username' => 'admin',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
         ]);
@@ -80,6 +82,7 @@ class RolePermissionSeeder extends Seeder
             'email' => 'user@cba.co.id'
         ], [
             'name' => 'User Operation',
+            'username' => 'user',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
         ]);

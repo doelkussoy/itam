@@ -43,6 +43,7 @@
                     <tr>
                         <th width="50">No</th>
                         <th>{{ __('messages.name') }}</th>
+                        <th>{{ __('messages.username') }}</th>
                         <th>{{ __('messages.email') }}</th>
                         <th>{{ __('messages.role') }}</th>
                         <th width="150" class="text-center">{{ __('messages.actions') }}</th>
@@ -53,6 +54,7 @@
                     <tr>
                         <td class="theme-text">{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
                         <td class="theme-text">{{ $user->name }}</td>
+                        <td class="theme-text">{{ $user->username }}</td>
                         <td class="theme-text">{{ $user->email }}</td>
                         <td class="theme-text">
                             @foreach($user->roles as $role)
@@ -73,7 +75,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">{{ __('messages.no_data') }}</td>
+                        <td colspan="6" class="text-center text-muted py-4">{{ __('messages.no_data') }}</td>
                     </tr>
                     @endforelse
                 </tbody>

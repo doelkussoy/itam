@@ -21,6 +21,13 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
+                        <label class="theme-text">{{ __('messages.username') }} <span class="text-danger">*</span></label>
+                        <input type="text" name="username" class="form-control theme-input @error('username') is-invalid @enderror" value="{{ old('username', $user->username) }}" required>
+                        @error('username')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
                         <label class="theme-text">{{ __('messages.email') }} <span class="text-danger">*</span></label>
                         <input type="email" name="email" class="form-control theme-input @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" required>
                         @error('email')<span class="invalid-feedback">{{ $message }}</span>@enderror
