@@ -22,6 +22,8 @@ return [
     'created_success' => 'Data berhasil ditambahkan.',
     'updated_success' => 'Data berhasil diperbarui.',
     'deleted_success' => 'Data berhasil dihapus.',
+    'deleting_data' => 'Menghapus Data',
+    'yes_delete' => 'Ya, Hapus!',
 
     // Master Common
     'manage' => 'Kelola',

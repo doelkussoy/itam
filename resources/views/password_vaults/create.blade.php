@@ -33,13 +33,13 @@
             <div class="form-group">
                 <label class="theme-text">{{ __('messages.category') }} *</label>
                 <select name="category" class="form-control theme-input select2-tags @error('category') is-invalid @enderror" required>
-                    <option value="" style="color: #000;">{{ __('messages.select_category') ?? 'Select Category' }}</option>
+                    <option value="" >{{ __('messages.select_category') ?? 'Select Category' }}</option>
                     @php
                         $defaultCategories = ['AnyDesk', 'Windows', 'Email', 'CCTV', 'Switch', 'Printer', 'SAP'];
                         $allCategories = collect($defaultCategories)->merge($categories ?? [])->unique()->sort();
                     @endphp
                     @foreach($allCategories as $cat)
-                        <option value="{{ $cat }}" style="color: #000;" {{ old('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                        <option value="{{ $cat }}"  {{ old('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
                     @endforeach
                 </select>
                 <small class="form-text text-muted" style="font-size: 11px;">Select an existing category or type a new one and press Enter.</small>

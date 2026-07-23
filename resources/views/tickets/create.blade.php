@@ -19,9 +19,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.reporter_employee') }} *</label>
                     <select name="employee_id" class="form-control select2 @error('employee_id') is-invalid @enderror" required >
-                        <option value="" style="color: #000;">{{ __('messages.select_employee') }}</option>
+                        <option value="" >{{ __('messages.select_employee') }}</option>
                         @foreach($employees as $employee)
-                            <option value="{{ $employee->id }}" style="color: #000;" {{ old('employee_id') == $employee->id ? 'selected' : '' }}>
+                            <option value="{{ $employee->id }}"  {{ old('employee_id') == $employee->id ? 'selected' : '' }}>
                                 {{ $employee->employee_id }} - {{ $employee->name }}
                             </option>
                         @endforeach
@@ -31,9 +31,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.related_asset_optional') }}</label>
                     <select name="asset_id" class="form-control select2 @error('asset_id') is-invalid @enderror" >
-                        <option value="" style="color: #000;">{{ __('messages.none') }}</option>
+                        <option value="" >{{ __('messages.none') }}</option>
                         @foreach($assets as $asset)
-                            <option value="{{ $asset->id }}" style="color: #000;" {{ old('asset_id') == $asset->id ? 'selected' : '' }}>
+                            <option value="{{ $asset->id }}"  {{ old('asset_id') == $asset->id ? 'selected' : '' }}>
                                 {{ $asset->asset_tag }} - {{ $asset->name }}
                             </option>
                         @endforeach
@@ -45,10 +45,10 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.priority') }} *</label>
                     <select name="priority" class="form-control @error('priority') is-invalid @enderror" required >
-                        <option value="Low" style="color: #000;" {{ old('priority') == 'Low' ? 'selected' : '' }}>{{ __('messages.low') }}</option>
-                        <option value="Medium" style="color: #000;" {{ old('priority') == 'Medium' ? 'selected' : '' }}>{{ __('messages.medium') }}</option>
-                        <option value="High" style="color: #000;" {{ old('priority') == 'High' ? 'selected' : '' }}>{{ __('messages.high') }}</option>
-                        <option value="Critical" style="color: #000;" {{ old('priority') == 'Critical' ? 'selected' : '' }}>{{ __('messages.critical') }}</option>
+                        <option value="Low"  {{ old('priority') == 'Low' ? 'selected' : '' }}>{{ __('messages.low') }}</option>
+                        <option value="Medium"  {{ old('priority') == 'Medium' ? 'selected' : '' }}>{{ __('messages.medium') }}</option>
+                        <option value="High"  {{ old('priority') == 'High' ? 'selected' : '' }}>{{ __('messages.high') }}</option>
+                        <option value="Critical"  {{ old('priority') == 'Critical' ? 'selected' : '' }}>{{ __('messages.critical') }}</option>
                     </select>
                     @error('priority') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>

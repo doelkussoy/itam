@@ -34,8 +34,8 @@
             <div class="form-group">
                 <label class="theme-text">{{ __('messages.status') }} *</label>
                 <select name="status" class="form-control theme-input @error('status') is-invalid @enderror" required>
-                    <option value="Active" style="color: #000;">{{ __('messages.active') }}</option>
-                    <option value="Inactive" style="color: #000;">{{ __('messages.inactive') }}</option>
+                    <option value="Active" >{{ __('messages.active') }}</option>
+                    <option value="Inactive" >{{ __('messages.inactive') }}</option>
                 </select>
                 @error('status') <span class="text-danger">{{ $message }}</span> @enderror
             </div>

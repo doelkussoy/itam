@@ -43,7 +43,7 @@ class SoftwareLicenseController extends Controller
 
         try {
             SoftwareLicense::create($request->all());
-            return redirect()->route('software_licenses.index')->with('success', __('messages.created_success'));
+            return redirect()->route('software_licenses.index', request()->query())->with('success', __('messages.created_success'));
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Failed to create Software License: ' . $e->getMessage());
         }
@@ -68,7 +68,7 @@ class SoftwareLicenseController extends Controller
 
         try {
             $softwareLicense->update($request->all());
-            return redirect()->route('software_licenses.index')->with('success', __('messages.updated_success'));
+            return redirect()->route('software_licenses.index', request()->query())->with('success', __('messages.updated_success'));
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Failed to update Software License: ' . $e->getMessage());
         }
@@ -77,6 +77,6 @@ class SoftwareLicenseController extends Controller
     public function destroy(SoftwareLicense $softwareLicense)
     {
         $softwareLicense->delete();
-        return redirect()->route('software_licenses.index')->with('success', __('messages.deleted_success'));
+        return redirect()->route('software_licenses.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 }

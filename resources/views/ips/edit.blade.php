@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="card theme-card">
-    <form action="{{ route('ips.update', $ip) }}" method="POST">
+    <form action="{{ route('ips.update', array_merge([$ip->id], request()->query())) }}" method="POST">
         @csrf @method('PUT')
         <div class="card-body">
             <h5 class="text-info mb-3"><i class="fas fa-edit"></i> {{ __('messages.edit') }} {{ __('messages.network_details') }}</h5>
@@ -17,9 +17,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.status') }} *</label>
                     <select name="status" class="form-control @error('status') is-invalid @enderror" required >
-                        <option value="Available" style="color: #000;" {{ old('status', $ip->status) == 'Available' ? 'selected' : '' }}>{{ __('messages.available') }}</option>
-                        <option value="Used" style="color: #000;" {{ old('status', $ip->status) == 'Used' ? 'selected' : '' }}>{{ __('messages.used') }}</option>
-                        <option value="Reserved" style="color: #000;" {{ old('status', $ip->status) == 'Reserved' ? 'selected' : '' }}>{{ __('messages.reserved') }}</option>
+                        <option value="Available"  {{ old('status', $ip->status) == 'Available' ? 'selected' : '' }}>{{ __('messages.available') }}</option>
+                        <option value="Used"  {{ old('status', $ip->status) == 'Used' ? 'selected' : '' }}>{{ __('messages.used') }}</option>
+                        <option value="Reserved"  {{ old('status', $ip->status) == 'Reserved' ? 'selected' : '' }}>{{ __('messages.reserved') }}</option>
                     </select>
                     @error('status') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
@@ -29,9 +29,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">VLAN</label>
                     <select name="vlan_id" class="form-control select2 @error('vlan_id') is-invalid @enderror" >
-                        <option value="" style="color: #000;">None / Standard</option>
+                        <option value="" >None / Standard</option>
                         @foreach($vlans as $vlan)
-                            <option value="{{ $vlan->id }}" style="color: #000;" {{ old('vlan_id', $ip->vlan_id) == $vlan->id ? 'selected' : '' }}>
+                            <option value="{{ $vlan->id }}"  {{ old('vlan_id', $ip->vlan_id) == $vlan->id ? 'selected' : '' }}>
                                 VLAN {{ $vlan->vlan_number }} - {{ $vlan->name }}
                             </option>
                         @endforeach
@@ -55,9 +55,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.assigned_employee') }} ({{ __('messages.optional') }})</label>
                     <select name="employee_id" class="form-control select2 @error('employee_id') is-invalid @enderror" >
-                        <option value="" style="color: #000;">{{ __('messages.none') }}</option>
+                        <option value="" >{{ __('messages.none') }}</option>
                         @foreach($employees as $employee)
-                            <option value="{{ $employee->id }}" style="color: #000;" {{ old('employee_id', $ip->employee_id) == $employee->id ? 'selected' : '' }}>
+                            <option value="{{ $employee->id }}"  {{ old('employee_id', $ip->employee_id) == $employee->id ? 'selected' : '' }}>
                                 {{ $employee->employee_id }} - {{ $employee->name }}
                             </option>
                         @endforeach
@@ -67,9 +67,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.assigned_asset') }} ({{ __('messages.optional') }})</label>
                     <select name="asset_id" class="form-control select2 @error('asset_id') is-invalid @enderror" >
-                        <option value="" style="color: #000;">{{ __('messages.none') }}</option>
+                        <option value="" >{{ __('messages.none') }}</option>
                         @foreach($assets as $asset)
-                            <option value="{{ $asset->id }}" style="color: #000;" {{ old('asset_id', $ip->asset_id) == $asset->id ? 'selected' : '' }}>
+                            <option value="{{ $asset->id }}"  {{ old('asset_id', $ip->asset_id) == $asset->id ? 'selected' : '' }}>
                                 {{ $asset->asset_tag }} - {{ $asset->name }}
                             </option>
                         @endforeach
@@ -87,7 +87,7 @@
         </div>
         <div class="card-footer bg-transparent border-0">
             <button type="submit" class="btn btn-primary" ><i class="fas fa-save"></i> {{ __('messages.update') }}</button>
-            <a href="{{ route('ips.index') }}" class="btn btn-outline-secondary ml-2" >{{ __('messages.cancel') }}</a>
+            <a href="{{ route('ips.index', request()->query()) }}" class="btn btn-outline-secondary ml-2" >{{ __('messages.cancel') }}</a>
         </div>
     </form>
 </div>

@@ -22,6 +22,8 @@ return [
     'created_success' => 'Data created successfully.',
     'updated_success' => 'Data updated successfully.',
     'deleted_success' => 'Data deleted successfully.',
+    'deleting_data' => 'Deleting Data',
+    'yes_delete' => 'Yes, Delete it!',
     
     // Master Common
     'manage' => 'Manage',

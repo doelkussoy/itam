@@ -43,7 +43,7 @@ class CategoryController extends Controller
         }
 
         Category::create($data);
-        return redirect()->route('categories.index')->with('success', __('messages.created_success'));
+        return redirect()->route('categories.index', request()->query())->with('success', __('messages.created_success'));
     }
 
     public function edit(Category $category)
@@ -65,13 +65,13 @@ class CategoryController extends Controller
         }
 
         $category->update($data);
-        return redirect()->route('categories.index')->with('success', __('messages.updated_success'));
+        return redirect()->route('categories.index', request()->query())->with('success', __('messages.updated_success'));
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
-        return redirect()->route('categories.index')->with('success', __('messages.deleted_success'));
+        return redirect()->route('categories.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 
     public function exportExcel()
@@ -87,9 +87,9 @@ class CategoryController extends Controller
 
         try {
             Excel::import(new CategoryImport, $request->file('file'));
-            return redirect()->route('categories.index')->with('success', 'Data imported successfully.');
+            return redirect()->route('categories.index', request()->query())->with('success', 'Data imported successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('categories.index')->with('error', 'Error importing data: ' . $e->getMessage());
+            return redirect()->route('categories.index', request()->query())->with('error', 'Error importing data: ' . $e->getMessage());
         }
     }
 }

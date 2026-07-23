@@ -9,23 +9,23 @@
             <div class="d-flex flex-wrap gap-2" style="gap: 10px;">
                 <input type="text" name="search" class="form-control theme-input" placeholder="{{ __('messages.search_ticket') }}" value="{{ request('search') }}" style="width: 250px;" >
                 
-                <select name="status" class="form-control select2 theme-input" style="width: 150px; background-color: rgba(0,0,0,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.1);" >
-                    <option value="" style="color: #000;">{{ __('messages.all_status') }}</option>
-                    <option value="Open" style="color: #000;" {{ request('status') == 'Open' ? 'selected' : '' }}>{{ __('messages.open') }}</option>
-                    <option value="In Progress" style="color: #000;" {{ request('status') == 'In Progress' ? 'selected' : '' }}>{{ __('messages.in_progress') }}</option>
-                    <option value="Resolved" style="color: #000;" {{ request('status') == 'Resolved' ? 'selected' : '' }}>{{ __('messages.resolved') }}</option>
-                    <option value="Closed" style="color: #000;" {{ request('status') == 'Closed' ? 'selected' : '' }}>{{ __('messages.closed') }}</option>
+                <select name="status" class="form-control select2 theme-input" style="width: 150px;">
+                    <option value="" >{{ __('messages.all_status') }}</option>
+                    <option value="Open"  {{ str_contains(request('status') ?? '', 'Open') ? 'selected' : '' }}>{{ __('messages.open') }}</option>
+                    <option value="In Progress"  {{ request('status') == 'In Progress' ? 'selected' : '' }}>{{ __('messages.in_progress') }}</option>
+                    <option value="Resolved"  {{ request('status') == 'Resolved' ? 'selected' : '' }}>{{ __('messages.resolved') }}</option>
+                    <option value="Closed"  {{ request('status') == 'Closed' ? 'selected' : '' }}>{{ __('messages.closed') }}</option>
                 </select>
 
-                <select name="priority" class="form-control select2 theme-input" style="width: 150px; background-color: rgba(0,0,0,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.1);" >
-                    <option value="" style="color: #000;">{{ __('messages.all_priority') }}</option>
-                    <option value="Low" style="color: #000;" {{ request('priority') == 'Low' ? 'selected' : '' }}>{{ __('messages.low') }}</option>
-                    <option value="Medium" style="color: #000;" {{ request('priority') == 'Medium' ? 'selected' : '' }}>{{ __('messages.medium') }}</option>
-                    <option value="High" style="color: #000;" {{ request('priority') == 'High' ? 'selected' : '' }}>{{ __('messages.high') }}</option>
-                    <option value="Critical" style="color: #000;" {{ request('priority') == 'Critical' ? 'selected' : '' }}>{{ __('messages.critical') }}</option>
+                <select name="priority" class="form-control select2 theme-input" style="width: 150px;">
+                    <option value="" >{{ __('messages.all_priority') }}</option>
+                    <option value="Low"  {{ request('priority') == 'Low' ? 'selected' : '' }}>{{ __('messages.low') }}</option>
+                    <option value="Medium"  {{ request('priority') == 'Medium' ? 'selected' : '' }}>{{ __('messages.medium') }}</option>
+                    <option value="High"  {{ request('priority') == 'High' ? 'selected' : '' }}>{{ __('messages.high') }}</option>
+                    <option value="Critical"  {{ request('priority') == 'Critical' ? 'selected' : '' }}>{{ __('messages.critical') }}</option>
                 </select>
                 
-                <button type="submit" class="btn btn-primary" ><i class="fas fa-search"></i></button>
+                <button type="submit" class="btn btn-outline-info" ><i class="fas fa-search"></i></button>
                 @if(request()->anyFilled(['search', 'status', 'priority']))
                     <a href="{{ route('tickets.index') }}" class="btn btn-outline-secondary" ><i class="fas fa-undo"></i> {{ __('messages.reset') }}</a>
                 @endif
@@ -76,18 +76,28 @@
                             @endswitch
                         </td>
                         <td class="theme-text">
-                            @switch($ticket->status)
-                                @case('Open') <span class="badge badge-primary" style="box-shadow: 0 0 8px rgba(0,123,255,0.5);">{{ __('messages.open') }}</span> @break
-                                @case('In Progress') <span class="badge badge-warning" style="box-shadow: 0 0 8px rgba(255,193,7,0.5);">{{ __('messages.in_progress') }}</span> @break
-                                @case('Resolved') <span class="badge badge-success" style="box-shadow: 0 0 8px rgba(40,167,69,0.5);">{{ __('messages.resolved') }}</span> @break
-                                @case('Closed') <span class="badge badge-secondary">{{ __('messages.closed') }}</span> @break
-                            @endswitch
+                            <div class="dropdown">
+                                <button class="btn btn-sm dropdown-toggle status-btn p-0 border-0 bg-transparent" type="button" data-toggle="dropdown" aria-expanded="false" data-ticket-id="{{ $ticket->id }}" style="box-shadow: none;">
+                                    @switch($ticket->status)
+                                        @case('Open') <span class="badge badge-primary status-badge" style="box-shadow: 0 0 8px rgba(0,123,255,0.5);">{{ __('messages.open') ?? 'Open' }}</span> @break
+                                        @case('In Progress') <span class="badge badge-warning status-badge" style="box-shadow: 0 0 8px rgba(255,193,7,0.5);">{{ __('messages.in_progress') ?? 'In Progress' }}</span> @break
+                                        @case('Resolved') <span class="badge badge-success status-badge" style="box-shadow: 0 0 8px rgba(40,167,69,0.5);">{{ __('messages.resolved') ?? 'Resolved' }}</span> @break
+                                        @case('Closed') <span class="badge badge-secondary status-badge">{{ __('messages.closed') ?? 'Closed' }}</span> @break
+                                    @endswitch
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" >
+                                    <a class="dropdown-item status-change-btn text-primary" href="#" data-status="Open">{{ __('messages.open') ?? 'Open' }}</a>
+                                    <a class="dropdown-item status-change-btn text-warning" href="#" data-status="In Progress">{{ __('messages.in_progress') ?? 'In Progress' }}</a>
+                                    <a class="dropdown-item status-change-btn text-success" href="#" data-status="Resolved">{{ __('messages.resolved') ?? 'Resolved' }}</a>
+                                    <a class="dropdown-item status-change-btn text-secondary" href="#" data-status="Closed">{{ __('messages.closed') ?? 'Closed' }}</a>
+                                </div>
+                            </div>
                         </td>
                         <td class="theme-text"><small>{{ $ticket->created_at->format('Y-m-d H:i') }}</small></td>
                         <td class="theme-text">
                             <div class="d-flex justify-content-center" style="gap: 8px;">
-                                <a href="{{ route('tickets.edit', $ticket) }}" class="btn action-btn btn-outline-warning" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;"  title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
-                                <form action="{{ route('tickets.destroy', $ticket) }}" method="POST" class="d-inline">
+                                <a href="{{ route('tickets.edit', array_merge(['ticket' => $ticket->id], request()->query())) }}" class="btn action-btn btn-outline-warning" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;"  title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
+                                <form action="{{ route('tickets.destroy', array_merge(['ticket' => $ticket->id], request()->query())) }}" method="POST" class="d-inline">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-delete action-btn btn-outline-danger" style="border: 1px solid rgba(220, 53, 69, 0.3); background: rgba(220, 53, 69, 0.15); color: #dc3545;"  title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}"><i class="fas fa-trash"></i></button>
                                 </form>
@@ -109,4 +119,73 @@
     </div>
     @endif
 </div>
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $(document).on('click', '.status-change-btn', function(e) {
+        e.preventDefault();
+        var btn = $(this);
+        var newStatus = btn.data('status');
+        var container = btn.closest('.dropdown');
+        var ticketId = container.find('.status-btn').data('ticket-id');
+        var badge = container.find('.status-badge');
+        
+        // Optional: Add a loading state
+        var originalHtml = badge.html();
+        badge.html('<i class="fas fa-spinner fa-spin"></i>');
+        
+        $.ajax({
+            url: '{{ url("tickets") }}/' + ticketId + '/status',
+            type: 'PATCH',
+            data: {
+                _token: '{{ csrf_token() }}',
+                status: newStatus
+            },
+            success: function(response) {
+                if(response.success) {
+                    badge.removeClass('badge-primary badge-warning badge-success badge-secondary badge-dark');
+                    badge.css('box-shadow', 'none');
+                    
+                    switch(newStatus) {
+                        case 'Open':
+                            badge.addClass('badge-primary');
+                            badge.css('box-shadow', '0 0 8px rgba(0,123,255,0.5)');
+                            badge.text('{{ __("messages.open") ?? "Open" }}');
+                            break;
+                        case 'In Progress':
+                            badge.addClass('badge-warning');
+                            badge.css('box-shadow', '0 0 8px rgba(255,193,7,0.5)');
+                            badge.text('{{ __("messages.in_progress") ?? "In Progress" }}');
+                            break;
+                        case 'Resolved':
+                            badge.addClass('badge-success');
+                            badge.css('box-shadow', '0 0 8px rgba(40,167,69,0.5)');
+                            badge.text('{{ __("messages.resolved") ?? "Resolved" }}');
+                            break;
+                        case 'Closed':
+                            badge.addClass('badge-secondary');
+                            badge.text('{{ __("messages.closed") ?? "Closed" }}');
+                            break;
+                    }
+                }
+            },
+            error: function(xhr) {
+                alert('Error updating status. Please try again.');
+                badge.html(originalHtml);
+            }
+        });
+    });
+});
+</script>
+<style>
+/* Hide default dropdown arrow for status button */
+.status-btn::after {
+    display: none !important;
+}
+.status-change-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+</style>
+@endpush
 @endsection

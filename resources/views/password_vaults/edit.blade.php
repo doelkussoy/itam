@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="card theme-card" style="max-width: 600px; margin: 0 auto;">
-    <form action="{{ route('password_vaults.update', $passwordVault) }}" method="POST">
+    <form action="{{ route('password_vaults.update', array_merge([$passwordVault->id], request()->query())) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="card-body">
@@ -35,13 +35,13 @@
             <div class="form-group">
                 <label class="theme-text">{{ __('messages.category') }} *</label>
                 <select name="category" class="form-control theme-input select2-tags @error('category') is-invalid @enderror" required>
-                    <option value="" style="color: #000;">{{ __('messages.select_category') ?? 'Select Category' }}</option>
+                    <option value="" >{{ __('messages.select_category') ?? 'Select Category' }}</option>
                     @php
                         $defaultCategories = ['AnyDesk', 'Windows', 'Email', 'CCTV', 'Switch', 'Printer', 'SAP'];
                         $allCategories = collect($defaultCategories)->merge($categories ?? [])->push($passwordVault->category)->unique()->filter()->sort();
                     @endphp
                     @foreach($allCategories as $cat)
-                        <option value="{{ $cat }}" style="color: #000;" {{ old('category', $passwordVault->category) == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                        <option value="{{ $cat }}"  {{ old('category', $passwordVault->category) == $cat ? 'selected' : '' }}>{{ $cat }}</option>
                     @endforeach
                 </select>
                 <small class="form-text text-muted" style="font-size: 11px;">Select an existing category or type a new one and press Enter.</small>
@@ -56,7 +56,7 @@
         </div>
         <div class="card-footer" style="background-color: transparent; border-top: 1px solid var(--tech-border);">
             <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i> {{ __('messages.update') }}</button>
-            <a href="{{ route('password_vaults.index') }}" class="btn btn-outline-secondary"><i class="fas fa-times mr-1"></i> {{ __('messages.cancel') }}</a>
+            <a href="{{ route('password_vaults.index', request()->query()) }}" class="btn btn-outline-secondary"><i class="fas fa-times mr-1"></i> {{ __('messages.cancel') }}</a>
         </div>
     </form>
 </div>

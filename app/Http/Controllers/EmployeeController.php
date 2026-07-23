@@ -57,7 +57,7 @@ class EmployeeController extends Controller
     {
         try {
             Employee::create($request->all());
-            return redirect()->route('employees.index')->with('success', __('messages.created_success'));
+            return redirect()->route('employees.index', request()->query())->with('success', __('messages.created_success'));
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Failed to create employee: ' . $e->getMessage());
         }
@@ -90,7 +90,7 @@ class EmployeeController extends Controller
     {
         try {
             $employee->update($request->all());
-            return redirect()->route('employees.index')->with('success', __('messages.updated_success'));
+            return redirect()->route('employees.index', request()->query())->with('success', __('messages.updated_success'));
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Failed to update employee: ' . $e->getMessage());
         }
@@ -99,7 +99,7 @@ class EmployeeController extends Controller
     public function destroy(Employee $employee)
     {
         $employee->delete();
-        return redirect()->route('employees.index')->with('success', __('messages.deleted_success'));
+        return redirect()->route('employees.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 
     public function importExcel(Request $request)
@@ -110,10 +110,22 @@ class EmployeeController extends Controller
 
         try {
             Excel::import(new EmployeeImport, $request->file('file'));
-            return redirect()->route('employees.index')->with('success', 'Employees imported successfully.');
+            return redirect()->route('employees.index', request()->query())->with('success', 'Employees imported successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('employees.index')->with('error', 'Failed to import data: ' . $e->getMessage());
+            return redirect()->route('employees.index', request()->query())->with('error', 'Failed to import data: ' . $e->getMessage());
         }
+    }
+
+    
+    public function updateStatus(Request $request, Employee $emp)
+    {
+        $request->validate([
+            'status' => 'required|in:Active,Inactive'
+        ]);
+
+        $emp->update(['status' => $request->status]);
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully.', 'status' => $emp->status]);
     }
 
     public function exportExcel()

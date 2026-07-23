@@ -35,9 +35,9 @@
             <div class="form-group">
                 <label class="theme-text">{{ __('messages.pic') }}</label>
                 <select name="pic_id" class="form-control select2 theme-input @error('pic_id') is-invalid @enderror">
-                    <option value="" style="color: #000;">{{ __('messages.select_employee') }}</option>
+                    <option value="" >{{ __('messages.select_employee') }}</option>
                     @foreach($employees as $emp)
-                        <option value="{{ $emp->id }}" style="color: #000;" {{ old('pic_id') == $emp->id ? 'selected' : '' }}>{{ $emp->name }} ({{ $emp->employee_id }})</option>
+                        <option value="{{ $emp->id }}"  {{ old('pic_id') == $emp->id ? 'selected' : '' }}>{{ $emp->name }} ({{ $emp->employee_id }})</option>
                     @endforeach
                 </select>
                 @error('pic_id') <span class="text-danger">{{ $message }}</span> @enderror

@@ -29,7 +29,7 @@ class VendorController extends Controller
         ]);
 
         Vendor::create($request->all());
-        return redirect()->route('vendors.index')->with('success', __('messages.created_success'));
+        return redirect()->route('vendors.index', request()->query())->with('success', __('messages.created_success'));
     }
 
     public function edit(Vendor $vendor)
@@ -48,12 +48,12 @@ class VendorController extends Controller
         ]);
 
         $vendor->update($request->all());
-        return redirect()->route('vendors.index')->with('success', __('messages.updated_success'));
+        return redirect()->route('vendors.index', request()->query())->with('success', __('messages.updated_success'));
     }
 
     public function destroy(Vendor $vendor)
     {
         $vendor->delete();
-        return redirect()->route('vendors.index')->with('success', __('messages.deleted_success'));
+        return redirect()->route('vendors.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 }

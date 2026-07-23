@@ -7,7 +7,7 @@
     <div class="card-header">
         <h3 class="card-title theme-text">{{ __('messages.edit_user') }}: {{ $user->name }}</h3>
     </div>
-    <form action="{{ route('users.update', $user) }}" method="POST">
+    <form action="{{ route('users.update', array_merge([$user->id], request()->query())) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="card-body">
@@ -61,7 +61,7 @@
             </div>
         </div>
         <div class="card-footer text-right bg-transparent">
-            <a href="{{ route('users.index') }}" class="btn btn-secondary">{{ __('messages.cancel') }}</a>
+            <a href="{{ route('users.index', request()->query()) }}" class="btn btn-secondary">{{ __('messages.cancel') }}</a>
             <button type="submit" class="btn btn-primary" style="box-shadow: 0 0 10px rgba(0,123,255,0.3);"><i class="fas fa-save"></i> {{ __('messages.update') }}</button>
         </div>
     </form>

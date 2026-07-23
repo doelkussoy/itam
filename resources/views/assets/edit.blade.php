@@ -345,9 +345,7 @@
     border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
     font-size: 13px;
-    flex-shrink: 0;
-    color: #fff;
-}
+    flex-shrink: 0;}
 .badge-cyan   { background: var(--color-accent-tint); color: var(--color-accent); }
 .badge-purple { background: oklch(93% 0.050 145); color: oklch(35% 0.120 145); }
 .badge-green  { background: oklch(93% 0.050 145); color: oklch(35% 0.120 145); }
@@ -499,9 +497,7 @@ textarea.field-input {
 .btn-save {
     display: inline-flex; align-items: center; gap: 7px;
     background: var(--color-accent);
-    border: none;
-    color: #fff;
-    font-weight: 600;
+    border: none;font-weight: 600;
     font-size: 13px;
     padding: 9px 26px;
     border-radius: var(--radius-sm);

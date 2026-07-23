@@ -12,9 +12,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.asset') }} *</label>
                     <select name="asset_id" class="form-control select2 @error('asset_id') is-invalid @enderror" required >
-                        <option value="" style="color: #000;">{{ __('messages.select_asset') }}</option>
+                        <option value="" >{{ __('messages.select_asset') }}</option>
                         @foreach($assets as $asset)
-                            <option value="{{ $asset->id }}" style="color: #000;" {{ old('asset_id') == $asset->id ? 'selected' : '' }}>
+                            <option value="{{ $asset->id }}"  {{ old('asset_id') == $asset->id ? 'selected' : '' }}>
                                 {{ $asset->asset_tag }} - {{ $asset->name }} ({{ $asset->status }})
                             </option>
                         @endforeach
@@ -24,9 +24,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.maintenance_type') }} *</label>
                     <select name="type" class="form-control @error('type') is-invalid @enderror" required >
-                        <option value="Routine" style="color: #000;" {{ old('type') == 'Routine' ? 'selected' : '' }}>{{ __('messages.routine_maintenance') }}</option>
-                        <option value="Repair" style="color: #000;" {{ old('type') == 'Repair' ? 'selected' : '' }}>{{ __('messages.repair_broken') }}</option>
-                        <option value="Upgrade" style="color: #000;" {{ old('type') == 'Upgrade' ? 'selected' : '' }}>{{ __('messages.hardware_upgrade') }}</option>
+                        <option value="Routine"  {{ old('type') == 'Routine' ? 'selected' : '' }}>{{ __('messages.routine_maintenance') }}</option>
+                        <option value="Repair"  {{ old('type') == 'Repair' ? 'selected' : '' }}>{{ __('messages.repair_broken') }}</option>
+                        <option value="Upgrade"  {{ old('type') == 'Upgrade' ? 'selected' : '' }}>{{ __('messages.hardware_upgrade') }}</option>
                     </select>
                     @error('type') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>

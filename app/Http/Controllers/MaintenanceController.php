@@ -58,7 +58,7 @@ class MaintenanceController extends Controller
         // Update asset status
         $maintenance->asset->update(['status' => 'Maintenance']);
 
-        return redirect()->route('maintenances.index')->with('success', 'Maintenance record created successfully.');
+        return redirect()->route('maintenances.index', request()->query())->with('success', 'Maintenance record created successfully.');
     }
 
     public function edit(Maintenance $maintenance)
@@ -93,13 +93,37 @@ class MaintenanceController extends Controller
             $maintenance->asset->update(['status' => 'Maintenance']);
         }
 
-        return redirect()->route('maintenances.index')->with('success', 'Maintenance updated successfully.');
+        return redirect()->route('maintenances.index', request()->query())->with('success', 'Maintenance updated successfully.');
     }
 
     public function destroy(Maintenance $maintenance)
     {
         $maintenance->delete();
-        return redirect()->route('maintenances.index')->with('success', 'Maintenance record deleted successfully.');
+        return redirect()->route('maintenances.index', request()->query())->with('success', 'Maintenance record deleted successfully.');
+    }
+
+    
+    public function updateStatus(Request $request, Maintenance $maintenance)
+    {
+        $request->validate([
+            'status' => 'required|in:Ongoing,Completed,Cancelled'
+        ]);
+
+        $maintenance->update(['status' => $request->status]);
+
+        if (in_array($request->status, ['Completed', 'Cancelled'])) {
+            if ($request->status === 'Completed' && !$maintenance->end_date) {
+                $maintenance->update(['end_date' => date('Y-m-d')]);
+            }
+            $maintenance->asset->update(['status' => 'Available']);
+        } else {
+            $maintenance->asset->update(['status' => 'Maintenance']);
+            if ($request->status === 'Ongoing') {
+                $maintenance->update(['end_date' => null]);
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully.', 'status' => $maintenance->status]);
     }
 
     public function exportExcel()
@@ -124,6 +148,6 @@ class MaintenanceController extends Controller
 
         $maintenance->asset->update(['status' => 'Available']);
 
-        return redirect()->route('maintenances.index')->with('success', 'Maintenance marked as completed.');
+        return redirect()->route('maintenances.index', request()->query())->with('success', 'Maintenance marked as completed.');
     }
 }

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="card theme-card" style="max-width: 600px; margin: 0 auto;">
-    <form action="{{ route('software_licenses.update', $softwareLicense) }}" method="POST">
+    <form action="{{ route('software_licenses.update', array_merge([$softwareLicense->id], request()->query())) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="card-body">
@@ -36,9 +36,9 @@
             <div class="form-group">
                 <label class="theme-text">{{ __('messages.pic') }}</label>
                 <select name="pic_id" class="form-control select2 theme-input @error('pic_id') is-invalid @enderror">
-                    <option value="" style="color: #000;">{{ __('messages.select_employee') }}</option>
+                    <option value="" >{{ __('messages.select_employee') }}</option>
                     @foreach($employees as $emp)
-                        <option value="{{ $emp->id }}" style="color: #000;" {{ old('pic_id', $softwareLicense->pic_id) == $emp->id ? 'selected' : '' }}>{{ $emp->name }} ({{ $emp->employee_id }})</option>
+                        <option value="{{ $emp->id }}"  {{ old('pic_id', $softwareLicense->pic_id) == $emp->id ? 'selected' : '' }}>{{ $emp->name }} ({{ $emp->employee_id }})</option>
                     @endforeach
                 </select>
                 @error('pic_id') <span class="text-danger">{{ $message }}</span> @enderror
@@ -52,7 +52,7 @@
         </div>
         <div class="card-footer" style="background-color: transparent; border-top: 1px solid var(--tech-border);">
             <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i> {{ __('messages.update') }}</button>
-            <a href="{{ route('software_licenses.index') }}" class="btn btn-outline-secondary"><i class="fas fa-times mr-1"></i> {{ __('messages.cancel') }}</a>
+            <a href="{{ route('software_licenses.index', request()->query()) }}" class="btn btn-outline-secondary"><i class="fas fa-times mr-1"></i> {{ __('messages.cancel') }}</a>
         </div>
     </form>
 </div>

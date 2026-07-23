@@ -32,6 +32,18 @@ class AssetController extends Controller
         }
     }
 
+    
+    public function updateStatus(Request $request, Asset $asset)
+    {
+        $request->validate([
+            'status' => 'required|in:Available,Assigned,Maintenance,Retired,Missing'
+        ]);
+
+        $asset->update(['status' => $request->status]);
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully.', 'status' => $asset->status]);
+    }
+
     public function exportExcel()
     {
         return Excel::download(new AssetsExport, 'assets_' . date('Ymd_His') . '.xlsx');

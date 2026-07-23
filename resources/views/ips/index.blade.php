@@ -10,17 +10,16 @@
                     <input type="text" name="search" class="form-control theme-input"
                         placeholder="{{ __('messages.search_ip') }}" value="{{ request('search') }}" style="width: 250px;">
 
-                    <select name="status" class="form-control select2 theme-input"
-                        style="width: 150px; background-color: rgba(0,0,0,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
-                        <option value="" style="color: #000;">{{ __('messages.all_status') }}</option>
-                        <option value="Available" style="color: #000;" {{ request('status') == 'Available' ? 'selected' : '' }}>{{ __('messages.available') }}</option>
-                        <option value="Used" style="color: #000;" {{ request('status') == 'Used' ? 'selected' : '' }}>
+                    <select name="status" class="form-control select2 theme-input" style="width: 150px;">
+                        <option value="" >{{ __('messages.all_status') }}</option>
+                        <option value="Available"  {{ request('status') == 'Available' ? 'selected' : '' }}>{{ __('messages.available') }}</option>
+                        <option value="Used"  {{ request('status') == 'Used' ? 'selected' : '' }}>
                             {{ __('messages.used') }}</option>
-                        <option value="Reserved" style="color: #000;" {{ request('status') == 'Reserved' ? 'selected' : '' }}>
+                        <option value="Reserved"  {{ request('status') == 'Reserved' ? 'selected' : '' }}>
                             {{ __('messages.reserved') }}</option>
                     </select>
 
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                    <button type="submit" class="btn btn-outline-info"><i class="fas fa-search"></i></button>
                     @if(request()->anyFilled(['search', 'status']))
                         <a href="{{ route('ips.index') }}" class="btn btn-outline-secondary"><i class="fas fa-undo"></i>
                             {{ __('messages.reset') }}</a>
@@ -85,13 +84,22 @@
                                     @endif
                                 </td>
                                 <td class="theme-text">
-                                    @if($ip->status == 'Available') <span class="badge badge-success"
-                                        style="box-shadow: 0 0 8px rgba(40,167,69,0.5);">{{ __('messages.available') }}</span>
-                                    @elseif($ip->status == 'Used') <span class="badge badge-primary"
-                                        style="box-shadow: 0 0 8px rgba(0,123,255,0.5);">{{ __('messages.used') }}</span>
-                                    @else <span class="badge badge-warning"
-                                        style="box-shadow: 0 0 8px rgba(255,193,7,0.5);">{{ __('messages.reserved') }}</span>
-                                    @endif
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm dropdown-toggle status-btn p-0 border-0 bg-transparent" type="button" data-toggle="dropdown" aria-expanded="false" data-id="{{ $ip->id }}" style="box-shadow: none;">
+                                            @if($ip->status == 'Available')
+                                                <span class="badge badge-success status-badge" style="box-shadow: 0 0 8px rgba(40,167,69,0.5);">{{ __('messages.available') }}</span>
+                                            @elseif($ip->status == 'Used')
+                                                <span class="badge badge-primary status-badge" style="box-shadow: 0 0 8px rgba(0,123,255,0.5);">{{ __('messages.used') }}</span>
+                                            @else
+                                                <span class="badge badge-warning status-badge" style="box-shadow: 0 0 8px rgba(255,193,7,0.5);">{{ __('messages.reserved') }}</span>
+                                            @endif
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right" >
+                                            <a class="dropdown-item status-change-btn text-success" href="#" data-status="Available">{{ __('messages.available') }}</a>
+                                            <a class="dropdown-item status-change-btn text-primary" href="#" data-status="Used">{{ __('messages.used') }}</a>
+                                            <a class="dropdown-item status-change-btn text-warning" href="#" data-status="Reserved">{{ __('messages.reserved') }}</a>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td class="theme-text">
                                     <div class="d-flex justify-content-center" style="gap: 8px;">
@@ -99,10 +107,10 @@
                                             data-ping-url="{{ route('ips.ping', $ip) }}" title="{{ __('messages.ping_device') ?? 'Ping Device' }}"
                                             style="border: 1px solid rgba(40, 167, 69, 0.3); background: rgba(40, 167, 69, 0.15); color: #28a745;"><i
                                                 class="fas fa-play"></i></button>
-                                        <a href="{{ route('ips.edit', $ip) }}" class="btn action-btn btn-outline-warning"
+                                        <a href="{{ route('ips.edit', array_merge([$ip->id], request()->query())) }}" class="btn action-btn btn-outline-warning"
                                             style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;"
                                             title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
-                                        <form action="{{ route('ips.destroy', $ip) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('ips.destroy', array_merge([$ip->id], request()->query())) }}" method="POST" class="d-inline">
                                             @csrf @method('DELETE')
                                             <button class="btn btn-delete action-btn btn-outline-danger"
                                                 style="border: 1px solid rgba(220, 53, 69, 0.3); background: rgba(220, 53, 69, 0.15); color: #dc3545;"
@@ -216,6 +224,59 @@
                     }
                 });
             });
+
+            $(document).on('click', '.status-change-btn', function(e) {
+                e.preventDefault();
+                var btn = $(this);
+                var newStatus = btn.data('status');
+                var container = btn.closest('.dropdown');
+                var id = container.find('.status-btn').data('id');
+                var badge = container.find('.status-badge');
+                
+                var originalHtml = badge.html();
+                badge.html('<i class="fas fa-spinner fa-spin"></i>');
+                
+                $.ajax({
+                    url: '{{ url("ips") }}/' + id + '/status',
+                    type: 'PATCH',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        status: newStatus
+                    },
+                    success: function(response) {
+                        if(response.success) {
+                            badge.removeClass('badge-primary badge-warning badge-success badge-danger badge-secondary badge-info badge-dark');
+                            badge.css('box-shadow', 'none');
+                            
+                            switch(newStatus) {
+                                case 'Available':
+                                    badge.addClass('badge-success');
+                                    badge.css('box-shadow', '0 0 8px rgba(40,167,69,0.5)');
+                                    badge.text('{{ __("messages.available") }}');
+                                    break;
+                                case 'Used':
+                                    badge.addClass('badge-primary');
+                                    badge.css('box-shadow', '0 0 8px rgba(0,123,255,0.5)');
+                                    badge.text('{{ __("messages.used") }}');
+                                    break;
+                                case 'Reserved':
+                                    badge.addClass('badge-warning');
+                                    badge.css('box-shadow', '0 0 8px rgba(255,193,7,0.5)');
+                                    badge.text('{{ __("messages.reserved") }}');
+                                    break;
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error updating status.');
+                        badge.html(originalHtml);
+                    }
+                });
+            });
         });
     </script>
+    <style>
+    .status-btn::after { display: none !important; }
+    .status-change-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
+    </style>
 @endpush

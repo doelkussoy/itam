@@ -7,36 +7,35 @@
     <div class="col-12 mb-3">
         <form action="{{ route('assets.index') }}" method="GET">
             <div class="d-flex flex-wrap gap-2" style="gap: 10px;">
-                <input type="text" name="search" class="form-control theme-input" placeholder="{{ __('messages.search_asset') }}" value="{{ request('search') }}" style="width: 200px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff;" >
-                
-                <select name="category_id" class="form-control select2 theme-input" style="width: 150px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff;" onchange="this.form.submit()" >
-                    <option value="" style="color: #000;">{{ __('messages.all_status') }} {{ __('messages.category') }}</option>
+                <input type="text" name="search" class="form-control theme-input" placeholder="{{ __('messages.search_asset') }}" value="{{ request('search') }}"   style="width: 250px;">
+<select name="category_id" class="form-control select2 theme-input" style="width: 150px;">
+                    <option value="" >{{ __('messages.all_status') }} {{ __('messages.category') }}</option>
                     @foreach($categories as $cat)
-                        <option value="{{ $cat->id }}" style="color: #000;" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        <option value="{{ $cat->id }}"  {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                     @endforeach
                 </select>
 
-                <select name="brand_id" class="form-control select2 theme-input" style="width: 150px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff;" onchange="this.form.submit()" >
-                    <option value="" style="color: #000;">{{ __('messages.all_status') }} {{ __('messages.brand') }}</option>
+                <select name="brand_id" class="form-control select2 theme-input" style="width: 150px;">
+                    <option value="" >{{ __('messages.all_status') }} {{ __('messages.brand') }}</option>
                     @foreach($brands as $brand)
-                        <option value="{{ $brand->id }}" style="color: #000;" {{ request('brand_id') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
+                        <option value="{{ $brand->id }}"  {{ request('brand_id') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                     @endforeach
                 </select>
                 
-                <select name="location_id" class="form-control select2 theme-input" style="width: 150px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff;" onchange="this.form.submit()" >
-                    <option value="" style="color: #000;">{{ __('messages.all_status') }} {{ __('messages.location') }}</option>
+                <select name="location_id" class="form-control select2 theme-input" style="width: 150px;">
+                    <option value="" >{{ __('messages.all_status') }} {{ __('messages.location') }}</option>
                     @foreach($locations as $loc)
-                        <option value="{{ $loc->id }}" style="color: #000;" {{ request('location_id') == $loc->id ? 'selected' : '' }}>{{ $loc->name }}</option>
+                        <option value="{{ $loc->id }}"  {{ request('location_id') == $loc->id ? 'selected' : '' }}>{{ $loc->name }}</option>
                     @endforeach
                 </select>
 
-                <select name="status" class="form-control select2 theme-input" style="width: 150px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff;" onchange="this.form.submit()" >
-                    <option value="" style="color: #000;">{{ __('messages.all_status') }}</option>
-                    <option value="Available" style="color: #000;" {{ request('status') == 'Available' ? 'selected' : '' }}>{{ __('messages.available') }}</option>
-                    <option value="Assigned" style="color: #000;" {{ request('status') == 'Assigned' ? 'selected' : '' }}>{{ __('messages.assigned') }}</option>
-                    <option value="Maintenance" style="color: #000;" {{ request('status') == 'Maintenance' ? 'selected' : '' }}>{{ __('messages.maintenance') }}</option>
-                    <option value="Retired" style="color: #000;" {{ request('status') == 'Retired' ? 'selected' : '' }}>{{ __('messages.retired') }}</option>
-                    <option value="Missing" style="color: #000;" {{ request('status') == 'Missing' ? 'selected' : '' }}>{{ __('messages.missing') }}</option>
+                <select name="status" class="form-control select2 theme-input" style="width: 150px;">
+                    <option value="" >{{ __('messages.all_status') }}</option>
+                    <option value="Available"  {{ str_contains(request('status') ?? '', 'Available') ? 'selected' : '' }}>{{ __('messages.available') }}</option>
+                    <option value="Assigned"  {{ request('status') == 'Assigned' ? 'selected' : '' }}>{{ __('messages.assigned') }}</option>
+                    <option value="Maintenance"  {{ request('status') == 'Maintenance' ? 'selected' : '' }}>{{ __('messages.maintenance') }}</option>
+                    <option value="Retired"  {{ request('status') == 'Retired' ? 'selected' : '' }}>{{ __('messages.retired') }}</option>
+                    <option value="Missing"  {{ request('status') == 'Missing' ? 'selected' : '' }}>{{ __('messages.missing') }}</option>
                 </select>
 
                 <button class="btn btn-outline-info" type="submit" ><i class="fas fa-search"></i></button>
@@ -60,7 +59,7 @@
 </div>
 
 @if(session('success'))
-    <div class="alert alert-success alert-dismissible" style="background: rgba(40,167,69,0.2); border: 1px solid rgba(40,167,69,0.5); color: #28a745; backdrop-filter: blur(10px);">
+    <div class="alert alert-success alert-dismissible" style="background: rgba(40,167,69,0.2); border: 1px solid rgba(40,167,69,0.5); color: #28a745;">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
         <i class="icon fas fa-check"></i> {{ session('success') }}
     </div>
@@ -98,23 +97,34 @@
                             @endif
                         </td>
                         <td class="theme-text">
-                            @switch($asset->status)
-                                @case('Available')
-                                    <span class="badge badge-success" style="box-shadow: 0 0 8px rgba(40,167,69,0.5);">{{ __('messages.available') }}</span>
-                                    @break
-                                @case('Assigned')
-                                    <span class="badge badge-primary" style="box-shadow: 0 0 8px rgba(0,123,255,0.5);">{{ __('messages.assigned') }}</span>
-                                    @break
-                                @case('Maintenance')
-                                    <span class="badge badge-warning" style="box-shadow: 0 0 8px rgba(255,193,7,0.5);">{{ __('messages.maintenance') }}</span>
-                                    @break
-                                @case('Retired')
-                                    <span class="badge badge-secondary">{{ __('messages.retired') }}</span>
-                                    @break
-                                @case('Missing')
-                                    <span class="badge badge-danger" style="box-shadow: 0 0 8px rgba(220,53,69,0.5);">{{ __('messages.missing') }}</span>
-                                    @break
-                            @endswitch
+                            <div class="dropdown">
+                                <button class="btn btn-sm dropdown-toggle status-btn p-0 border-0 bg-transparent" type="button" data-toggle="dropdown" aria-expanded="false" data-id="{{ $asset->id }}" style="box-shadow: none;">
+                                    @switch($asset->status)
+                                        @case('Available')
+                                            <span class="badge badge-success status-badge" style="box-shadow: 0 0 8px rgba(40,167,69,0.5);">{{ __('messages.available') }}</span>
+                                            @break
+                                        @case('Assigned')
+                                            <span class="badge badge-primary status-badge" style="box-shadow: 0 0 8px rgba(0,123,255,0.5);">{{ __('messages.assigned') }}</span>
+                                            @break
+                                        @case('Maintenance')
+                                            <span class="badge badge-warning status-badge" style="box-shadow: 0 0 8px rgba(255,193,7,0.5);">{{ __('messages.maintenance') }}</span>
+                                            @break
+                                        @case('Retired')
+                                            <span class="badge badge-secondary status-badge">{{ __('messages.retired') }}</span>
+                                            @break
+                                        @case('Missing')
+                                            <span class="badge badge-danger status-badge" style="box-shadow: 0 0 8px rgba(220,53,69,0.5);">{{ __('messages.missing') }}</span>
+                                            @break
+                                    @endswitch
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" >
+                                    <a class="dropdown-item status-change-btn text-success" href="#" data-status="Available">{{ __('messages.available') }}</a>
+                                    <a class="dropdown-item status-change-btn text-primary" href="#" data-status="Assigned">{{ __('messages.assigned') }}</a>
+                                    <a class="dropdown-item status-change-btn text-warning" href="#" data-status="Maintenance">{{ __('messages.maintenance') }}</a>
+                                    <a class="dropdown-item status-change-btn text-secondary" href="#" data-status="Retired">{{ __('messages.retired') }}</a>
+                                    <a class="dropdown-item status-change-btn text-danger" href="#" data-status="Missing">{{ __('messages.missing') }}</a>
+                                </div>
+                            </div>
                         </td>
                         <td class="theme-text">
                             <div class="d-flex justify-content-center" style="gap: 8px;">
@@ -167,4 +177,72 @@
         </form>
     </div>
 </div>
+</div>
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $(document).on('click', '.status-change-btn', function(e) {
+        e.preventDefault();
+        var btn = $(this);
+        var newStatus = btn.data('status');
+        var container = btn.closest('.dropdown');
+        var id = container.find('.status-btn').data('id');
+        var badge = container.find('.status-badge');
+        
+        var originalHtml = badge.html();
+        badge.html('<i class="fas fa-spinner fa-spin"></i>');
+        
+        $.ajax({
+            url: '{{ url("assets") }}/' + id + '/status',
+            type: 'PATCH',
+            data: {
+                _token: '{{ csrf_token() }}',
+                status: newStatus
+            },
+            success: function(response) {
+                if(response.success) {
+                    badge.removeClass('badge-primary badge-warning badge-success badge-danger badge-secondary badge-info badge-dark');
+                    badge.css('box-shadow', 'none');
+                    
+                    switch(newStatus) {
+                        case 'Available':
+                            badge.addClass('badge-success');
+                            badge.css('box-shadow', '0 0 8px rgba(40,167,69,0.5)');
+                            badge.text('{{ __("messages.available") }}');
+                            break;
+                        case 'Assigned':
+                            badge.addClass('badge-primary');
+                            badge.css('box-shadow', '0 0 8px rgba(0,123,255,0.5)');
+                            badge.text('{{ __("messages.assigned") }}');
+                            break;
+                        case 'Maintenance':
+                            badge.addClass('badge-warning');
+                            badge.css('box-shadow', '0 0 8px rgba(255,193,7,0.5)');
+                            badge.text('{{ __("messages.maintenance") }}');
+                            break;
+                        case 'Retired':
+                            badge.addClass('badge-secondary');
+                            badge.text('{{ __("messages.retired") }}');
+                            break;
+                        case 'Missing':
+                            badge.addClass('badge-danger');
+                            badge.css('box-shadow', '0 0 8px rgba(220,53,69,0.5)');
+                            badge.text('{{ __("messages.missing") }}');
+                            break;
+                    }
+                }
+            },
+            error: function(xhr) {
+                alert('Error updating status.');
+                badge.html(originalHtml);
+            }
+        });
+    });
+});
+</script>
+<style>
+.status-btn::after { display: none !important; }
+.status-change-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
+</style>
+@endpush
 @endsection

@@ -35,9 +35,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.department') }}</label>
                     <select name="department_id" class="form-control @error('department_id') is-invalid @enderror" >
-                        <option value="" style="color: #000;">Select {{ __('messages.department') }}</option>
+                        <option value="" >Select {{ __('messages.department') }}</option>
                         @foreach($departments as $dept)
-                            <option value="{{ $dept->id }}" style="color: #000;" {{ old('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
+                            <option value="{{ $dept->id }}"  {{ old('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
                         @endforeach
                     </select>
                     @error('department_id') <span class="text-danger">{{ $message }}</span> @enderror
@@ -45,9 +45,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.supervisor') ?? 'Supervisor' }}</label>
                     <select name="supervisor_id" class="form-control select2 @error('supervisor_id') is-invalid @enderror" >
-                        <option value="" style="color: #000;">Select {{ __('messages.supervisor') ?? 'Supervisor' }}</option>
+                        <option value="" >Select {{ __('messages.supervisor') ?? 'Supervisor' }}</option>
                         @foreach($supervisors as $sup)
-                            <option value="{{ $sup->id }}" style="color: #000;" {{ old('supervisor_id') == $sup->id ? 'selected' : '' }}>{{ $sup->name }}</option>
+                            <option value="{{ $sup->id }}"  {{ old('supervisor_id') == $sup->id ? 'selected' : '' }}>{{ $sup->name }}</option>
                         @endforeach
                     </select>
                     @error('supervisor_id') <span class="text-danger">{{ $message }}</span> @enderror
@@ -55,9 +55,9 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.location') }}</label>
                     <select name="location_id" class="form-control select2 @error('location_id') is-invalid @enderror" >
-                        <option value="" style="color: #000;">Select {{ __('messages.location') }}</option>
+                        <option value="" >Select {{ __('messages.location') }}</option>
                         @foreach($locations as $loc)
-                            <option value="{{ $loc->id }}" style="color: #000;" {{ old('location_id') == $loc->id ? 'selected' : '' }}>{{ $loc->name }}</option>
+                            <option value="{{ $loc->id }}"  {{ old('location_id') == $loc->id ? 'selected' : '' }}>{{ $loc->name }}</option>
                         @endforeach
                     </select>
                     @error('location_id') <span class="text-danger">{{ $message }}</span> @enderror
@@ -98,8 +98,8 @@
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">Status</label>
                     <select name="status" class="form-control @error('status') is-invalid @enderror" required >
-                        <option value="Active" style="color: #000;" {{ old('status') == 'Active' ? 'selected' : '' }}>Active</option>
-                        <option value="Inactive" style="color: #000;" {{ old('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                        <option value="Active"  {{ old('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                        <option value="Inactive"  {{ old('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
                     </select>
                     @error('status') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>

@@ -49,7 +49,7 @@ class UserController extends Controller
 
             $user->assignRole($request->role);
 
-            return redirect()->route('users.index')->with('success', __('messages.created_success') ?? 'User created successfully');
+            return redirect()->route('users.index', request()->query())->with('success', __('messages.created_success') ?? 'User created successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Failed to create user: ' . $e->getMessage());
         }
@@ -86,7 +86,7 @@ class UserController extends Controller
             $user->update($data);
             $user->syncRoles([$request->role]);
 
-            return redirect()->route('users.index')->with('success', __('messages.updated_success') ?? 'User updated successfully');
+            return redirect()->route('users.index', request()->query())->with('success', __('messages.updated_success') ?? 'User updated successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Failed to update user: ' . $e->getMessage());
         }
@@ -100,7 +100,7 @@ class UserController extends Controller
 
         try {
             $user->delete();
-            return redirect()->route('users.index')->with('success', __('messages.deleted_success') ?? 'User deleted successfully');
+            return redirect()->route('users.index', request()->query())->with('success', __('messages.deleted_success') ?? 'User deleted successfully');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete user: ' . $e->getMessage());
         }

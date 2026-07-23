@@ -8,390 +8,374 @@
   <!-- Favicon -->
   <link rel="icon" href="{{ asset('logo.png') }}" type="image/png">
 
-  <!-- Google Fonts: DM Sans + JetBrains Mono (Hallmark Tally) -->
+  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <!-- AdminLTE base -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-
-  <!-- ═══════════════════════════════════════════════════════
-       Hallmark · Tally — Login Page
-       genre: modern-minimal · theme: Pastel · accent: cool-indigo
-       ══════════════════════════════════════════════════════ -->
+  
   <style>
     :root {
-      --color-paper-0:     oklch(98.4% 0.005 258);
-      --color-paper-1:     oklch(96.2% 0.010 258);
-      --color-paper-2:     oklch(93.0% 0.015 258);
-      --color-ink-0:       oklch(18.0% 0.030 258);
-      --color-ink-1:       oklch(35.0% 0.025 258);
-      --color-ink-2:       oklch(52.0% 0.018 258);
-      --color-ink-3:       oklch(70.0% 0.012 258);
-      --color-accent:      oklch(54.0% 0.220 268);
-      --color-accent-soft: oklch(72.0% 0.140 268);
-      --color-accent-tint: oklch(94.0% 0.040 268);
-      --color-companion:   oklch(82.0% 0.180 130);
-      --color-success:     oklch(68.0% 0.150 145);
-      --color-danger:      oklch(58.0% 0.200 25);
-      --color-focus:       oklch(54.0% 0.220 268);
-
-      --font-display: 'DM Sans', system-ui, sans-serif;
-      --font-body:    'DM Sans', system-ui, sans-serif;
-      --font-mono:    'JetBrains Mono', ui-monospace, monospace;
-
-      --radius-sm:   6px;
-      --radius-md:   10px;
-      --radius-lg:   16px;
-      --radius-xl:   20px;
-      --radius-pill: 999px;
-
-      --rule-soft:   1px solid color-mix(in oklch, var(--color-ink-0) 9%, transparent);
-      --shadow-card: 0 1px 3px rgba(30,30,80,0.06), 0 8px 32px rgba(79,70,229,0.10);
-
-      --dur-fast: 150ms;
-      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --color-bg: #0f172a;
+      --color-card-bg: rgba(30, 41, 59, 0.4);
+      --color-card-border: rgba(255, 255, 255, 0.1);
+      --color-text-main: #f8fafc;
+      --color-text-muted: #94a3b8;
+      --color-primary: #6366f1;
+      --color-primary-glow: rgba(99, 102, 241, 0.5);
+      --color-primary-hover: #4f46e5;
+      --color-input-bg: rgba(15, 23, 42, 0.6);
+      --color-input-border: rgba(255, 255, 255, 0.08);
+      
+      --font-main: 'Inter', sans-serif;
+      --radius-lg: 24px;
+      --radius-md: 12px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    *, *::before, *::after { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: var(--font-body) !important;
-      color: var(--color-ink-0) !important;
-      -webkit-font-smoothing: antialiased;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
+      font-family: var(--font-main);
+      color: var(--color-text-main);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-
-      /* Tally pastel radial background */
-      background:
-        radial-gradient(1200px 600px at 12% -10%, color-mix(in oklch, var(--color-accent-tint) 90%, transparent), transparent 60%),
-        radial-gradient(900px 500px at 88% 8%, color-mix(in oklch, var(--color-companion) 35%, transparent), transparent 55%),
-        var(--color-paper-0) !important;
-      background-attachment: fixed !important;
-    }
-
-    /* Subtle dot grid overlay */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image:
-        radial-gradient(circle, color-mix(in oklch, var(--color-ink-0) 15%, transparent) 1px, transparent 1px);
-      background-size: 28px 28px;
-      mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
-      -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    ::selection { background: var(--color-accent); color: var(--color-paper-0); }
-
-    :focus-visible {
-      outline: 2px solid var(--color-focus);
-      outline-offset: 3px;
-      border-radius: var(--radius-sm);
-    }
-
-    /* ── Login wrapper ──────────────────────────────────── */
-    .login-wrapper {
+      background-color: var(--color-bg);
+      
+      /* Vibrant animated background */
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 25%);
       position: relative;
-      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* Animated background blobs */
+    body::before, body::after {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      animation: float 20s infinite ease-in-out alternate;
+    }
+    body::before {
+      background: rgba(99, 102, 241, 0.1);
+      top: -200px;
+      left: -200px;
+    }
+    body::after {
+      background: rgba(168, 85, 247, 0.1);
+      bottom: -200px;
+      right: -200px;
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(100px, 50px) scale(1.2); }
+    }
+
+    /* Glassmorphism Card */
+    .login-container {
       width: 100%;
-      max-width: 420px;
-      padding: 24px 16px;
+      max-width: 440px;
+      padding: 20px;
+      z-index: 10;
     }
 
-    /* ── Brand block ────────────────────────────────────── */
-    .login-brand {
+    .glass-card {
+      background: var(--color-card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       text-align: center;
-      margin-bottom: 28px;
     }
-    .login-brand img {
-      height: 48px;
-      margin-bottom: 14px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
+
+    /* Brand Header inside card */
+    .brand-header {
+      margin-bottom: 32px;
     }
-    .login-brand h1 {
-      font-family: var(--font-display);
-      font-size: 1.625rem;
+    .brand-header img {
+      height: 52px;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+    }
+    .brand-header h1 {
+      font-size: 1.5rem;
       font-weight: 700;
-      letter-spacing: -0.04em;
-      color: var(--color-ink-0);
-      margin: 0 0 4px;
-      line-height: 1;
-    }
-    .login-brand h1 span {
-      color: var(--color-accent);
-    }
-    .login-brand p {
-      font-family: var(--font-mono);
-      font-size: 0.6875rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--color-ink-3);
-      margin: 0;
-    }
-
-    /* ── Login card ─────────────────────────────────────── */
-    .login-card {
-      background: color-mix(in oklch, var(--color-paper-0) 92%, transparent);
-      -webkit-backdrop-filter: blur(24px);
-      backdrop-filter: blur(24px);
-      border: var(--rule-soft);
-      border-radius: var(--radius-xl);
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.8) inset,
-        var(--shadow-card);
-      padding: 36px 32px;
-    }
-
-    .login-card h2 {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--color-ink-0);
-      margin: 0 0 20px;
       letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .brand-header h1 span {
+      color: #a855f7;
+      background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand-header p {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      font-weight: 500;
     }
 
-    /* ── Form groups ────────────────────────────────────── */
+    /* Form Styles */
+    .form-group {
+      text-align: left;
+      margin-bottom: 20px;
+      position: relative;
+    }
     .form-group label {
       display: block;
-      font-size: 0.8125rem;
+      font-size: 0.875rem;
       font-weight: 500;
-      color: var(--color-ink-1);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      color: #e2e8f0;
     }
 
-    .input-field {
-      width: 100%;
-      height: 42px;
-      padding: 0 14px;
-      font-family: var(--font-body);
-      font-size: 0.9375rem;
-      color: var(--color-ink-0);
-      background: var(--color-paper-0);
-      border: var(--rule-soft);
-      border-radius: var(--radius-md);
-      transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
-      outline: none;
-      -webkit-appearance: none;
-    }
-    .input-field:focus {
-      border-color: var(--color-accent);
-      box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-accent) 15%, transparent);
-    }
-    .input-field::placeholder { color: var(--color-ink-3); }
-
-    .input-with-icon {
+    .input-wrapper {
       position: relative;
     }
-    .input-with-icon .input-field {
-      padding-right: 42px;
-    }
-    .input-with-icon .input-icon {
+    .input-icon {
       position: absolute;
-      right: 14px;
+      left: 16px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--color-ink-3);
-      font-size: 0.875rem;
-      pointer-events: none;
+      color: var(--color-text-muted);
+      transition: var(--transition);
     }
 
-    /* Error state */
-    .input-field.is-invalid {
-      border-color: var(--color-danger);
+    .form-control {
+      width: 100%;
+      background: var(--color-input-bg);
+      border: 1px solid var(--color-input-border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px 12px 44px;
+      color: var(--color-text-main);
+      font-family: var(--font-main);
+      font-size: 0.95rem;
+      transition: var(--transition);
+      outline: none;
     }
+    
+    .form-control::placeholder {
+      color: #475569;
+    }
+
+    .form-control:focus {
+      border-color: var(--color-primary);
+      background: rgba(15, 23, 42, 0.8);
+      box-shadow: 0 0 0 4px var(--color-primary-glow);
+    }
+    .form-control:focus + .input-icon,
+    .form-control:focus ~ .input-icon {
+      color: var(--color-primary);
+    }
+    
+    .toggle-password {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+      z-index: 10;
+    }
+    .toggle-password:hover {
+      color: var(--color-primary);
+    }
+
+    /* Invalid State */
+    .form-control.is-invalid { border-color: #ef4444; }
     .invalid-feedback {
       display: block;
-      font-size: 0.75rem;
-      color: oklch(45% 0.180 25);
-      margin-top: 4px;
+      color: #f87171;
+      font-size: 0.8rem;
+      margin-top: 6px;
+      text-align: left;
     }
-    .valid-feedback { display: none; }
 
-    /* ── Remember + submit row ──────────────────────────── */
-    .login-actions {
+    /* Actions Row */
+    .actions-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       margin-top: 24px;
+      margin-bottom: 32px;
     }
-
-    .remember-label {
+    .remember-me {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.8125rem;
-      color: var(--color-ink-2);
-      cursor: pointer;
-    }
-    .remember-label input[type="checkbox"] {
-      width: 15px;
-      height: 15px;
-      accent-color: var(--color-accent);
-      cursor: pointer;
-    }
-
-    .btn-signin {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 22px;
-      background: var(--color-ink-0);
-      color: var(--color-paper-0);
-      border: none;
-      border-radius: var(--radius-pill);
-      font-family: var(--font-body);
       font-size: 0.875rem;
-      font-weight: 600;
-      letter-spacing: 0.01em;
+      color: var(--color-text-muted);
       cursor: pointer;
-      transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.12);
     }
-    .btn-signin:hover {
-      background: var(--color-accent);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px color-mix(in oklch, var(--color-accent) 35%, transparent);
+    .remember-me input {
+      accent-color: var(--color-primary);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
     }
-    .btn-signin:active { transform: translateY(0); }
-
-    /* ── Divider + Forgot link ──────────────────────────── */
-    .login-footer {
-      margin-top: 20px;
-      text-align: center;
-      border-top: var(--rule-soft);
-      padding-top: 16px;
-    }
-    .login-footer a {
-      font-size: 0.8125rem;
-      color: var(--color-accent);
+    
+    .forgot-link {
+      font-size: 0.875rem;
+      color: var(--color-primary);
       text-decoration: none;
       font-weight: 500;
-      transition: opacity var(--dur-fast);
+      transition: var(--transition);
     }
-    .login-footer a:hover { opacity: 0.75; }
+    .forgot-link:hover {
+      color: #818cf8;
+      text-shadow: 0 0 8px var(--color-primary-glow);
+    }
 
-    /* ── Session status alert ───────────────────────────── */
-    .status-alert {
-      background: oklch(93% 0.050 145);
-      color: oklch(35% 0.120 145);
-      border: 1px solid color-mix(in oklch, oklch(68% 0.150 145) 25%, transparent);
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--color-primary) 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
       border-radius: var(--radius-md);
-      padding: 10px 14px;
-      font-size: 0.875rem;
-      margin-bottom: 16px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: var(--font-main);
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+    }
+    .btn-submit:active {
+      transform: translateY(0);
     }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: var(--color-paper-1); }
-    ::-webkit-scrollbar-thumb {
-      background: color-mix(in oklch, var(--color-accent) 30%, var(--color-paper-2));
-      border-radius: var(--radius-pill);
+    /* Alerts */
+    .alert {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      margin-bottom: 24px;
+      text-align: left;
     }
   </style>
 </head>
 <body>
 
-<div class="login-wrapper">
-  <!-- Brand -->
-  <div class="login-brand">
-    <img src="{{ asset('logo.png') }}" alt="ITAM Logo">
-    <h1>ITAM <span>Enterprise</span></h1>
-    <p>IT Asset Management System</p>
-  </div>
+<div class="login-container">
+  <div class="glass-card">
+    
+    <!-- Brand Info Inside Card -->
+    <div class="brand-header">
+      <img src="{{ asset('logo.png') }}" alt="ITAM Logo">
+      <h1>ITAM <span>Enterprise</span></h1>
+      <p>Sign in to your account</p>
+    </div>
 
-  <!-- Card -->
-  <div class="login-card">
-    <h2>Sign in to your account</h2>
-
-    <!-- Session Status -->
     @if (session('status'))
-      <div class="status-alert">{{ session('status') }}</div>
+      <div class="alert">
+        <i class="fas fa-check-circle mr-2"></i> {{ session('status') }}
+      </div>
     @endif
 
     <form method="POST" action="{{ route('login') }}">
       @csrf
 
       <!-- Username -->
-      <div class="form-group mb-3">
+      <div class="form-group">
         <label for="username">Username</label>
-        <div class="input-with-icon">
+        <div class="input-wrapper">
+          <i class="fas fa-user input-icon"></i>
           <input
             id="username"
             type="text"
-            class="input-field @error('username') is-invalid @enderror"
+            class="form-control @error('username') is-invalid @enderror"
             name="username"
             value="{{ old('username') }}"
             placeholder="Enter your username"
             required
             autofocus
             autocomplete="username">
-          <i class="fas fa-user input-icon"></i>
         </div>
         @error('username')
-          <span class="invalid-feedback">{{ $message }}</span>
+          <span class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</span>
         @enderror
       </div>
 
       <!-- Password -->
-      <div class="form-group mb-0">
+      <div class="form-group">
         <label for="password">Password</label>
-        <div class="input-with-icon">
+        <div class="input-wrapper">
+          <i class="fas fa-lock input-icon"></i>
           <input
             id="password"
             type="password"
-            class="input-field @error('password') is-invalid @enderror"
+            class="form-control @error('password') is-invalid @enderror"
             name="password"
             placeholder="Enter your password"
             required
             autocomplete="current-password">
-          <i class="fas fa-lock input-icon"></i>
+          <i class="fas fa-eye toggle-password" id="togglePassword" title="Show/Hide Password"></i>
         </div>
         @error('password')
-          <span class="invalid-feedback">{{ $message }}</span>
+          <span class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</span>
         @enderror
       </div>
 
       <!-- Actions -->
-      <div class="login-actions">
-        <label class="remember-label">
-          <input type="checkbox" id="remember_me" name="remember">
+      <div class="actions-row">
+        <label class="remember-me">
+          <input type="checkbox" name="remember" id="remember_me" {{ old('remember') ? 'checked' : '' }}>
           Remember me
         </label>
-        <button type="submit" class="btn-signin">
-          Sign in
-          <i class="fas fa-arrow-right" style="font-size: 0.75rem;"></i>
-        </button>
+        
+        @if (Route::has('password.request'))
+          <a href="{{ route('password.request') }}" class="forgot-link">Forgot Password?</a>
+        @endif
       </div>
+
+      <button type="submit" class="btn-submit">
+        Sign In <i class="fas fa-arrow-right"></i>
+      </button>
+
     </form>
 
-    @if (Route::has('password.request'))
-      <div class="login-footer">
-        <a href="{{ route('password.request') }}">
-          <i class="fas fa-key" style="font-size: 0.75rem; margin-right: 4px;"></i>Forgot your password?
-        </a>
-      </div>
-    @endif
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.getElementById('togglePassword').addEventListener('click', function (e) {
+    const password = document.getElementById('password');
+    if (password.type === 'password') {
+      password.type = 'text';
+      this.classList.remove('fa-eye');
+      this.classList.add('fa-eye-slash');
+    } else {
+      password.type = 'password';
+      this.classList.remove('fa-eye-slash');
+      this.classList.add('fa-eye');
+    }
+  });
+</script>
 </body>
 </html>

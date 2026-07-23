@@ -70,7 +70,7 @@ class IpAddressController extends Controller
 
         IpAddress::create($request->all());
 
-        return redirect()->route('ips.index')->with('success', 'IP Address added successfully.');
+        return redirect()->route('ips.index', request()->query())->with('success', 'IP Address added successfully.');
     }
 
     public function edit(IpAddress $ip)
@@ -97,13 +97,25 @@ class IpAddressController extends Controller
 
         $ip->update($request->all());
 
-        return redirect()->route('ips.index')->with('success', 'IP Address updated successfully.');
+        return redirect()->route('ips.index', request()->query())->with('success', 'IP Address updated successfully.');
     }
 
     public function destroy(IpAddress $ip)
     {
         $ip->delete();
-        return redirect()->route('ips.index')->with('success', 'IP Address deleted successfully.');
+        return redirect()->route('ips.index', request()->query())->with('success', 'IP Address deleted successfully.');
+    }
+
+    
+    public function updateStatus(Request $request, IpAddress $ip)
+    {
+        $request->validate([
+            'status' => 'required|in:Available,Used,Reserved'
+        ]);
+
+        $ip->update(['status' => $request->status]);
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully.', 'status' => $ip->status]);
     }
 
     public function exportExcel()

@@ -70,7 +70,7 @@ class AssetAssignmentController extends Controller
         // Update asset status
         $asset->update(['status' => 'Assigned']);
 
-        return redirect()->route('assignments.index')->with('success', 'Asset successfully assigned.');
+        return redirect()->route('assignments.index', request()->query())->with('success', 'Asset successfully assigned.');
     }
 
     public function edit(AssetAssignment $assignment)
@@ -93,7 +93,7 @@ class AssetAssignmentController extends Controller
             'notes' => $request->notes
         ]);
 
-        return redirect()->route('assignments.index')->with('success', 'Assignment updated successfully.');
+        return redirect()->route('assignments.index', request()->query())->with('success', 'Assignment updated successfully.');
     }
 
     public function destroy(AssetAssignment $assignment)
@@ -103,7 +103,35 @@ class AssetAssignmentController extends Controller
             $assignment->asset->update(['status' => 'Available']);
         }
         $assignment->delete();
-        return redirect()->route('assignments.index')->with('success', 'Assignment record deleted.');
+        return redirect()->route('assignments.index', request()->query())->with('success', 'Assignment record deleted.');
+    }
+
+    public function updateStatus(Request $request, AssetAssignment $assignment)
+    {
+        $request->validate([
+            'status' => 'required|in:Assigned,Returned'
+        ]);
+
+        if ($request->status === 'Returned' && $assignment->status === 'Assigned') {
+            $assignment->update([
+                'status' => 'Returned',
+                'return_date' => date('Y-m-d')
+            ]);
+            $assignment->asset->update(['status' => 'Available']);
+        } elseif ($request->status === 'Assigned' && $assignment->status === 'Returned') {
+            // Check if asset is still available before returning to Assigned
+            if ($assignment->asset->status === 'Available') {
+                $assignment->update([
+                    'status' => 'Assigned',
+                    'return_date' => null
+                ]);
+                $assignment->asset->update(['status' => 'Assigned']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Asset is no longer available.']);
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully.', 'status' => $assignment->status]);
     }
 
     public function returnAsset(Request $request, AssetAssignment $assignment)
@@ -124,6 +152,6 @@ class AssetAssignmentController extends Controller
 
         $assignment->asset->update(['status' => 'Available']);
 
-        return redirect()->route('assignments.index')->with('success', 'Asset successfully returned.');
+        return redirect()->route('assignments.index', request()->query())->with('success', 'Asset successfully returned.');
     }
 }

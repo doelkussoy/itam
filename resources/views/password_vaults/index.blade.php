@@ -9,10 +9,10 @@
             <div class="d-flex flex-wrap" style="gap: 10px;">
                 <input type="text" name="search" class="form-control theme-input" placeholder="{{ __('messages.search_vault') ?? 'Search...' }}" value="{{ request('search') }}" style="width: 250px;">
                 
-                <select name="category" class="form-control select2 theme-input" style="width: 180px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff;" onchange="this.form.submit()">
-                    <option value="" style="color: #000;">{{ __('messages.all_category') ?? 'All Categories' }}</option>
+                <select name="category" class="form-control select2 theme-input" style="width: 150px;">
+                    <option value="" >{{ __('messages.all_category') ?? 'All Categories' }}</option>
                     @foreach($categories as $cat)
-                        <option value="{{ $cat }}" style="color: #000;" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                        <option value="{{ $cat }}"  {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
                     @endforeach
                 </select>
 
@@ -31,13 +31,13 @@
 </div>
 
 @if(session('success'))
-    <div class="alert alert-success alert-dismissible" style="background: rgba(40,167,69,0.2); border: 1px solid rgba(40,167,69,0.5); color: #28a745; backdrop-filter: blur(10px);">
+    <div class="alert alert-success alert-dismissible" style="background: rgba(40,167,69,0.2); border: 1px solid rgba(40,167,69,0.5); color: #28a745;">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
         <i class="icon fas fa-check"></i> {{ session('success') }}
     </div>
 @endif
 @if(session('error'))
-    <div class="alert alert-danger alert-dismissible" style="background: rgba(220,53,69,0.2); border: 1px solid rgba(220,53,69,0.5); color: #dc3545; backdrop-filter: blur(10px);">
+    <div class="alert alert-danger alert-dismissible" style="background: rgba(220,53,69,0.2); border: 1px solid rgba(220,53,69,0.5); color: #dc3545;">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
         <i class="icon fas fa-ban"></i> {{ session('error') }}
     </div>
@@ -77,8 +77,8 @@
                         <td class="theme-text">{{ Str::limit($pwd->notes, 30) }}</td>
                         <td class="theme-text">
                             <div class="d-flex justify-content-center" style="gap: 8px;">
-                                <a href="{{ route('password_vaults.edit', $pwd) }}" class="btn action-btn btn-outline-warning" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;" title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
-                                <form action="{{ route('password_vaults.destroy', $pwd) }}" method="POST" class="d-inline">
+                                <a href="{{ route('password_vaults.edit', array_merge([$pwd->id], request()->query())) }}" class="btn action-btn btn-outline-warning" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;" title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
+                                <form action="{{ route('password_vaults.destroy', array_merge([$pwd->id], request()->query())) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-delete action-btn btn-outline-danger" style="border: 1px solid rgba(220, 53, 69, 0.3); background: rgba(220, 53, 69, 0.15); color: #dc3545;" title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}"><i class="fas fa-trash"></i></button>

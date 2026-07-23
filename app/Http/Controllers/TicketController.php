@@ -68,7 +68,7 @@ class TicketController extends Controller
             'status' => 'Open'
         ]);
 
-        return redirect()->route('tickets.index')->with('success', 'Ticket created successfully.');
+        return redirect()->route('tickets.index', request()->query())->with('success', 'Ticket created successfully.');
     }
 
     public function edit(Ticket $ticket)
@@ -98,13 +98,24 @@ class TicketController extends Controller
             'status' => $request->status
         ]);
 
-        return redirect()->route('tickets.index')->with('success', 'Ticket updated successfully.');
+        return redirect()->route('tickets.index', $request->query())->with('success', 'Ticket updated successfully.');
     }
 
-    public function destroy(Ticket $ticket)
+    public function destroy(Ticket $ticket, Request $request)
     {
         $ticket->delete();
-        return redirect()->route('tickets.index')->with('success', 'Ticket deleted successfully.');
+        return redirect()->route('tickets.index', $request->query())->with('success', 'Ticket deleted successfully.');
+    }
+
+    public function updateStatus(Request $request, Ticket $ticket)
+    {
+        $request->validate([
+            'status' => 'required|in:Open,In Progress,Resolved,Closed'
+        ]);
+
+        $ticket->update(['status' => $request->status]);
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully.', 'status' => $ticket->status]);
     }
 
     public function exportExcel()

@@ -54,9 +54,9 @@
                                             @if($setting->type == 'textarea')
                                                 <textarea name="{{ $setting->key }}" class="form-control theme-input" rows="3" >{{ $setting->value }}</textarea>
                                             @elseif($setting->type == 'boolean')
-                                                <select name="{{ $setting->key }}" class="form-control theme-input" >
-                                                    <option value="1" style="color: #000;" {{ $setting->value == '1' ? 'selected' : '' }}>{{ __('messages.enabled') }}</option>
-                                                    <option value="0" style="color: #000;" {{ $setting->value == '0' ? 'selected' : '' }}>{{ __('messages.disabled') }}</option>
+                                                <select name="{{ $setting->key }}" class="form-control theme-input" style="width: 150px;">
+                                                    <option value="1"  {{ $setting->value == '1' ? 'selected' : '' }}>{{ __('messages.enabled') }}</option>
+                                                    <option value="0"  {{ $setting->value == '0' ? 'selected' : '' }}>{{ __('messages.disabled') }}</option>
                                                 </select>
                                             @else
                                                 <input type="text" name="{{ $setting->key }}" class="form-control theme-input" value="{{ $setting->value }}" >

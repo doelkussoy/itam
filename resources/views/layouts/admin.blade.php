@@ -910,18 +910,7 @@
         </span>
       </li>
 
-      <!-- Logout -->
-      <li class="nav-item">
-        <form method="POST" action="{{ route('logout') }}" class="m-0">
-          @csrf
-          <button type="submit" class="nav-pill-btn danger" style="cursor: pointer; background: none; border: none; padding: 0;" onclick="this.closest('form').submit()">
-            <a href="#" class="nav-pill-btn danger" onclick="event.preventDefault(); this.closest('form').submit();">
-              <i class="fas fa-sign-out-alt" style="font-size: 0.8rem;"></i>
-              <span>{{ __('messages.logout') }}</span>
-            </a>
-          </button>
-        </form>
-      </li>
+
       @else
       <li class="nav-item">
         <a href="{{ route('login') }}" class="nav-pill-btn">
@@ -948,14 +937,17 @@
       <nav class="mt-3">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
+          @can('menu_dashboard')
           <li class="nav-item">
             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>{{ __('messages.dashboard') }}</p>
             </a>
           </li>
+          @endcan
 
-          @role('Super Admin|Admin')
+          
+          @canany(['menu_departments', 'menu_brands', 'menu_locations', 'menu_categories'])
           <li class="nav-header">{{ __('messages.master_data') }}</li>
 
           <li class="nav-item {{ request()->routeIs('departments.*', 'positions.*', 'brands.*', 'locations.*', 'categories.*') ? 'menu-open' : '' }}">
@@ -967,44 +959,55 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
+              @can('menu_departments')
               <li class="nav-item">
                 <a href="{{ route('departments.index') }}" class="nav-link {{ request()->routeIs('departments.*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>{{ __('messages.department') }}</p>
                 </a>
               </li>
+              @endcan
+              @can('menu_brands')
               <li class="nav-item">
                 <a href="{{ route('brands.index') }}" class="nav-link {{ request()->routeIs('brands.*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>{{ __('messages.brand') }}</p>
                 </a>
               </li>
+              @endcan
+              @can('menu_locations')
               <li class="nav-item">
                 <a href="{{ route('locations.index') }}" class="nav-link {{ request()->routeIs('locations.*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>{{ __('messages.location') }}</p>
                 </a>
               </li>
+              @endcan
+              @can('menu_categories')
               <li class="nav-item">
                 <a href="{{ route('categories.index') }}" class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>{{ __('messages.category') }}</p>
                 </a>
               </li>
+              @endcan
             </ul>
           </li>
+          @endcanany
 
+          @can('menu_employees')
           <li class="nav-item">
             <a href="{{ route('employees.index') }}" class="nav-link {{ request()->routeIs('employees.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-users"></i>
               <p>{{ __('messages.employee') }}</p>
             </a>
           </li>
-          @endrole
+          @endcan
 
           <li class="nav-header">{{ __('messages.it_assets') }}</li>
 
           <!-- Asset Menu -->
+          @can('menu_assets')
           <li class="nav-item {{ request()->routeIs('assets.*') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->routeIs('assets.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-laptop"></i>
@@ -1033,28 +1036,37 @@
             </ul>
           </li>
 
+          @endcan
+
           <li class="nav-header">{{ __('messages.operations') }}</li>
 
+          @can('menu_assignments')
           <li class="nav-item">
             <a href="{{ route('assignments.index') }}" class="nav-link {{ request()->routeIs('assignments.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-exchange-alt"></i>
               <p>{{ __('messages.assignment') }}</p>
             </a>
           </li>
+          @endcan
+          @can('menu_maintenances')
           <li class="nav-item">
             <a href="{{ route('maintenances.index') }}" class="nav-link {{ request()->routeIs('maintenances.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-tools"></i>
               <p>{{ __('messages.maintenance') }}</p>
             </a>
           </li>
+          @endcan
+          @can('menu_tickets')
           <li class="nav-item">
             <a href="{{ route('tickets.index') }}" class="nav-link {{ request()->routeIs('tickets.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-ticket-alt"></i>
               <p>{{ __('messages.ticket') ?? 'Ticket' }}</p>
             </a>
           </li>
+          @endcan
 
           <!-- Network -->
+          @canany(['menu_ips', 'menu_vlans'])
           <li class="nav-item {{ request()->routeIs('ips.*', 'vlans.*') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->routeIs('ips.*', 'vlans.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-network-wired"></i>
@@ -1064,51 +1076,85 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
+              @can('menu_ips')
               <li class="nav-item">
                 <a href="{{ route('ips.index') }}" class="nav-link {{ request()->routeIs('ips.*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>{{ __('messages.ip_address') }}</p>
                 </a>
               </li>
+              @endcan
+              @can('menu_vlans')
               <li class="nav-item">
                 <a href="{{ route('vlans.index') }}" class="nav-link {{ request()->routeIs('vlans.*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>{{ __('messages.vlan_config') }}</p>
                 </a>
               </li>
+              @endcan
             </ul>
           </li>
+          @endcanany
 
+          @can('menu_software_licenses')
           <li class="nav-item">
             <a href="{{ route('software_licenses.index') }}" class="nav-link {{ request()->routeIs('software_licenses.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-key"></i>
               <p>{{ __('messages.software_license') }}</p>
             </a>
           </li>
+          @endcan
 
+          @can('menu_password_vaults')
           <li class="nav-item">
             <a href="{{ route('password_vaults.index') }}" class="nav-link {{ request()->routeIs('password_vaults.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-lock"></i>
               <p>{{ __('messages.password_vault') }}</p>
             </a>
           </li>
+          @endcan
 
-          @role('Super Admin|Admin')
+          
+          @canany(['menu_users', 'menu_settings', 'menu_roles'])
           <li class="nav-header">{{ __('messages.system') }}</li>
 
+          @can('menu_users')
           <li class="nav-item">
             <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-user-shield"></i>
               <p>{{ __('messages.user_management') ?? 'Login Management' }}</p>
             </a>
           </li>
+          @endcan
+          @can('menu_settings')
           <li class="nav-item">
             <a href="{{ route('settings.index') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-cogs"></i>
               <p>{{ __('messages.setting') ?? 'Setting' }}</p>
             </a>
           </li>
-          @endrole
+          @endcan
+
+          @can('menu_roles')
+          <li class="nav-item">
+            <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-user-shield"></i>
+              <p>Hak Akses</p>
+            </a>
+          </li>
+          @endcan
+          @endcanany
+
+          <!-- Logout -->
+          <li class="nav-item mt-3">
+            <form method="POST" action="{{ route('logout') }}" class="m-0">
+              @csrf
+              <a href="#" class="nav-link text-danger" onclick="event.preventDefault(); this.closest('form').submit();">
+                <i class="nav-icon fas fa-sign-out-alt"></i>
+                <p>{{ __('messages.logout') ?? 'Logout' }}</p>
+              </a>
+            </form>
+          </li>
 
         </ul>
       </nav>
@@ -1228,16 +1274,27 @@
     });
   }
 
+  function triggerAjaxSearch(form) {
+    let url = form.attr('action') || window.location.href.split('?')[0];
+    let params = form.serialize();
+    loadTableData(url + '?' + params, form.find('button[type="submit"]'));
+  }
+
   let searchTimeout;
   $(document).on('input', 'input[name="search"]', function() {
     let form = $(this).closest('form');
     if (form.length) {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(function() {
-        let url = form.attr('action') || window.location.href.split('?')[0];
-        let params = form.serialize();
-        loadTableData(url + '?' + params, form.find('button[type="submit"]'));
+        triggerAjaxSearch(form);
       }, 500);
+    }
+  });
+
+  $(document).on('change', 'form:has(input[name="search"]) select', function() {
+    let form = $(this).closest('form');
+    if (form.length) {
+      triggerAjaxSearch(form);
     }
   });
 

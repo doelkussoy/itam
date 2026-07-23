@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="card theme-card" style="max-width: 600px; margin: 0 auto;">
-    <form action="{{ route('vlans.update', $vlan) }}" method="POST">
+    <form action="{{ route('vlans.update', array_merge([$vlan->id], request()->query())) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="card-body">
@@ -35,8 +35,8 @@
             <div class="form-group">
                 <label class="theme-text">{{ __('messages.status') }} *</label>
                 <select name="status" class="form-control theme-input @error('status') is-invalid @enderror" required>
-                    <option value="Active" style="color: #000;" {{ $vlan->status == 'Active' ? 'selected' : '' }}>{{ __('messages.active') }}</option>
-                    <option value="Inactive" style="color: #000;" {{ $vlan->status == 'Inactive' ? 'selected' : '' }}>{{ __('messages.inactive') }}</option>
+                    <option value="Active"  {{ $vlan->status == 'Active' ? 'selected' : '' }}>{{ __('messages.active') }}</option>
+                    <option value="Inactive"  {{ $vlan->status == 'Inactive' ? 'selected' : '' }}>{{ __('messages.inactive') }}</option>
                 </select>
                 @error('status') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
@@ -49,7 +49,7 @@
         </div>
         <div class="card-footer" style="background-color: transparent; border-top: 1px solid var(--tech-border);">
             <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i> {{ __('messages.update') }}</button>
-            <a href="{{ route('vlans.index') }}" class="btn btn-outline-secondary"><i class="fas fa-times mr-1"></i> {{ __('messages.cancel') }}</a>
+            <a href="{{ route('vlans.index', request()->query()) }}" class="btn btn-outline-secondary"><i class="fas fa-times mr-1"></i> {{ __('messages.cancel') }}</a>
         </div>
     </form>
 </div>

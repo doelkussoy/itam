@@ -22,6 +22,6 @@ class SettingController extends Controller
             Setting::where('key', $key)->update(['value' => $value]);
         }
         
-        return redirect()->route('settings.index')->with('success', 'Settings updated successfully.');
+        return redirect()->route('settings.index', request()->query())->with('success', 'Settings updated successfully.');
     }
 }

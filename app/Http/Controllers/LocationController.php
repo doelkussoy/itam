@@ -38,7 +38,7 @@ class LocationController extends Controller
         ]);
 
         Location::create($request->all());
-        return redirect()->route('locations.index')->with('success', __('messages.created_success'));
+        return redirect()->route('locations.index', request()->query())->with('success', __('messages.created_success'));
     }
 
     public function edit(Location $location)
@@ -55,13 +55,13 @@ class LocationController extends Controller
         ]);
 
         $location->update($request->all());
-        return redirect()->route('locations.index')->with('success', __('messages.updated_success'));
+        return redirect()->route('locations.index', request()->query())->with('success', __('messages.updated_success'));
     }
 
     public function destroy(Location $location)
     {
         $location->delete();
-        return redirect()->route('locations.index')->with('success', __('messages.deleted_success'));
+        return redirect()->route('locations.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 
     public function exportExcel()
@@ -77,9 +77,9 @@ class LocationController extends Controller
 
         try {
             Excel::import(new LocationImport, $request->file('file'));
-            return redirect()->route('locations.index')->with('success', 'Data imported successfully.');
+            return redirect()->route('locations.index', request()->query())->with('success', 'Data imported successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('locations.index')->with('error', 'Error importing data: ' . $e->getMessage());
+            return redirect()->route('locations.index', request()->query())->with('error', 'Error importing data: ' . $e->getMessage());
         }
     }
 }

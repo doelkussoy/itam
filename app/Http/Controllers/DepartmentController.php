@@ -37,7 +37,7 @@ class DepartmentController extends Controller
         ]);
 
         Department::create($request->all());
-        return redirect()->route('departments.index')->with('success', __('messages.created_success'));
+        return redirect()->route('departments.index', request()->query())->with('success', __('messages.created_success'));
     }
 
     public function edit(Department $department)
@@ -53,13 +53,13 @@ class DepartmentController extends Controller
         ]);
 
         $department->update($request->all());
-        return redirect()->route('departments.index')->with('success', __('messages.updated_success'));
+        return redirect()->route('departments.index', request()->query())->with('success', __('messages.updated_success'));
     }
 
     public function destroy(Department $department)
     {
         $department->delete();
-        return redirect()->route('departments.index')->with('success', __('messages.deleted_success'));
+        return redirect()->route('departments.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 
     public function exportExcel()
@@ -75,9 +75,9 @@ class DepartmentController extends Controller
 
         try {
             Excel::import(new DepartmentImport, $request->file('file'));
-            return redirect()->route('departments.index')->with('success', 'Data imported successfully.');
+            return redirect()->route('departments.index', request()->query())->with('success', 'Data imported successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('departments.index')->with('error', 'Error importing data: ' . $e->getMessage());
+            return redirect()->route('departments.index', request()->query())->with('error', 'Error importing data: ' . $e->getMessage());
         }
     }
 }

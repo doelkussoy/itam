@@ -42,7 +42,7 @@ class VlanController extends Controller
 
         try {
             Vlan::create($request->all());
-            return redirect()->route('vlans.index')->with('success', __('messages.created_success'));
+            return redirect()->route('vlans.index', request()->query())->with('success', __('messages.created_success'));
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Failed to create VLAN: ' . $e->getMessage());
         }
@@ -66,7 +66,7 @@ class VlanController extends Controller
 
         try {
             $vlan->update($request->all());
-            return redirect()->route('vlans.index')->with('success', __('messages.updated_success'));
+            return redirect()->route('vlans.index', request()->query())->with('success', __('messages.updated_success'));
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Failed to update VLAN: ' . $e->getMessage());
         }
@@ -75,6 +75,18 @@ class VlanController extends Controller
     public function destroy(Vlan $vlan)
     {
         $vlan->delete();
-        return redirect()->route('vlans.index')->with('success', __('messages.deleted_success'));
+        return redirect()->route('vlans.index', request()->query())->with('success', __('messages.deleted_success'));
     }
+
+    public function updateStatus(Request $request, Vlan $vlan)
+    {
+        $request->validate([
+            'status' => 'required|in:Active,Inactive'
+        ]);
+
+        $vlan->update(['status' => $request->status]);
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully.', 'status' => $vlan->status]);
+    }
+
 }

@@ -4,21 +4,21 @@
 
 @section('content')
 <div class="card theme-card">
-    <form action="{{ route('assignments.update', $assignment) }}" method="POST">
+    <form action="{{ route('assignments.update', array_merge([$assignment->id], request()->query())) }}" method="POST">
         @csrf @method('PUT')
         <div class="card-body">
             <h5 class="text-info mb-3"><i class="fas fa-edit"></i> {{ __('messages.edit_assignment') }}</h5>
             <div class="row">
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.asset') }}</label>
-                    <input type="text" class="form-control theme-input" value="{{ $assignment->asset->asset_tag ?? '' }} - {{ $assignment->asset->name ?? '' }}" readonly style="background-color: rgba(0,0,0,0.3); color: #ccc; border: 1px solid rgba(255,255,255,0.1);">
+                    <input type="text" class="form-control theme-input" value="{{ $assignment->asset->asset_tag ?? '' }} - {{ $assignment->asset->name ?? '' }}" readonly style="background-color: rgba(0,0,0,0.3); color: #ccc;">
                     <small class="text-muted">{{ __('messages.asset_cannot_be_changed') }}</small>
                 </div>
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">{{ __('messages.employee') }} *</label>
                     <select name="employee_id" class="form-control select2 @error('employee_id') is-invalid @enderror" required >
                         @foreach($employees as $employee)
-                            <option value="{{ $employee->id }}" style="color: #000;" {{ old('employee_id', $assignment->employee_id) == $employee->id ? 'selected' : '' }}>
+                            <option value="{{ $employee->id }}"  {{ old('employee_id', $assignment->employee_id) == $employee->id ? 'selected' : '' }}>
                                 {{ $employee->employee_id }} - {{ $employee->name }}
                             </option>
                         @endforeach
@@ -41,7 +41,7 @@
         </div>
         <div class="card-footer bg-transparent border-0">
             <button type="submit" class="btn btn-primary" ><i class="fas fa-save"></i> {{ __('messages.update') }}</button>
-            <a href="{{ route('assignments.index') }}" class="btn btn-outline-secondary ml-2" >{{ __('messages.cancel') }}</a>
+            <a href="{{ route('assignments.index', request()->query()) }}" class="btn btn-outline-secondary ml-2" >{{ __('messages.cancel') }}</a>
         </div>
     </form>
 </div>
