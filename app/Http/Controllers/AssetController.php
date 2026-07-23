@@ -50,11 +50,15 @@ class AssetController extends Controller
         }
 
         // Generate prefix, e.g., "LAP" for Laptop, "PRI" for Printer
-        $words = explode(' ', trim(str_replace('-', ' ', $category->name)));
-        if (count($words) >= 2) {
-            $prefix = strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 2));
+        if (strtolower($category->name) === 'access point') {
+            $prefix = 'WIF';
         } else {
-            $prefix = strtoupper(substr($category->name, 0, 3));
+            $words = explode(' ', trim(str_replace('-', ' ', $category->name)));
+            if (count($words) >= 2) {
+                $prefix = strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 2));
+            } else {
+                $prefix = strtoupper(substr($category->name, 0, 3));
+            }
         }
 
         $year = date('Y');
@@ -78,7 +82,7 @@ class AssetController extends Controller
 
     public function index(Request $request)
     {
-        $query = Asset::with(['category', 'brand', 'location']);
+        $query = Asset::with(['category', 'brand', 'location', 'currentAssignment.employee']);
 
         if ($request->has('category') && $request->category != '') {
             $category = Category::where('name', $request->category)->first();
@@ -106,23 +110,35 @@ class AssetController extends Controller
             $query->where('location_id', $request->location_id);
         }
         if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
+            $statuses = explode(',', $request->status);
+            if (count($statuses) > 1) {
+                $query->whereIn('status', $statuses);
+            } else {
+                $query->where('status', $request->status);
+            }
         }
 
         $categories = Category::orderBy('name')->get();
         $brands = Brand::orderBy('name')->get();
         $locations = Location::orderBy('name')->get();
 
-        $assets = $query->orderBy('name')->paginate(10)->appends($request->all());
+        $assets = $query->orderBy('asset_tag', 'asc')->paginate(10)->appends($request->all());
         return view('assets.index', compact('assets', 'categories', 'brands', 'locations'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $categories = Category::all();
         $brands = Brand::all();
         $locations = Location::all();
-        return view('assets.create', compact('categories', 'brands', 'locations'));
+        
+        $selectedCategoryId = null;
+        if ($request->has('category')) {
+            $cat = Category::where('name', $request->category)->first();
+            if ($cat) $selectedCategoryId = $cat->id;
+        }
+
+        return view('assets.create', compact('categories', 'brands', 'locations', 'selectedCategoryId'));
     }
 
     public function store(\App\Http\Requests\StoreAssetRequest $request)
@@ -177,6 +193,7 @@ class AssetController extends Controller
                     'warranty_months' => $request->warranty_months ?? 0,
                     'status' => $request->status,
                     'notes' => $request->notes,
+                    'spec_data' => $request->spec_data,
                 ]);
 
                 if ($quantity == 1) {
@@ -184,7 +201,7 @@ class AssetController extends Controller
                 }
             }
 
-            return redirect()->route('assets.index')->with('success', $quantity > 1 ? $quantity . ' Assets successfully created.' : __('messages.created_success'));
+            return redirect()->route('assets.index', $request->query())->with('success', $quantity > 1 ? $quantity . ' Assets successfully created.' : __('messages.created_success'));
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Failed to create asset: ' . $e->getMessage());
         }
@@ -212,16 +229,16 @@ class AssetController extends Controller
             $data['warranty_months'] = $request->warranty_months ?? 0;
             $asset->update($data);
             $this->saveSpecifications($asset, $request);
-            return redirect()->route('assets.index')->with('success', __('messages.updated_success'));
+            return redirect()->route('assets.index', $request->query())->with('success', __('messages.updated_success'));
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Failed to update asset: ' . $e->getMessage());
         }
     }
 
-    public function destroy(Asset $asset)
+    public function destroy(Asset $asset, Request $request)
     {
         $asset->delete();
-        return redirect()->route('assets.index')->with('success', __('messages.deleted_success'));
+        return redirect()->route('assets.index', $request->query())->with('success', __('messages.deleted_success'));
     }
 
     private function saveSpecifications(Asset $asset, Request $request)

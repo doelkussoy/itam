@@ -15,29 +15,29 @@ class IpAddressController extends Controller
     public function index(Request $request)
     {
         $query = IpAddress::with(['asset', 'employee', 'vlan']);
-        
+
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('ip_address', 'like', "%$search%")
-                  ->orWhere('notes', 'like', "%$search%")
-                  ->orWhereHas('asset', function($q2) use ($search) {
-                      $q2->where('name', 'like', "%$search%")
-                        ->orWhere('asset_tag', 'like', "%$search%")
-                        ->orWhereHas('category', function($q3) use ($search) {
-                            $q3->where('name', 'like', "%$search%");
-                        })
-                        ->orWhereHas('brand', function($q3) use ($search) {
-                            $q3->where('name', 'like', "%$search%");
-                        });
-                  })
-                  ->orWhereHas('employee', function($q2) use ($search) {
-                      $q2->where('name', 'like', "%$search%")
-                        ->orWhere('employee_id', 'like', "%$search%");
-                  });
+                    ->orWhere('notes', 'like', "%$search%")
+                    ->orWhereHas('asset', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%$search%")
+                            ->orWhere('asset_tag', 'like', "%$search%")
+                            ->orWhereHas('category', function ($q3) use ($search) {
+                                $q3->where('name', 'like', "%$search%");
+                            })
+                            ->orWhereHas('brand', function ($q3) use ($search) {
+                                $q3->where('name', 'like', "%$search%");
+                            });
+                    })
+                    ->orWhereHas('employee', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%$search%")
+                            ->orWhere('employee_id', 'like', "%$search%");
+                    });
             });
         }
-        
+
         if ($request->has('status') && $request->status != '') {
             $query->where('status', $request->status);
         }
@@ -114,18 +114,18 @@ class IpAddressController extends Controller
     public function ping(Request $request, IpAddress $ip)
     {
         $ipAddress = $ip->ip_address;
-        
+
         $str = PHP_OS;
         if (stristr($str, 'win')) {
             $command = 'ping -n 1 -w 1000 ' . escapeshellarg($ipAddress);
         } else {
             $command = 'ping -c 1 -W 1 ' . escapeshellarg($ipAddress);
         }
-        
+
         exec($command, $outcome, $status);
-        
+
         $online = ($status === 0);
-        
+
         return response()->json([
             'ip' => $ipAddress,
             'online' => $online,

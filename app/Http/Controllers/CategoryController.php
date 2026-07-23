@@ -34,9 +34,15 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:categories',
             'description' => 'nullable|string',
+            'spec_definitions' => 'nullable|string',
         ]);
 
-        Category::create($request->all());
+        $data = $request->all();
+        if (isset($data['spec_definitions'])) {
+            $data['spec_definitions'] = json_decode($data['spec_definitions'], true);
+        }
+
+        Category::create($data);
         return redirect()->route('categories.index')->with('success', __('messages.created_success'));
     }
 
@@ -50,9 +56,15 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string',
+            'spec_definitions' => 'nullable|string',
         ]);
 
-        $category->update($request->all());
+        $data = $request->all();
+        if (isset($data['spec_definitions'])) {
+            $data['spec_definitions'] = json_decode($data['spec_definitions'], true);
+        }
+
+        $category->update($data);
         return redirect()->route('categories.index')->with('success', __('messages.updated_success'));
     }
 

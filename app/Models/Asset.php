@@ -14,7 +14,12 @@ class Asset extends Model
     protected $fillable = [
         'asset_tag', 'name', 'serial_number', 'category_id', 'brand_id',
         'location_id', 'date_received', 'delivery_order_number',
-        'warranty_months', 'status', 'notes'
+        'warranty_months', 'status', 'notes', 'spec_data'
+    ];
+
+    protected $casts = [
+        'spec_data' => 'array',
+        'date_received' => 'date',
     ];
 
     public function category() { return $this->belongsTo(Category::class); }

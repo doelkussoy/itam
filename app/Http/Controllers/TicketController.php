@@ -25,7 +25,12 @@ class TicketController extends Controller
         }
         
         if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
+            $statuses = explode(',', $request->status);
+            if (count($statuses) > 1) {
+                $query->whereIn('status', $statuses);
+            } else {
+                $query->where('status', $request->status);
+            }
         }
 
         if ($request->has('priority') && $request->priority != '') {

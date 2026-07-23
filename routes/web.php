@@ -14,7 +14,9 @@ Route::get('lang/{lang}', [App\Http\Controllers\LanguageController::class, 'swit
 Route::get('theme/{theme}', [App\Http\Controllers\ThemeController::class, 'switchTheme'])->name('theme.switch');
 
 // Public route for viewing asset details (e.g. from QR code)
-Route::get('assets/{asset}', [App\Http\Controllers\AssetController::class, 'show'])->name('assets.show');
+Route::get('assets/{asset}', [App\Http\Controllers\AssetController::class, 'show'])
+    ->name('assets.show')
+    ->where('asset', '[0-9]+');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -26,17 +28,17 @@ Route::middleware('auth')->group(function () {
         Route::post('departments/import', [App\Http\Controllers\DepartmentController::class, 'importExcel'])->name('departments.import');
         Route::get('departments/export', [App\Http\Controllers\DepartmentController::class, 'exportExcel'])->name('departments.export');
         Route::resource('departments', App\Http\Controllers\DepartmentController::class);
-        
+
         Route::resource('vendors', App\Http\Controllers\VendorController::class);
-        
+
         Route::post('brands/import', [App\Http\Controllers\BrandController::class, 'importExcel'])->name('brands.import');
         Route::get('brands/export', [App\Http\Controllers\BrandController::class, 'exportExcel'])->name('brands.export');
         Route::resource('brands', App\Http\Controllers\BrandController::class);
-        
+
         Route::post('locations/import', [App\Http\Controllers\LocationController::class, 'importExcel'])->name('locations.import');
         Route::get('locations/export', [App\Http\Controllers\LocationController::class, 'exportExcel'])->name('locations.export');
         Route::resource('locations', App\Http\Controllers\LocationController::class);
-        
+
         Route::post('categories/import', [App\Http\Controllers\CategoryController::class, 'importExcel'])->name('categories.import');
         Route::get('categories/export', [App\Http\Controllers\CategoryController::class, 'exportExcel'])->name('categories.export');
         Route::resource('categories', App\Http\Controllers\CategoryController::class);
@@ -78,4 +80,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

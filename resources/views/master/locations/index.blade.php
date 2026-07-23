@@ -21,8 +21,8 @@
     <div class="card-header border-0">
         <h3 class="card-title theme-text">{{ __('messages.list') }} {{ __('messages.location') }}</h3>
         <div class="card-tools d-flex" style="gap: 10px;">
-            <a href="{{ route('locations.export') }}" class="btn btn-sm btn-success"><i class="fas fa-file-excel"></i> Export</a>
-            <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#importModal"><i class="fas fa-file-upload"></i> Import</button>
+            <a href="{{ route('locations.export') }}" class="btn btn-sm btn-success"><i class="fas fa-file-excel"></i> {{ __('messages.export') }}</a>
+            <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#importModal"><i class="fas fa-file-upload"></i> {{ __('messages.import_excel') }}</button>
             <a href="{{ route('locations.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> {{ __('messages.add_new') }}</a>
         </div>
     </div>
@@ -31,7 +31,7 @@
             <table class="table table-striped table-hover m-0 theme-table">
                 <thead>
                     <tr>
-                        <th width="50">No</th>
+                        <th width="50">{{ __('messages.no') }}</th>
                         <th>{{ __('messages.name') }}</th>
                         <th>{{ __('messages.address') }}</th>
                         <th>{{ __('messages.description') }}</th>
@@ -46,11 +46,11 @@
                         <td class="theme-text">{{ $item->address }}</td>
                         <td class="theme-text">{{ $item->description }}</td>
                         <td class="theme-text">
-                            <div class="d-flex" style="gap: 8px;">
-                                <a href="{{ route('locations.edit', $item) }}" class="btn action-btn btn-edit-tech"  title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
+                            <div class="d-flex justify-content-center" style="gap: 8px;">
+                                <a href="{{ route('locations.edit', $item) }}" class="btn action-btn btn-outline-warning" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;"  title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
                             <form action="{{ route('locations.destroy', $item) }}" method="POST" class="d-inline">
                                 @csrf @method('DELETE')
-                                <button class="btn btn-delete action-btn btn-delete-tech"  title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-delete action-btn btn-outline-danger" style="border: 1px solid rgba(220, 53, 69, 0.3); background: rgba(220, 53, 69, 0.15); color: #dc3545;"  title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}"><i class="fas fa-trash"></i></button>
                             </form>
                             </div>
                         </td>
@@ -74,21 +74,20 @@
       <form action="{{ route('locations.import') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="modal-header border-0">
-          <h5 class="modal-title theme-text" id="importModalLabel">Import Locations</h5>
+          <h5 class="modal-title theme-text" id="importModalLabel">{{ __('messages.import_excel') }} {{ __('messages.location') }}</h5>
           <button type="button" class="close theme-text" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <label class="theme-text">Upload Excel/CSV File</label>
+            <label class="theme-text">{{ __('messages.import_excel') }} (.xlsx, .xls, .csv)</label>
             <input type="file" name="file" class="form-control-file theme-text" required accept=".xlsx,.xls,.csv">
-            <small class="form-text text-muted">Format: name, address, description.</small>
           </div>
         </div>
         <div class="modal-footer border-0">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Import Data</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('messages.cancel') }}</button>
+          <button type="submit" class="btn btn-primary">{{ __('messages.import_excel') }}</button>
         </div>
       </form>
     </div>

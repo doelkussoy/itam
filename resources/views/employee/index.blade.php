@@ -7,7 +7,7 @@
     <div class="col-12 mb-3">
         <form action="{{ route('employees.index') }}" method="GET">
             <div class="d-flex flex-wrap gap-2" style="gap: 10px;">
-                <input type="text" name="search" class="form-control theme-input" placeholder="{{ __('messages.search') }} by Name or NIK..." value="{{ request('search') }}" style="width: 250px;" >
+                <input type="text" name="search" class="form-control theme-input" placeholder="{{ __('messages.search_employee') }}" value="{{ request('search') }}" style="width: 250px;" >
                 
                 <select name="department_id" class="form-control select2 theme-input" style="width: 200px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff;" onchange="this.form.submit()" >
                     <option value="" style="color: #000;">All {{ __('messages.department') }}</option>
@@ -68,12 +68,12 @@
             <table class="table table-striped table-hover m-0 theme-table">
                 <thead>
                     <tr >
-                        <th width="50">No</th>
+                        <th width="50">{{ __('messages.no') }}</th>
                         <th>{{ __('messages.nik') }}</th>
                         <th>{{ __('messages.name') }}</th>
                         <th>{{ __('messages.email') }}</th>
                         <th>{{ __('messages.anydesk_id') ?? 'AnyDesk ID' }}</th>
-                        <th>PC Username</th>
+                        <th>{{ __('messages.pc_username') }}</th>
                         <th>{{ __('messages.status') }}</th>
                         <th width="150" class="text-center">{{ __('messages.actions') }}</th>
                     </tr>
@@ -96,10 +96,10 @@
                         </td>
                         <td class="theme-text">
                             <div class="d-flex justify-content-center" style="gap: 8px;">
-                                <a href="{{ route('employees.edit', $emp) }}" class="btn action-btn btn-edit-tech"  title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
+                                <a href="{{ route('employees.edit', $emp) }}" class="btn action-btn btn-outline-warning" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;"  title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
                             <form action="{{ route('employees.destroy', $emp) }}" method="POST" class="d-inline">
                                 @csrf @method('DELETE')
-                                <button class="btn btn-delete action-btn btn-delete-tech"  title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-delete action-btn btn-outline-danger" style="border: 1px solid rgba(220, 53, 69, 0.3); background: rgba(220, 53, 69, 0.15); color: #dc3545;"  title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}"><i class="fas fa-trash"></i></button>
                             </form>
                             </div>
                         </td>
@@ -123,7 +123,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header border-0">
-        <h5 class="modal-title " id="importModalLabel"><i class="fas fa-upload text-success"></i> Import Employees</h5>
+        <h5 class="modal-title " id="importModalLabel"><i class="fas fa-upload text-success"></i> {{ __('messages.import_excel') }} {{ __('messages.employee') }}</h5>
         <button type="button" class="close " data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -132,19 +132,16 @@
         @csrf
         <div class="modal-body">
             <div class="form-group">
-                <label  class="theme-text">Excel File (.xlsx, .xls, .csv)</label>
+                <label  class="theme-text">{{ __('messages.import_excel') }} (.xlsx, .xls, .csv)</label>
                 <div class="custom-file">
                     <input type="file" name="file" class="custom-file-input" id="customFile" required accept=".xlsx, .xls, .csv">
-                    <label class="custom-file-label" for="customFile" style="background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1;" class="theme-text">Choose file...</label>
+                    <label class="custom-file-label" for="customFile" style="background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1;" class="theme-text">{{ __('messages.select') }}...</label>
                 </div>
-                <small class="form-text text-muted mt-2">
-                    Ensure columns: <b>nik, nama, email, telepon, divisi, jabatan, status</b> exist in the header row.
-                </small>
             </div>
         </div>
         <div class="modal-footer border-0">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success" style="box-shadow: 0 0 10px rgba(40,167,69,0.4);">Upload & Import</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('messages.cancel') }}</button>
+            <button type="submit" class="btn btn-success" style="box-shadow: 0 0 10px rgba(40,167,69,0.4);">{{ __('messages.import_excel') }}</button>
         </div>
       </form>
     </div>

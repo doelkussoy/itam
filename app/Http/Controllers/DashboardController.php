@@ -18,25 +18,26 @@ class DashboardController extends Controller
         
         $open_tickets = \App\Models\Ticket::whereIn('status', ['Open', 'In Progress'])->count();
         $used_ips = \App\Models\IpAddress::where('status', 'Used')->count();
+        $assigned_assets = Asset::where('status', 'Assigned')->count();
 
         // Specific Category Counts for Dashboard Widgets
-        $pc_count = Asset::whereHas('category', function($q) {
-            $q->whereIn('name', ['Komputer', 'PC']);
+        $accessories_count = Asset::whereHas('category', function($q) {
+            $q->where('name', 'Accessories');
         })->count();
-        $laptop_count = Asset::whereHas('category', function($q) {
-            $q->where('name', 'Laptop');
+        $cctv_count = Asset::whereHas('category', function($q) {
+            $q->where('name', 'CCTV');
         })->count();
-        $mini_pc_count = Asset::whereHas('category', function($q) {
-            $q->where('name', 'Mini PC');
+        $computer_count = Asset::whereHas('category', function($q) {
+            $q->where('name', 'Computer');
         })->count();
-        $printers_count = Asset::whereHas('category', function($q) {
-            $q->where('name', 'Printer');
+        $network_count = Asset::whereHas('category', function($q) {
+            $q->where('name', 'Network');
         })->count();
-        $switches_count = Asset::whereHas('category', function($q) {
-            $q->where('name', 'Switch');
+        $storage_count = Asset::whereHas('category', function($q) {
+            $q->where('name', 'Storage');
         })->count();
-        $wifi_count = Asset::whereHas('category', function($q) {
-            $q->whereIn('name', ['Access Point', 'WIFI', 'WiFi']);
+        $other_it_asset_count = Asset::whereHas('category', function($q) {
+            $q->where('name', 'Other IT Asset');
         })->count();
 
         // Expiring Warranties (Disabled)
@@ -67,16 +68,14 @@ class DashboardController extends Controller
             ->groupBy(\DB::raw('COALESCE(locations.name, "Unassigned")'))
             ->get();
 
-        // 3. OS Distribution
-        $os_data = \App\Models\Computer::select('os', \DB::raw('count(*) as count'))
-            ->whereNotNull('os')
-            ->groupBy('os')
+        // 3. IP Address Distribution
+        $ip_data = \App\Models\IpAddress::select('status', \DB::raw('count(*) as count'))
+            ->groupBy('status')
             ->get();
 
-        // 4. RAM Distribution
-        $ram_data = \App\Models\Computer::select('ram', \DB::raw('count(*) as count'))
-            ->whereNotNull('ram')
-            ->groupBy('ram')
+        // 4. Ticket Status Distribution
+        $ticket_data = \App\Models\Ticket::select('status', \DB::raw('count(*) as count'))
+            ->groupBy('status')
             ->get();
 
         $activities = collect();
@@ -109,18 +108,19 @@ class DashboardController extends Controller
             'maintenance_assets',
             'open_tickets',
             'used_ips',
+            'assigned_assets',
             'recent_activities',
-            'pc_count',
-            'laptop_count',
-            'mini_pc_count',
-            'printers_count',
-            'switches_count',
-            'wifi_count',
+            'accessories_count',
+            'cctv_count',
+            'computer_count',
+            'network_count',
+            'storage_count',
+            'other_it_asset_count',
             'expiring_warranty_count',
-            'age_buckets',
-            'locations_data',
-            'os_data',
-            'ram_data'
+            'age_buckets', 
+            'locations_data', 
+            'ip_data', 
+            'ticket_data'
         ));
     }
 

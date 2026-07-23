@@ -324,6 +324,24 @@
                         </div>
                     </div>
                 @endif
+
+                <!-- 6. Dynamic Custom Specs -->
+                @if($asset->category && $asset->category->spec_definitions && !empty($asset->spec_data))
+                    <hr style="border-top: 1px solid var(--tech-border);">
+                    <h5 class="text-info mb-3"><i class="fas fa-list mr-2"></i> Custom Specifications</h5>
+                    <div class="row">
+                        @foreach($asset->category->spec_definitions as $spec)
+                            <div class="col-sm-6 mb-3">
+                                <div class="d-flex justify-content-between align-items-start border-bottom pb-2" style="border-bottom: 1px solid var(--tech-border) !important;">
+                                    <span class="text-muted"><i class="fas fa-tag mr-2 text-info" style="width: 20px;"></i>{{ $spec['label'] }}</span>
+                                    <span class="theme-text font-weight-bold text-right" style="max-width: 70%; word-break: break-word;">
+                                        {{ $asset->spec_data[$spec['name']] ?? '-' }}
+                                    </span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -332,10 +350,10 @@
             <div class="card-header p-2 border-bottom-0">
                 <ul class="nav nav-tabs theme-tabs" role="tablist" style="border-bottom: 1px solid var(--tech-border);">
                     <li class="nav-item">
-                        <a class="nav-link active theme-text" id="assignments-tab" data-toggle="tab" href="#assignments" role="tab" aria-selected="true"><i class="fas fa-history mr-2 text-warning"></i> Assignment History</a>
+                        <a class="nav-link active theme-text" id="assignments-tab" data-toggle="tab" href="#assignments" role="tab" aria-selected="true"><i class="fas fa-history mr-2 text-warning"></i> {{ __('messages.asset_assignment') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link theme-text" id="maintenances-tab" data-toggle="tab" href="#maintenances" role="tab" aria-selected="false"><i class="fas fa-tools mr-2 text-danger"></i> Maintenance Logs</a>
+                        <a class="nav-link theme-text" id="maintenances-tab" data-toggle="tab" href="#maintenances" role="tab" aria-selected="false"><i class="fas fa-tools mr-2 text-danger"></i> {{ __('messages.log_maintenance') }}</a>
                     </li>
                 </ul>
             </div>
@@ -347,11 +365,11 @@
                             <table class="table table-striped table-hover m-0 theme-table">
                                 <thead>
                                     <tr>
-                                        <th>Date Assigned</th>
-                                        <th>Employee</th>
-                                        <th>Date Returned</th>
-                                        <th>Status</th>
-                                        <th>Notes</th>
+                                        <th>{{ __('messages.assigned_date') }}</th>
+                                        <th>{{ __('messages.employee') }}</th>
+                                        <th>{{ __('messages.return_date') }}</th>
+                                        <th>{{ __('messages.status') }}</th>
+                                        <th>{{ __('messages.notes') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -375,7 +393,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted">No assignment records.</td>
+                                        <td colspan="5" class="text-center text-muted">{{ __('messages.no_data') }}</td>
                                     </tr>
                                     @endforelse
                                 </tbody>
@@ -389,12 +407,12 @@
                             <table class="table table-striped table-hover m-0 theme-table">
                                 <thead>
                                     <tr>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Type</th>
-                                        <th>Description</th>
-                                        <th>Cost</th>
-                                        <th>Status</th>
+                                        <th>{{ __('messages.start_date') }}</th>
+                                        <th>{{ __('messages.end_date') }}</th>
+                                        <th>{{ __('messages.type') }}</th>
+                                        <th>{{ __('messages.description') }}</th>
+                                        <th>{{ __('messages.cost') }}</th>
+                                        <th>{{ __('messages.status') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -415,7 +433,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted">No maintenance records.</td>
+                                        <td colspan="6" class="text-center text-muted">{{ __('messages.no_data') }}</td>
                                     </tr>
                                     @endforelse
                                 </tbody>

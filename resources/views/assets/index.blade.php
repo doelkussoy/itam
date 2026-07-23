@@ -53,7 +53,7 @@
         <a href="{{ route('assets.export') }}" class="btn btn-sm btn-success" style="border: none; margin-right: 5px;">
             <i class="fas fa-file-export"></i> {{ __('messages.export') }}
         </a>
-        <a href="{{ route('assets.create') }}" class="btn btn-sm btn-primary" >
+        <a href="{{ route('assets.create', request()->query()) }}" class="btn btn-sm btn-primary" >
             <i class="fas fa-laptop-medical"></i> {{ __('messages.add_new') }} {{ __('messages.asset') }}
         </a>
     </div>
@@ -72,11 +72,12 @@
             <table class="table table-striped table-hover m-0 theme-table">
                 <thead>
                     <tr >
-                        <th width="50">No</th>
+                        <th width="50">{{ __('messages.no') }}</th>
                         <th>{{ __('messages.asset_tag') }}</th>
                         <th>{{ __('messages.name') }}</th>
                         <th>{{ __('messages.category') }}</th>
                         <th>{{ __('messages.location') }}</th>
+                        <th>{{ __('messages.user') }}</th>
                         <th>{{ __('messages.status') }}</th>
                         <th width="150" class="text-center">{{ __('messages.actions') }}</th>
                     </tr>
@@ -89,6 +90,13 @@
                         <td class="theme-text"><a href="{{ route('assets.show', $asset) }}" class="theme-text">{{ $asset->name }}</a></td>
                         <td class="theme-text">{{ $asset->category->name ?? '-' }}</td>
                         <td class="theme-text">{{ $asset->location->name ?? '-' }}</td>
+                        <td class="theme-text">
+                            @if($asset->currentAssignment && $asset->currentAssignment->employee)
+                                <a href="{{ route('employees.show', $asset->currentAssignment->employee_id) }}" class="text-info font-weight-bold">{{ $asset->currentAssignment->employee->name }}</a>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
                         <td class="theme-text">
                             @switch($asset->status)
                                 @case('Available')
@@ -109,12 +117,12 @@
                             @endswitch
                         </td>
                         <td class="theme-text">
-                            <div class="d-flex" style="gap: 8px;">
-                                <a href="{{ route('assets.show', $asset) }}" class="btn action-btn btn-outline-info" title="View Details" style="border: 1px solid rgba(23, 162, 184, 0.3); background: rgba(23, 162, 184, 0.15); color: #17a2b8;"><i class="fas fa-eye"></i></a>
-                                <a href="{{ route('assets.edit', $asset) }}" class="btn action-btn btn-edit-tech"  title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
-                                <form action="{{ route('assets.destroy', $asset) }}" method="POST" class="d-inline">
+                            <div class="d-flex justify-content-center" style="gap: 8px;">
+                                <a href="{{ route('assets.show', $asset) }}" class="btn action-btn btn-outline-info" title="{{ __('messages.more_info') }}" style="border: 1px solid rgba(23, 162, 184, 0.3); background: rgba(23, 162, 184, 0.15); color: #17a2b8;"><i class="fas fa-eye"></i></a>
+                                <a href="{{ route('assets.edit', array_merge(['asset' => $asset->id], request()->query())) }}" class="btn action-btn btn-outline-warning" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;" title="{{ __('messages.edit') }}" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;"><i class="fas fa-edit"></i></a>
+                                <form action="{{ route('assets.destroy', array_merge(['asset' => $asset->id], request()->query())) }}" method="POST" class="d-inline">
                                     @csrf @method('DELETE')
-                                    <button class="btn btn-delete action-btn btn-delete-tech"  title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-delete action-btn btn-outline-danger" style="border: 1px solid rgba(220, 53, 69, 0.3); background: rgba(220, 53, 69, 0.15); color: #dc3545;" title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}" style="border: 1px solid rgba(220, 53, 69, 0.3); background: rgba(220, 53, 69, 0.15); color: #dc3545;"><i class="fas fa-trash"></i></button>
                                 </form>
                             </div>
                         </td>
@@ -140,21 +148,20 @@
             @csrf
             <div class="modal-content">
                 <div class="modal-header border-bottom-0">
-                    <h5 class="modal-title "><i class="fas fa-file-import text-info"></i> Import Assets</h5>
+                    <h5 class="modal-title "><i class="fas fa-file-import text-info"></i> {{ __('messages.import_excel') }} {{ __('messages.asset') }}</h5>
                     <button type="button" class="close " data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label  class="theme-text">Select Excel File (.xlsx, .xls, .csv)</label>
+                        <label  class="theme-text">{{ __('messages.import_excel') }} (.xlsx, .xls, .csv)</label>
                         <input type="file" name="file" class="form-control-file " accept=".xlsx,.xls,.csv" required>
                     </div>
-                    <small class="text-muted">Columns needed: asset_code, name, serial_number, category, brand, location, date_received, delivery_order_number, warranty_months, status, notes.</small>
                 </div>
                 <div class="modal-footer border-top-0">
-                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" >Close</button>
-                    <button type="submit" class="btn btn-info">Upload & Import</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" >{{ __('messages.cancel') }}</button>
+                    <button type="submit" class="btn btn-info">{{ __('messages.import_excel') }}</button>
                 </div>
             </div>
         </form>

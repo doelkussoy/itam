@@ -11,7 +11,7 @@ class TicketExport implements FromCollection, WithHeadings, WithMapping
 {
     public function collection()
     {
-        return Ticket::with(['asset', 'user'])->get();
+        return Ticket::with(['asset', 'employee'])->get();
     }
 
     public function headings(): array
@@ -37,7 +37,7 @@ class TicketExport implements FromCollection, WithHeadings, WithMapping
             $ticket->status,
             $ticket->priority,
             $ticket->asset ? $ticket->asset->name : '-',
-            $ticket->user ? $ticket->user->name : '-',
+            $ticket->employee ? $ticket->employee->name : '-',
             $ticket->created_at,
         ];
     }

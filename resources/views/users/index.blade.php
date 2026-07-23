@@ -41,7 +41,7 @@
             <table class="table table-striped table-hover m-0 theme-table">
                 <thead>
                     <tr>
-                        <th width="50">No</th>
+                        <th width="50">{{ __('messages.no') }}</th>
                         <th>{{ __('messages.name') }}</th>
                         <th>{{ __('messages.username') }}</th>
                         <th>{{ __('messages.email') }}</th>
@@ -63,12 +63,16 @@
                         </td>
                         <td class="theme-text">
                             <div class="d-flex justify-content-center" style="gap: 8px;">
-                                <a href="{{ route('users.edit', $user) }}" class="btn action-btn btn-edit-tech" title="Edit"><i class="fas fa-edit"></i></a>
+                                <a href="{{ route('users.edit', $user) }}" class="btn action-btn btn-outline-warning" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;" title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
                                 @if(auth()->id() !== $user->id)
                                 <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline">
                                     @csrf @method('DELETE')
-                                    <button class="btn btn-delete action-btn btn-delete-tech" title="Delete" data-confirm-message="Are you sure you want to delete this user?"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-delete action-btn btn-outline-danger" style="border: 1px solid rgba(220, 53, 69, 0.3); background: rgba(220, 53, 69, 0.15); color: #dc3545;" title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}"><i class="fas fa-trash"></i></button>
                                 </form>
+                                @else
+                                <div class="d-inline">
+                                    <button class="btn action-btn" style="visibility: hidden;"><i class="fas fa-trash"></i></button>
+                                </div>
                                 @endif
                             </div>
                         </td>

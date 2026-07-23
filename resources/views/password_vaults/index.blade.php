@@ -49,7 +49,7 @@
             <table class="table table-striped table-hover m-0 theme-table">
                 <thead>
                     <tr>
-                        <th width="50">No</th>
+                        <th width="50">{{ __('messages.no') }}</th>
                         <th>{{ __('messages.device_name') }}</th>
                         <th>{{ __('messages.username') }}</th>
                         <th>{{ __('messages.password') }}</th>
@@ -67,8 +67,8 @@
                         <td>
                             <div class="d-flex align-items-center" style="gap: 5px;">
                                 <input type="password" value="{{ $pwd->encrypted_password }}" class="password-field border-0 bg-transparent theme-text" style="outline: none; width: 100px;" readonly>
-                                <button type="button" class="btn btn-xs btn-outline-info toggle-password-btn" style="padding: 2px 6px;" title="Toggle Password"><i class="fas fa-eye"></i></button>
-                                <button type="button" class="btn btn-xs btn-outline-success copy-password-btn" style="padding: 2px 6px;" title="Copy" data-password="{{ $pwd->encrypted_password }}"><i class="fas fa-copy"></i></button>
+                                <button type="button" class="btn btn-xs btn-outline-info toggle-password-btn" style="padding: 2px 6px;" title="{{ __('messages.toggle_password') ?? 'Toggle Password' }}"><i class="fas fa-eye"></i></button>
+                                <button type="button" class="btn btn-xs btn-outline-success copy-password-btn" style="padding: 2px 6px;" title="{{ __('messages.copy') ?? 'Copy' }}" data-password="{{ $pwd->encrypted_password }}"><i class="fas fa-copy"></i></button>
                             </div>
                         </td>
                         <td class="theme-text">
@@ -77,11 +77,11 @@
                         <td class="theme-text">{{ Str::limit($pwd->notes, 30) }}</td>
                         <td class="theme-text">
                             <div class="d-flex justify-content-center" style="gap: 8px;">
-                                <a href="{{ route('password_vaults.edit', $pwd) }}" class="btn action-btn btn-edit-tech" title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
+                                <a href="{{ route('password_vaults.edit', $pwd) }}" class="btn action-btn btn-outline-warning" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;" title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
                                 <form action="{{ route('password_vaults.destroy', $pwd) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn action-btn btn-delete-tech btn-delete" title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}"><i class="fas fa-trash"></i></button>
+                                    <button type="submit" class="btn btn-delete action-btn btn-outline-danger" style="border: 1px solid rgba(220, 53, 69, 0.3); background: rgba(220, 53, 69, 0.15); color: #dc3545;" title="{{ __('messages.delete') }}" data-confirm-message="{{ __('messages.confirm_delete') }}"><i class="fas fa-trash"></i></button>
                                 </form>
                             </div>
                         </td>

@@ -17,6 +17,7 @@
                 <textarea name="description" class="form-control @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
                 @error('description') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
+            @include('master.categories.partials.spec_editor')
         </div>
         <div class="card-footer bg-transparent">
             <button type="submit" class="btn btn-primary">{{ __('messages.save') }}</button>

@@ -11,5 +11,14 @@ class Category extends Model
     /** @use HasFactory<\Database\Factories\CategoryFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name', 'description'];
+    protected $fillable = ['name', 'description', 'spec_definitions'];
+
+    protected $casts = [
+        'spec_definitions' => 'array',
+    ];
+
+    public function assets()
+    {
+        return $this->hasMany(Asset::class);
+    }
 }
