@@ -43,4 +43,35 @@ class RoleController extends Controller
 
         return redirect()->route('roles.index')->with('success', 'Hak akses berhasil diperbarui.');
     }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|unique:roles,name|max:255',
+        ], [
+            'name.required' => 'Nama peran wajib diisi.',
+            'name.unique' => 'Nama peran sudah ada.',
+            'name.max' => 'Nama peran maksimal 255 karakter.'
+        ]);
+
+        Role::create(['name' => $request->name]);
+
+        return redirect()->route('roles.index')->with('success', 'Peran baru berhasil ditambahkan.');
+    }
+
+    public function destroy(Role $role)
+    {
+        if ($role->name == 'Super Admin' || $role->name == 'Admin' || $role->name == 'User') {
+            return redirect()->route('roles.index')->with('error', 'Peran bawaan sistem tidak dapat dihapus.');
+        }
+
+        // Check if role is assigned to any users before deleting (optional, depends on requirement, but safe to do)
+        if ($role->users()->count() > 0) {
+             return redirect()->route('roles.index')->with('error', 'Peran tidak dapat dihapus karena masih digunakan oleh pengguna.');
+        }
+
+        $role->delete();
+
+        return redirect()->route('roles.index')->with('success', 'Peran berhasil dihapus.');
+    }
 }

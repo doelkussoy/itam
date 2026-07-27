@@ -21,3 +21,6 @@ try {
 } catch (\Exception $e) {
     // Ignore if table doesn't exist yet
 }
+
+// Ping all IP Addresses at 08:00 every day
+Schedule::command('ips:ping-all')->dailyAt('08:00');

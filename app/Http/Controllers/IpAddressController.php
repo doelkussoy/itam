@@ -57,7 +57,7 @@ class IpAddressController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'ip_address' => 'required|ip|unique:ip_addresses,ip_address',
+            'ip_address' => ['required', 'ip', \Illuminate\Validation\Rule::unique('ip_addresses')->whereNull('deleted_at')],
             'mac_address' => 'nullable|string|max:17',
             'asset_id' => 'nullable|exists:assets,id',
             'employee_id' => 'nullable|exists:employees,id',
@@ -84,7 +84,7 @@ class IpAddressController extends Controller
     public function update(Request $request, IpAddress $ip)
     {
         $request->validate([
-            'ip_address' => 'required|ip|unique:ip_addresses,ip_address,' . $ip->id,
+            'ip_address' => ['required', 'ip', \Illuminate\Validation\Rule::unique('ip_addresses')->ignore($ip->id)->whereNull('deleted_at')],
             'mac_address' => 'nullable|string|max:17',
             'asset_id' => 'nullable|exists:assets,id',
             'employee_id' => 'nullable|exists:employees,id',

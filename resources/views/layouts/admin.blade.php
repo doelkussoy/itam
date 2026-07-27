@@ -865,7 +865,7 @@
   </style>
   @stack('styles')
 </head>
-<body class="hold-transition sidebar-mini {{ session('theme', 'light') }}-mode" style="min-height: 100vh;">
+<body class="hold-transition sidebar-mini {{ session('theme', 'dark') }}-mode" style="min-height: 100vh;">
 <!-- Site wrapper -->
 <div class="wrapper">
 
@@ -886,9 +886,9 @@
       <!-- Theme Switch -->
       <li class="nav-item">
         <a class="nav-pill-btn"
-           href="{{ session('theme') == 'dark' ? route('theme.switch', 'light') : route('theme.switch', 'dark') }}"
+           href="{{ session('theme', 'dark') == 'dark' ? route('theme.switch', 'light') : route('theme.switch', 'dark') }}"
            title="Toggle Theme">
-          <i class="fas {{ session('theme') == 'dark' ? 'fa-sun' : 'fa-moon' }}" style="font-size: 0.8rem;"></i>
+          <i class="fas {{ session('theme', 'dark') == 'dark' ? 'fa-sun' : 'fa-moon' }}" style="font-size: 0.8rem;"></i>
         </a>
       </li>
 
@@ -1019,17 +1019,13 @@
             <ul class="nav nav-treeview">
               <li class="nav-item"><a href="{{ route('assets.index') }}" class="nav-link {{ request()->routeIs('assets.index') && !request('category') && !request('status') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>{{ __('messages.all_assets') }}</p></a></li>
               @php
-                  $topCategories = \App\Models\Category::withCount('assets')
-                      ->having('assets_count', '>', 0)
-                      ->orderBy('assets_count', 'desc')
-                      ->limit(6)
-                      ->get();
+                  $fixedCategories = ['Accessories', 'Computer', 'Network', 'Printer', 'Storage', 'Other IT Asset'];
               @endphp
-              @foreach($topCategories as $topCat)
+              @foreach($fixedCategories as $catName)
               <li class="nav-item">
-                  <a href="{{ route('assets.index', ['category' => $topCat->name]) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == $topCat->name ? 'active' : '' }}">
+                  <a href="{{ route('assets.index', ['category' => $catName]) }}" class="nav-link {{ request()->routeIs('assets.index') && request('category') == $catName ? 'active' : '' }}">
                       <i class="far fa-circle nav-icon"></i>
-                      <p>{{ $topCat->name }}</p>
+                      <p>{{ $catName }}</p>
                   </a>
               </li>
               @endforeach
@@ -1139,7 +1135,7 @@
           <li class="nav-item">
             <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-user-shield"></i>
-              <p>Hak Akses</p>
+              <p>{{ __('messages.roles_permissions') }}</p>
             </a>
           </li>
           @endcan

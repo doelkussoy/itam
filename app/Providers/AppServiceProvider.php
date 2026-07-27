@@ -23,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrapFive();
 
+        if (env('APP_ENV') !== 'local' || request()->header('x-forwarded-proto') === 'https') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Implicitly grant "Super Admin" role all permissions
         Gate::before(function ($user, $ability) {
             return $user->hasRole('Super Admin') ? true : null;

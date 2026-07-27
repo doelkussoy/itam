@@ -172,9 +172,7 @@
                                 showConfirmButton: false,
                                 timer: 3000,
                                 icon: 'success',
-                                title: "{{ __('messages.ping_online') ?? 'Ping Successful! Device is Online.' }}",
-                                background: 'rgba(30, 41, 59, 0.95)',
-                                color: '#f8f9fa'
+                                title: "{{ __('messages.ping_online') ?? 'Ping Successful! Device is Online.' }}"
                             });
                         } else {
                             icon.attr('class', 'fas fa-times-circle');
@@ -189,9 +187,7 @@
                                 showConfirmButton: false,
                                 timer: 3000,
                                 icon: 'error',
-                                title: "{{ __('messages.ping_offline') ?? 'Ping Failed! Device is Offline.' }}",
-                                background: 'rgba(30, 41, 59, 0.95)',
-                                color: '#f8f9fa'
+                                title: "{{ __('messages.ping_offline') ?? 'Ping Failed! Device is Offline.' }}"
                             });
                         }
                         setTimeout(function () {
@@ -217,9 +213,7 @@
                             showConfirmButton: false,
                             timer: 3000,
                             icon: 'warning',
-                            title: "{{ __('messages.ping_error') ?? 'Error executing ping command.' }}",
-                            background: 'rgba(30, 41, 59, 0.95)',
-                            color: '#f8f9fa'
+                            title: "{{ __('messages.ping_error') ?? 'Error executing ping command.' }}"
                         });
                     }
                 });

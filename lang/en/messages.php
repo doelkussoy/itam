@@ -348,4 +348,20 @@ return [
     'quantity' => 'Quantity',
     'years' => 'Years',
     'fingerprint' => 'Fingerprint',
+    
+    // Roles & Permissions
+    'roles_permissions' => 'Roles & Permissions',
+    'roles_desc' => 'Manage permissions accessible by specific roles.',
+    'add_role' => 'Add Role',
+    'role_name' => 'Role Name',
+    'total_permissions' => 'Total Permissions',
+    'permissions' => 'Permissions',
+    'manage_permissions' => 'Manage Permissions',
+    'permissions_desc' => 'Check permissions accessible by this role.',
+    'menu_access' => 'Menu Access',
+    'action_access' => 'Action & Management Access',
+    'save_permissions' => 'Save Permissions',
+    'role_name_placeholder' => 'Example: Manager, Staff, HR',
+    'delete_role_confirm' => 'Are you sure you want to delete this role?',
+    'back' => 'Back',
 ];

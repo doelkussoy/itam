@@ -87,11 +87,11 @@
             </a>
         </div>
         <div class="col-lg-2 col-md-3 col-6 mb-3">
-            <a href="{{ route('assets.index', ['category' => 'CCTV']) }}" style="text-decoration: none; display: block;"
+            <a href="{{ route('assets.index', ['category' => 'Printer']) }}" style="text-decoration: none; display: block;"
                 class="h-100">
                 <div class="card cat-mini-card p-3 text-center h-100">
-                    <h3 class="cat-count">{{ $cctv_count }}</h3>
-                    <span class="cat-label">CCTV</span>
+                    <h3 class="cat-count">{{ $printer_count }}</h3>
+                    <span class="cat-label">Printer</span>
                 </div>
             </a>
         </div>

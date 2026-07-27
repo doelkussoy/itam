@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function () {
 
     // Roles & Permissions
     Route::middleware(['permission:menu_roles'])->group(function () {
-        Route::resource('roles', App\Http\Controllers\RoleController::class)->only(['index', 'edit', 'update']);
+        Route::resource('roles', App\Http\Controllers\RoleController::class)->except(['show']);
     });
 
     Route::middleware(['permission:menu_departments'])->group(function () {

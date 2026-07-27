@@ -349,4 +349,20 @@ return [
     'quantity' => 'Jumlah',
     'years' => 'Tahun',
     'fingerprint' => 'Fingerprint',
+
+    // Roles & Permissions
+    'roles_permissions' => 'Manajemen Hak Akses',
+    'roles_desc' => 'Atur izin apa saja yang dapat diakses oleh peran tertentu.',
+    'add_role' => 'Tambah Peran',
+    'role_name' => 'Nama Peran',
+    'total_permissions' => 'Jumlah Izin',
+    'permissions' => 'Hak Akses',
+    'manage_permissions' => 'Atur Hak Akses',
+    'permissions_desc' => 'Centang izin yang boleh diakses oleh peran ini.',
+    'menu_access' => 'Akses Menu',
+    'action_access' => 'Akses Aksi & Manajemen',
+    'save_permissions' => 'Simpan Hak Akses',
+    'role_name_placeholder' => 'Contoh: Manager, Staff, HRD',
+    'delete_role_confirm' => 'Apakah Anda yakin ingin menghapus peran ini?',
+    'back' => 'Kembali',
 ];

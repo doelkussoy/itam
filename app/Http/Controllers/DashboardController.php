@@ -24,8 +24,8 @@ class DashboardController extends Controller
         $accessories_count = Asset::whereHas('category', function($q) {
             $q->where('name', 'Accessories');
         })->count();
-        $cctv_count = Asset::whereHas('category', function($q) {
-            $q->where('name', 'CCTV');
+        $printer_count = Asset::whereHas('category', function($q) {
+            $q->where('name', 'Printer');
         })->count();
         $computer_count = Asset::whereHas('category', function($q) {
             $q->where('name', 'Computer');
@@ -111,7 +111,7 @@ class DashboardController extends Controller
             'assigned_assets',
             'recent_activities',
             'accessories_count',
-            'cctv_count',
+            'printer_count',
             'computer_count',
             'network_count',
             'storage_count',
