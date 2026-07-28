@@ -365,4 +365,11 @@ return [
     'role_name_placeholder' => 'Example: Manager, Staff, HR',
     'delete_role_confirm' => 'Are you sure you want to delete this role?',
     'back' => 'Back',
+    
+    // PIC Data
+    'pic_data' => 'PIC Data',
+    'add_pic' => 'Add PIC',
+    'pic_name' => 'PIC Name',
+    'edit_pic' => 'Edit PIC',
+    'enter_pic_name' => 'Enter PIC name',
 ];

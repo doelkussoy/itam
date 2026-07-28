@@ -1106,10 +1106,12 @@
               <p>{{ __('messages.ticket') ?? 'Ticket' }}</p>
             </a>
           </li>
+          @endcan
+          @can('menu_pics')
           <li class="nav-item">
             <a href="{{ route('pics.index') }}" class="nav-link {{ request()->routeIs('pics.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-user-tie"></i>
-              <p>Data PIC</p>
+              <p>{{ __('messages.pic_data') }}</p>
             </a>
           </li>
           @endcan

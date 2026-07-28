@@ -366,4 +366,11 @@ return [
     'role_name_placeholder' => 'Contoh: Manager, Staff, HRD',
     'delete_role_confirm' => 'Apakah Anda yakin ingin menghapus peran ini?',
     'back' => 'Kembali',
+    
+    // PIC Data
+    'pic_data' => 'Data PIC',
+    'add_pic' => 'Tambah PIC',
+    'pic_name' => 'Nama PIC',
+    'edit_pic' => 'Edit PIC',
+    'enter_pic_name' => 'Masukkan nama PIC',
 ];

@@ -131,6 +131,9 @@ Route::middleware('auth')->group(function () {
         Route::get('tickets/export', [TicketController::class, 'exportExcel'])->name('tickets.export');
         Route::patch('tickets/{ticket}/status', [TicketController::class, 'updateStatus'])->name('tickets.updateStatus');
         Route::resource('tickets', TicketController::class);
+    });
+
+    Route::middleware(['permission:menu_pics'])->group(function () {
         Route::resource('pics', PicController::class)->except(['show', 'edit']);
     });
 

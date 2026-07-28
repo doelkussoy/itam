@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
-@section('title', 'Data PIC')
+@section('title', __('messages.pic_data'))
 
 @section('content')
 <div class="row mb-3">
     <div class="col-12 d-flex justify-content-end">
-        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addPicModal"><i class="fas fa-plus"></i> Tambah PIC</button>
+        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addPicModal"><i class="fas fa-plus"></i> {{ __('messages.add_pic') }}</button>
     </div>
 </div>
 
@@ -16,7 +16,7 @@
                 <thead>
                     <tr>
                         <th width="50">{{ __('messages.no') }}</th>
-                        <th>Nama PIC</th>
+                        <th>{{ __('messages.pic_name') }}</th>
                         <th width="150" class="text-center">{{ __('messages.actions') }}</th>
                     </tr>
                 </thead>
@@ -53,15 +53,15 @@
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addPicModalLabel">Tambah PIC</h5>
+                    <h5 class="modal-title" id="addPicModalLabel">{{ __('messages.add_pic') }}</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Nama PIC *</label>
-                        <input type="text" name="name" class="form-control" required placeholder="Masukkan nama PIC">
+                        <label>{{ __('messages.pic_name') }} *</label>
+                        <input type="text" name="name" class="form-control" required placeholder="{{ __('messages.enter_pic_name') }}">
                     </div>
                 </div>
                 <div class="modal-footer border-0 bg-transparent">
@@ -81,15 +81,15 @@
             @csrf @method('PUT')
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit PIC</h5>
+                    <h5 class="modal-title">{{ __('messages.edit_pic') }}</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Nama PIC *</label>
-                        <input type="text" name="name" class="form-control" value="{{ $pic->name }}" required placeholder="Masukkan nama PIC">
+                        <label>{{ __('messages.pic_name') }} *</label>
+                        <input type="text" name="name" class="form-control" value="{{ $pic->name }}" required placeholder="{{ __('messages.enter_pic_name') }}">
                     </div>
                 </div>
                 <div class="modal-footer border-0 bg-transparent">

@@ -31,6 +31,7 @@ $permissions = [
     'menu_password_vaults',
     'menu_settings',
     'menu_roles',
+    'menu_pics',
 ];
 
 foreach ($permissions as $permission) {
