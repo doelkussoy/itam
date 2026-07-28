@@ -2,18 +2,19 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Position;
-use App\Models\Department;
+use Illuminate\Database\Seeder;
 
 class ImportEmployeesSeeder extends Seeder
 {
     public function run()
     {
         $filePath = base_path('employees.json');
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             echo "Warning: employees.json not found. Skipping employees import.\n";
+
             return;
         }
 
@@ -25,32 +26,34 @@ class ImportEmployeesSeeder extends Seeder
             $employeeId = $row['Employee Id'] ?? null;
             $name = $row['Employee Name'] ?? null;
             $positionTitle = $row['Position Title'] ?? null;
-            
-            if (!$employeeId || !$name) continue;
+
+            if (! $employeeId || ! $name) {
+                continue;
+            }
 
             $defaultDepartment = Department::firstOrCreate(['name' => 'General'], ['description' => 'General Department']);
 
             $position = null;
-            if (!empty($positionTitle)) {
+            if (! empty($positionTitle)) {
                 $position = Position::firstOrCreate([
-                    'name' => $positionTitle
+                    'name' => $positionTitle,
                 ], [
                     'department_id' => $defaultDepartment->id,
-                    'description' => 'Posisi ' . $positionTitle
+                    'description' => 'Posisi '.$positionTitle,
                 ]);
             }
 
             Employee::updateOrCreate([
-                'employee_id' => $employeeId
+                'employee_id' => $employeeId,
             ], [
                 'name' => $name,
                 'position_id' => $position ? $position->id : null,
-                'status' => 'Active'
+                'status' => 'Active',
             ]);
-            
+
             $count++;
         }
-        
+
         echo "Successfully imported $count employees.\n";
     }
 }

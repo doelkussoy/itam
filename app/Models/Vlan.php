@@ -15,7 +15,7 @@ class Vlan extends Model
         'subnet',
         'gateway',
         'status',
-        'notes'
+        'notes',
     ];
 
     public function ipAddresses()

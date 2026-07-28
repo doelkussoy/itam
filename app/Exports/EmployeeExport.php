@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Employee;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -10,8 +11,8 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class EmployeeExport implements FromCollection, WithHeadings, WithMapping
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return Collection
+     */
     public function collection()
     {
         return Employee::with(['department'])->get();
@@ -26,7 +27,7 @@ class EmployeeExport implements FromCollection, WithHeadings, WithMapping
             'Telepon',
             'Departemen',
             'Jabatan',
-            'Status'
+            'Status',
         ];
     }
 
@@ -39,7 +40,7 @@ class EmployeeExport implements FromCollection, WithHeadings, WithMapping
             $employee->phone,
             $employee->department ? $employee->department->name : '-',
             '-', // Jabatan (Position is removed)
-            $employee->status
+            $employee->status,
         ];
     }
 }

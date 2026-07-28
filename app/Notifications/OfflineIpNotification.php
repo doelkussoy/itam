@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -39,12 +38,12 @@ class OfflineIpNotification extends Notification
         $mailMessage = (new MailMessage)
             ->subject('Peringatan: IP Address Offline')
             ->greeting('Halo,')
-            ->line('Sistem mendeteksi ada ' . count($this->offlineIps) . ' IP Address yang saat ini tidak dapat dihubungi (Offline).');
+            ->line('Sistem mendeteksi ada '.count($this->offlineIps).' IP Address yang saat ini tidak dapat dihubungi (Offline).');
 
         foreach ($this->offlineIps as $ip) {
-            $details = "IP: " . $ip['ip_address'];
-            if (!empty($ip['name'])) {
-                $details .= " - " . $ip['name'];
+            $details = 'IP: '.$ip['ip_address'];
+            if (! empty($ip['name'])) {
+                $details .= ' - '.$ip['name'];
             }
             $mailMessage->line($details);
         }

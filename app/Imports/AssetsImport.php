@@ -3,12 +3,11 @@
 namespace App\Imports;
 
 use App\Models\Asset;
-use App\Models\Category;
 use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Location;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Illuminate\Support\Facades\Log;
 
 class AssetsImport implements ToModel, WithHeadingRow
 {
@@ -21,21 +20,21 @@ class AssetsImport implements ToModel, WithHeadingRow
 
         // Find or create category
         $categoryId = null;
-        if (!empty($row['category'])) {
+        if (! empty($row['category'])) {
             $category = Category::firstOrCreate(['name' => $row['category']]);
             $categoryId = $category->id;
         }
 
         // Find or create brand
         $brandId = null;
-        if (!empty($row['brand'])) {
+        if (! empty($row['brand'])) {
             $brand = Brand::firstOrCreate(['name' => $row['brand']]);
             $brandId = $brand->id;
         }
 
         // Find or create location
         $locationId = null;
-        if (!empty($row['location'])) {
+        if (! empty($row['location'])) {
             $location = Location::firstOrCreate(['name' => $row['location']]);
             $locationId = $location->id;
         }
@@ -43,7 +42,7 @@ class AssetsImport implements ToModel, WithHeadingRow
         // Standardize status
         $status = 'Available';
         $validStatuses = ['Available', 'Assigned', 'Maintenance', 'Retired', 'Missing'];
-        if (!empty($row['status'])) {
+        if (! empty($row['status'])) {
             $rowStatus = ucfirst(strtolower(trim($row['status'])));
             if (in_array($rowStatus, $validStatuses)) {
                 $status = $rowStatus;
@@ -51,7 +50,7 @@ class AssetsImport implements ToModel, WithHeadingRow
         }
 
         // Ensure date_received is a valid format or null
-        $dateReceived = !empty($row['date_received']) ? date('Y-m-d', strtotime($row['date_received'])) : null;
+        $dateReceived = ! empty($row['date_received']) ? date('Y-m-d', strtotime($row['date_received'])) : null;
 
         // Check if asset already exists by asset_tag to update instead of duplicate
         $asset = Asset::where('asset_tag', $row['asset_code'])->first();
@@ -69,6 +68,7 @@ class AssetsImport implements ToModel, WithHeadingRow
                 'status' => $status,
                 'notes' => $row['notes'] ?? null,
             ]);
+
             return null; // Return null because we manually updated
         }
 

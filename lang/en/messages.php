@@ -1,4 +1,5 @@
 <?php
+
 return [
     'dashboard' => 'Dashboard',
     'master_data' => 'Master Data',
@@ -6,7 +7,7 @@ return [
     'asset' => 'Asset',
     'logout' => 'Logout',
     'ticket_status' => 'Ticket Status Distribution',
-    
+
     // Actions
     'add_new' => 'Add New',
     'save' => 'Save',
@@ -15,7 +16,7 @@ return [
     'delete' => 'Delete',
     'cancel' => 'Cancel',
     'actions' => 'Actions',
-    
+
     // Messages
     'confirm_delete' => 'Are you sure you want to delete this data?',
     'no_data' => 'No data found.',
@@ -24,12 +25,12 @@ return [
     'deleted_success' => 'Data deleted successfully.',
     'deleting_data' => 'Deleting Data',
     'yes_delete' => 'Yes, Delete it!',
-    
+
     // Master Common
     'manage' => 'Manage',
     'list' => 'List',
     'add' => 'Add',
-    
+
     // Specific
     'category' => 'Category',
     'brand' => 'Brand',
@@ -37,7 +38,7 @@ return [
     'vendor' => 'Vendor',
     'department' => 'Division',
     'position' => 'Position',
-    
+
     // Asset Specific
     'receiving_warranty' => 'Receiving & Warranty',
     'date_received' => 'Date Received',
@@ -55,7 +56,7 @@ return [
     'maintenance' => 'Maintenance',
     'retired' => 'Retired',
     'missing' => 'Missing',
-    
+
     // Employee Specific
     'employee_id' => 'Employee ID (NIK)',
     'full_name' => 'Full Name',
@@ -67,7 +68,7 @@ return [
     'search_asset' => 'Search Tag, Name, S/N, DO...',
     'search' => 'Search',
     'clear' => 'Clear',
-    
+
     // Dashboard Specific
     'total_asset' => 'Total Asset',
     'total_user' => 'Total User',
@@ -86,7 +87,7 @@ return [
     'target_asset' => 'Target Asset',
     'today' => 'Today',
     'yesterday' => 'Yesterday',
-    
+
     'operations' => 'Operations',
     'assignment' => 'Handover',
     'asset_assignment' => 'Asset Handover',
@@ -97,7 +98,7 @@ return [
     'setting' => 'Setting',
     'system_overview' => 'System Overview',
     'more_info' => 'More info',
-    
+
     // Generics
     'name' => 'Name',
     'description' => 'Description',
@@ -116,7 +117,7 @@ return [
     'custom_specifications' => 'Custom Specifications (Optional)',
     'add_field' => 'Add Field',
     'no_custom_specifications' => 'No custom specifications defined.',
-    
+
     // Additional Table Headers
     'nik' => 'NIK',
     'assigned_date' => 'Handover Date',
@@ -132,7 +133,7 @@ return [
     'priority' => 'Priority',
     'created' => 'Created',
     'updated' => 'Updated',
-    
+
     // Actions / Buttons
     'reset' => 'Reset',
     'log_maintenance' => 'Log Maintenance',
@@ -145,7 +146,7 @@ return [
     'assign_asset' => 'Handover Asset',
     'return_asset' => 'Return Asset',
     'mark_returned' => 'Mark Returned',
-    
+
     // Statuses
     'all_status' => 'All Status',
     'ongoing' => 'Ongoing',
@@ -163,7 +164,7 @@ return [
     'critical' => 'Critical',
     'used' => 'Used',
     'reserved' => 'Reserved',
-    
+
     // Forms
     'assignment_details' => 'Handover Details',
     'select_available_asset' => 'Select Available Asset',
@@ -203,7 +204,7 @@ return [
     'returned' => 'Returned',
     'filter_date' => 'Filter Date',
     'return_notes' => 'Return Notes',
-    
+
     // Login Management
     'manage_users' => 'Manage Logins',
     'user_management' => 'Login Management',
@@ -304,7 +305,7 @@ return [
     'no_ips_mapped' => 'No IP addresses explicitly mapped to this user.',
     'managed_software' => 'Software Licenses (Under Charge)',
     'no_software_pic' => 'No software licenses assigned as PIC for this user.',
-    
+
     // Sidebar
     'it_assets' => 'IT Assets',
     'all_assets' => 'All Assets',
@@ -321,7 +322,7 @@ return [
     'ping_online' => 'Ping Successful! Device is Online.',
     'ping_offline' => 'Ping Failed! Device is Offline.',
     'ping_error' => 'Error executing ping command.',
-    
+
     // Settings groups
     'general_settings' => 'General Settings',
     'email_settings' => 'Email Settings',
@@ -348,7 +349,7 @@ return [
     'quantity' => 'Quantity',
     'years' => 'Years',
     'fingerprint' => 'Fingerprint',
-    
+
     // Roles & Permissions
     'roles_permissions' => 'Roles & Permissions',
     'roles_desc' => 'Manage permissions accessible by specific roles.',

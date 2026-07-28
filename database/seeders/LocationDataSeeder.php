@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Location;
+use Illuminate\Database\Seeder;
 
 class LocationDataSeeder extends Seeder
 {
@@ -36,15 +36,15 @@ class LocationDataSeeder extends Seeder
             'Gedung A3',
             'Gedung F5',
             'Gedung J',
-            'Pos Security'
+            'Pos Security',
         ];
 
         foreach ($locations as $loc) {
             Location::firstOrCreate([
-                'name' => $loc
+                'name' => $loc,
             ], [
-                'address'     => 'Pabrik Cikande',
-                'description' => 'Lokasi ' . $loc,
+                'address' => 'Pabrik Cikande',
+                'description' => 'Lokasi '.$loc,
             ]);
         }
 

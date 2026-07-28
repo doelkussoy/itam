@@ -13,11 +13,11 @@ class Printer extends Model
         'has_scanner',
         'counter_print',
         'toner_status',
-        'drum_status'
+        'drum_status',
     ];
 
     protected $casts = [
-        'has_scanner' => 'boolean'
+        'has_scanner' => 'boolean',
     ];
 
     public function asset()

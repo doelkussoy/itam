@@ -16,7 +16,7 @@ class AssetAssignment extends Model
         'assigned_date',
         'return_date',
         'status',
-        'notes'
+        'notes',
     ];
 
     public function asset()

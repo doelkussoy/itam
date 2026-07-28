@@ -1,58 +1,58 @@
 # IT Asset Management (ITAM)
 
-A comprehensive IT Asset Management system built with Laravel. This application helps organizations track, manage, and optimize their IT assets, network resources, and helpdesk operations.
+Aplikasi Sistem Manajemen Aset IT dan Helpdesk yang komprehensif, dibangun menggunakan framework Laravel. Aplikasi ini membantu perusahaan dan departemen IT dalam melacak, mengelola, dan mengoptimalkan aset IT, sumber daya jaringan, serta operasional layanan dukungan teknis (helpdesk).
 
-## Features
+## Fitur Utama
 
-- **Role-Based Access Control (RBAC):** Secure access with Super Admin, Admin, and User roles.
-- **Master Data Management:** Easily manage Departments, Vendors, Brands, Locations, Categories, and Employees.
-- **Asset Lifecycle Management:** Track assets from procurement to disposal. Assign (checkout) and return (checkin) assets to employees. Generate asset tags.
-- **Network Management:** Manage VLANs and IP Addresses, including a built-in ping feature to check IP status.
-- **Licenses & Credentials:** Securely store and manage Software Licenses and Password Vaults.
-- **Helpdesk & Maintenance:** Built-in ticketing system for IT support and maintenance tracking for hardware/assets.
-- **Import & Export:** Bulk import and export data using Excel for easy data migration and reporting.
-- **Multi-language & Theming:** Support for multiple languages and theme switching.
+- **Manajemen Hak Akses (RBAC):** Keamanan akses berbasis peran pengguna (Super Admin, Admin, dan User).
+- **Manajemen Data Master:** Kemudahan dalam mengelola data Departemen, Vendor, Merk (Brand), Lokasi, Kategori Aset, Karyawan, serta Master Data PIC IT.
+- **Manajemen Siklus Hidup Aset:** Melacak aset mulai dari pengadaan hingga pembuangan (disposal). Proses peminjaman (checkout) dan pengembalian (checkin) aset kepada karyawan, serta pembuatan label aset (QR Code).
+- **Manajemen Jaringan:** Mengelola VLAN dan Alamat IP secara terstruktur, dilengkapi dengan fitur *ping* otomatis untuk memonitor status IP address perangkat secara *real-time*.
+- **Lisensi & Kredensial:** Menyimpan dan mengelola Lisensi Software serta *Password Vault* (Brankas Password) dengan aman.
+- **Helpdesk & Ticketing:** Sistem tiket pelaporan gangguan IT yang dilengkapi dengan kategori sesuai *jobdesk*, PIC penanggung jawab, template otomatis untuk judul pelaporan, serta pelacakan *timeline* (waktu pembuatan dan waktu penyelesaian tiket).
+- **Import & Export Data:** Mendukung Import dan Export data secara massal menggunakan file Excel untuk memudahkan migrasi data dan pembuatan laporan.
+- **Multi-Bahasa & Tema Modern:** Mendukung peralihan bahasa (Inggris/Indonesia) dan tema modern dengan fitur Mode Gelap (*Dark Mode*) / Mode Terang (*Light Mode*) menggunakan desain *glassmorphism* dan adaptasi komponen UI.
 
-## Tech Stack
+## Teknologi yang Digunakan
 
 - **Backend Framework:** Laravel 12
-- **Authentication & Authorization:** Laravel Breeze, Spatie Laravel Permission
-- **Excel Export/Import:** Maatwebsite Excel
-- **Frontend:** Tailwind CSS, Vite
+- **Autentikasi & Otorisasi:** Laravel Breeze, Spatie Laravel Permission
+- **Export/Import Excel:** Maatwebsite Excel
+- **Frontend & UI:** Bootstrap, AdminLTE 3 (Customisasi modern), Vanilla CSS, Flatpickr
 
-## Installation
+## Instalasi
 
-1. Clone the repository.
-2. Install PHP dependencies:
+1. Clone repositori ini ke komputer Anda.
+2. Install dependensi PHP:
    ```bash
    composer install
    ```
-3. Install frontend dependencies:
+3. Install dependensi Frontend:
    ```bash
    npm install
    ```
-4. Copy `.env.example` to `.env` and configure your database and environment settings.
+4. Salin file konfigurasi `.env.example` menjadi `.env` dan sesuaikan pengaturan database serta environment lainnya:
    ```bash
    cp .env.example .env
    ```
-5. Generate the application key:
+5. Generate *application key*:
    ```bash
    php artisan key:generate
    ```
-6. Run database migrations:
+6. Jalankan migrasi database (beserta seeder jika diperlukan):
    ```bash
    php artisan migrate
    ```
-7. Build frontend assets:
+7. Build aset frontend:
    ```bash
    npm run build
    ```
-8. Start the development server:
+8. Jalankan *development server*:
    ```bash
    php artisan serve
    ```
-   *Note: You can also use `composer run dev` which runs `php artisan serve`, queue listeners, and `npm run dev` concurrently.*
+   *Catatan: Anda juga dapat menggunakan perintah `composer run dev` yang akan menjalankan `php artisan serve`, queue worker, dan `npm run dev` secara bersamaan.*
 
-## License
+## Lisensi
 
-This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proyek ini adalah perangkat lunak *open-source* di bawah lisensi [MIT license](https://opensource.org/licenses/MIT).

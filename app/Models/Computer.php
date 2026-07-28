@@ -14,7 +14,7 @@ class Computer extends Model
         'hdd',
         'gpu',
         'os',
-        'office'
+        'office',
     ];
 
     public function asset()

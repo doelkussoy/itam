@@ -11,12 +11,12 @@ class DepartmentImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         // Skip if name is empty
-        if (!isset($row['name']) || empty($row['name'])) {
+        if (! isset($row['name']) || empty($row['name'])) {
             return null;
         }
 
         return new Department([
-            'name'        => $row['name'],
+            'name' => $row['name'],
             'description' => $row['description'] ?? null,
         ]);
     }

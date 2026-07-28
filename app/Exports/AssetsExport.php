@@ -4,11 +4,11 @@ namespace App\Exports;
 
 use App\Models\Asset;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class AssetsExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
+class AssetsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping
 {
     public function collection()
     {
@@ -30,7 +30,7 @@ class AssetsExport implements FromCollection, WithHeadings, WithMapping, ShouldA
             'Warranty (Months)',
             'Status',
             'Notes',
-            'Created At'
+            'Created At',
         ];
     }
 

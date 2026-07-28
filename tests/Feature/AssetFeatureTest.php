@@ -2,12 +2,10 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use App\Models\User;
-use App\Models\Asset;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
+use Tests\TestCase;
 
 class AssetFeatureTest extends TestCase
 {
@@ -16,7 +14,7 @@ class AssetFeatureTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Setup Roles
         Role::firstOrCreate(['name' => 'Admin']);
         Role::firstOrCreate(['name' => 'User']);

@@ -34,7 +34,7 @@ class StoreAssetRequest extends FormRequest
             'warranty_months' => 'nullable|integer|min:0',
             'status' => 'required|in:Available,Assigned,Maintenance,Retired,Missing',
             'notes' => 'nullable|string',
-            'quantity' => 'nullable|integer|min:1'
+            'quantity' => 'nullable|integer|min:1',
         ];
     }
 }

@@ -8,11 +8,11 @@ class Monitor extends Model
 {
     protected $fillable = [
         'asset_id',
-        'size'
+        'size',
     ];
 
     protected $casts = [
-        'size' => 'decimal:1'
+        'size' => 'decimal:1',
     ];
 
     public function asset()

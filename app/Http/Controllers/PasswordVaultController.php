@@ -13,10 +13,10 @@ class PasswordVaultController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('device_name', 'like', "%$search%")
-                  ->orWhere('username', 'like', "%$search%")
-                  ->orWhere('category', 'like', "%$search%");
+                    ->orWhere('username', 'like', "%$search%")
+                    ->orWhere('category', 'like', "%$search%");
             });
         }
 
@@ -33,6 +33,7 @@ class PasswordVaultController extends Controller
     public function create()
     {
         $categories = PasswordVault::select('category')->distinct()->pluck('category');
+
         return view('password_vaults.create', compact('categories'));
     }
 
@@ -43,7 +44,7 @@ class PasswordVaultController extends Controller
             'username' => 'required|string|max:255',
             'encrypted_password' => 'required|string',
             'category' => 'required|string|max:255',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ]);
 
         try {
@@ -54,15 +55,17 @@ class PasswordVaultController extends Controller
                 'category' => $request->category,
                 'notes' => $request->notes,
             ]);
+
             return redirect()->route('password_vaults.index', request()->query())->with('success', __('messages.created_success'));
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Failed to save password: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to save password: '.$e->getMessage());
         }
     }
 
     public function edit(PasswordVault $passwordVault)
     {
         $categories = PasswordVault::select('category')->distinct()->pluck('category');
+
         return view('password_vaults.edit', compact('passwordVault', 'categories'));
     }
 
@@ -73,7 +76,7 @@ class PasswordVaultController extends Controller
             'username' => 'required|string|max:255',
             'encrypted_password' => 'required|string',
             'category' => 'required|string|max:255',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ]);
 
         try {
@@ -84,15 +87,17 @@ class PasswordVaultController extends Controller
                 'category' => $request->category,
                 'notes' => $request->notes,
             ]);
+
             return redirect()->route('password_vaults.index', request()->query())->with('success', __('messages.updated_success'));
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Failed to update password: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to update password: '.$e->getMessage());
         }
     }
 
     public function destroy(PasswordVault $passwordVault)
     {
         $passwordVault->delete();
+
         return redirect()->route('password_vaults.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 }

@@ -2,17 +2,19 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Asset;
-use App\Models\Category;
 use App\Models\Brand;
-use App\Models\Location;
+use App\Models\Category;
+use App\Models\Department;
 use App\Models\Employee;
 use App\Models\IpAddress;
-use App\Models\Vlan;
-use App\Models\SoftwareLicense;
+use App\Models\Location;
 use App\Models\PasswordVault;
+use App\Models\Setting;
+use App\Models\SoftwareLicense;
+use App\Models\Vlan;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class SampleITAMDataSeeder extends Seeder
 {
@@ -24,66 +26,66 @@ class SampleITAMDataSeeder extends Seeder
                 'key' => 'app_name',
                 'value' => 'ITAM Enterprise',
                 'type' => 'text',
-                'group' => 'general'
+                'group' => 'general',
             ],
             [
                 'key' => 'company_name',
                 'value' => 'PT CBA Chemical Industry',
                 'type' => 'text',
-                'group' => 'general'
+                'group' => 'general',
             ],
             [
                 'key' => 'company_email',
                 'value' => 'it.admin@cba.co.id',
                 'type' => 'text',
-                'group' => 'general'
+                'group' => 'general',
             ],
             [
                 'key' => 'smtp_host',
                 'value' => 'smtp.mailtrap.io',
                 'type' => 'text',
-                'group' => 'email'
+                'group' => 'email',
             ],
             [
                 'key' => 'smtp_port',
                 'value' => '2525',
                 'type' => 'text',
-                'group' => 'email'
+                'group' => 'email',
             ],
             [
                 'key' => 'smtp_username',
                 'value' => 'null',
                 'type' => 'text',
-                'group' => 'email'
+                'group' => 'email',
             ],
             [
                 'key' => 'smtp_password',
                 'value' => 'null',
                 'type' => 'text',
-                'group' => 'email'
+                'group' => 'email',
             ],
             [
                 'key' => 'email_notification',
                 'value' => '1',
                 'type' => 'boolean',
-                'group' => 'system'
+                'group' => 'system',
             ],
             [
                 'key' => 'maintenance_mode',
                 'value' => '0',
                 'type' => 'boolean',
-                'group' => 'system'
+                'group' => 'system',
             ],
             [
                 'key' => 'auto_backup',
                 'value' => '1',
                 'type' => 'boolean',
-                'group' => 'system'
-            ]
+                'group' => 'system',
+            ],
         ];
 
         foreach ($defaultSettings as $setting) {
-            \App\Models\Setting::firstOrCreate(['key' => $setting['key']], $setting);
+            Setting::firstOrCreate(['key' => $setting['key']], $setting);
         }
 
         // 1. Seed VLANs
@@ -100,7 +102,7 @@ class SampleITAMDataSeeder extends Seeder
             'expiry_date' => null,
             'total_seats' => 100,
             'pic_id' => $picId,
-            'notes' => 'Volume license for office PCs'
+            'notes' => 'Volume license for office PCs',
         ]);
 
         SoftwareLicense::firstOrCreate(['name' => 'Office Home & Business 2021'], [
@@ -108,7 +110,7 @@ class SampleITAMDataSeeder extends Seeder
             'expiry_date' => null,
             'total_seats' => 50,
             'pic_id' => $picId,
-            'notes' => 'Retail keys for operations staff'
+            'notes' => 'Retail keys for operations staff',
         ]);
 
         SoftwareLicense::firstOrCreate(['name' => 'AnyDesk Premium'], [
@@ -116,7 +118,7 @@ class SampleITAMDataSeeder extends Seeder
             'expiry_date' => Carbon::now()->addDays(20), // Expirying soon warning!
             'total_seats' => 20,
             'pic_id' => $picId,
-            'notes' => 'AnyDesk license for IT remote control'
+            'notes' => 'AnyDesk license for IT remote control',
         ]);
 
         // 3. Seed Password Vault entries
@@ -124,21 +126,21 @@ class SampleITAMDataSeeder extends Seeder
             'username' => 'admin',
             'encrypted_password' => 'CBA_Lab_Nvr_2026',
             'category' => 'CCTV',
-            'notes' => 'Located in Laboratory server room rack'
+            'notes' => 'Located in Laboratory server room rack',
         ]);
 
         PasswordVault::firstOrCreate(['device_name' => 'Switch Core CBA'], [
             'username' => 'admin',
             'encrypted_password' => 'switch_core_secret_password',
             'category' => 'Switch',
-            'notes' => 'Backup config on \\\\cba-nas\\configs\\'
+            'notes' => 'Backup config on \\\\cba-nas\\configs\\',
         ]);
 
         PasswordVault::firstOrCreate(['device_name' => 'IT Support Email'], [
             'username' => 'support@cba.co.id',
             'encrypted_password' => 'Sup_CBA_Pabrik_99',
             'category' => 'Email',
-            'notes' => 'Shared mailbox password'
+            'notes' => 'Shared mailbox password',
         ]);
 
         // 4. Load or check Categories/Brands/Locations
@@ -150,12 +152,24 @@ class SampleITAMDataSeeder extends Seeder
         $cctvCat = Category::where('name', 'CCTV')->first();
 
         // Create categories if they don't exist
-        if (!$compCat) $compCat = Category::create(['name' => 'Komputer', 'description' => 'PC Client']);
-        if (!$laptopCat) $laptopCat = Category::create(['name' => 'Laptop', 'description' => 'Laptop Client']);
-        if (!$printCat) $printCat = Category::create(['name' => 'Printer', 'description' => 'Printer Client']);
-        if (!$switchCat) $switchCat = Category::create(['name' => 'Switch', 'description' => 'Switch Network']);
-        if (!$apCat) $apCat = Category::create(['name' => 'Access Point', 'description' => 'WiFi Access Point']);
-        if (!$cctvCat) $cctvCat = Category::create(['name' => 'CCTV', 'description' => 'Camera CCTV']);
+        if (! $compCat) {
+            $compCat = Category::create(['name' => 'Komputer', 'description' => 'PC Client']);
+        }
+        if (! $laptopCat) {
+            $laptopCat = Category::create(['name' => 'Laptop', 'description' => 'Laptop Client']);
+        }
+        if (! $printCat) {
+            $printCat = Category::create(['name' => 'Printer', 'description' => 'Printer Client']);
+        }
+        if (! $switchCat) {
+            $switchCat = Category::create(['name' => 'Switch', 'description' => 'Switch Network']);
+        }
+        if (! $apCat) {
+            $apCat = Category::create(['name' => 'Access Point', 'description' => 'WiFi Access Point']);
+        }
+        if (! $cctvCat) {
+            $cctvCat = Category::create(['name' => 'CCTV', 'description' => 'Camera CCTV']);
+        }
 
         $brandHP = Brand::firstOrCreate(['name' => 'HP']);
         $brandDell = Brand::firstOrCreate(['name' => 'Dell']);
@@ -173,21 +187,21 @@ class SampleITAMDataSeeder extends Seeder
         $allEmps = Employee::all();
         if ($allEmps->count() >= 2) {
             $supervisor = $allEmps[0];
-            $allEmps->each(function($emp, $idx) use ($supervisor, $locOffice) {
+            $allEmps->each(function ($emp, $idx) use ($supervisor, $locOffice) {
                 if ($idx > 0) {
                     $emp->update([
                         'supervisor_id' => $supervisor->id,
                         'location_id' => $locOffice->id,
-                        'extension' => '10' . $idx,
-                        'anydesk_id' => '98765432' . $idx,
-                        'anydesk_password' => 'pass_any_' . $idx
+                        'extension' => '10'.$idx,
+                        'anydesk_id' => '98765432'.$idx,
+                        'anydesk_password' => 'pass_any_'.$idx,
                     ]);
                 }
             });
         }
 
         // 5. Seed Assets with Specification details
-        
+
         // Asset 1: PC
         $asset1 = Asset::firstOrCreate(['asset_tag' => 'CBA-PC-0001'], [
             'name' => 'HP ProDesk 600 G6 MT',
@@ -199,7 +213,7 @@ class SampleITAMDataSeeder extends Seeder
             'delivery_order_number' => 'DO-HP-2024-001',
             'warranty_months' => 36, // active warranty
             'status' => 'Assigned',
-            'notes' => 'Laboratory computer client'
+            'notes' => 'Laboratory computer client',
         ]);
         $asset1->computer()->updateOrCreate([], [
             'cpu' => 'Intel Core i5-10500 @ 3.10GHz',
@@ -208,7 +222,7 @@ class SampleITAMDataSeeder extends Seeder
             'hdd' => 1000,
             'gpu' => 'Intel UHD Graphics 630',
             'os' => 'Windows 11 Pro',
-            'office' => 'Office Home & Business 2021'
+            'office' => 'Office Home & Business 2021',
         ]);
 
         // Asset 2: Laptop (Expiring Warranty)
@@ -222,7 +236,7 @@ class SampleITAMDataSeeder extends Seeder
             'delivery_order_number' => 'DO-DELL-2025-09',
             'warranty_months' => 12,
             'status' => 'Assigned',
-            'notes' => 'HRD Staff Laptop'
+            'notes' => 'HRD Staff Laptop',
         ]);
         $asset2->computer()->updateOrCreate([], [
             'cpu' => 'Intel Core i5-1135G7 @ 2.40GHz',
@@ -231,7 +245,7 @@ class SampleITAMDataSeeder extends Seeder
             'hdd' => 0,
             'gpu' => 'Intel Iris Xe Graphics',
             'os' => 'Windows 10 Pro',
-            'office' => 'Office Home & Business 2019'
+            'office' => 'Office Home & Business 2019',
         ]);
 
         // Asset 3: Printer
@@ -245,7 +259,7 @@ class SampleITAMDataSeeder extends Seeder
             'delivery_order_number' => 'DO-EPS-2022',
             'warranty_months' => 12,
             'status' => 'Available',
-            'notes' => 'Epson desk printer'
+            'notes' => 'Epson desk printer',
         ]);
         $asset3->printer()->updateOrCreate([], [
             'type' => 'Inkjet',
@@ -253,7 +267,7 @@ class SampleITAMDataSeeder extends Seeder
             'has_scanner' => true,
             'counter_print' => 12450,
             'toner_status' => 'BK: 60%, C: 40%, M: 40%, Y: 50%',
-            'drum_status' => 'OK'
+            'drum_status' => 'OK',
         ]);
 
         // Asset 4: Network Switch
@@ -267,7 +281,7 @@ class SampleITAMDataSeeder extends Seeder
             'delivery_order_number' => 'DO-MT-2021',
             'warranty_months' => 12,
             'status' => 'Available',
-            'notes' => 'Core switch laboratory rack'
+            'notes' => 'Core switch laboratory rack',
         ]);
         $asset4->networkDetail()->updateOrCreate([], [
             'firmware' => 'RouterOS v7.8',
@@ -276,7 +290,7 @@ class SampleITAMDataSeeder extends Seeder
             'backup_config_path' => '\\\\cba-nas\\configs\\switches\\crs326-lab.backup',
             'ssid' => null,
             'wifi_password' => null,
-            'controller' => null
+            'controller' => null,
         ]);
 
         // Asset 5: Access Point
@@ -290,7 +304,7 @@ class SampleITAMDataSeeder extends Seeder
             'delivery_order_number' => 'DO-AP-25',
             'warranty_months' => 24,
             'status' => 'Available',
-            'notes' => 'Ceiling mounted AP HRD room'
+            'notes' => 'Ceiling mounted AP HRD room',
         ]);
         $asset5->networkDetail()->updateOrCreate([], [
             'firmware' => 'AP-v6.5.28',
@@ -299,7 +313,7 @@ class SampleITAMDataSeeder extends Seeder
             'backup_config_path' => null,
             'ssid' => 'CBA Chemical Industry Wifi',
             'wifi_password' => 'cba_wifi_pabrik_2026',
-            'controller' => '192.168.5.5 (UniFi Server)'
+            'controller' => '192.168.5.5 (UniFi Server)',
         ]);
 
         // Asset 6: CCTV Camera
@@ -313,27 +327,27 @@ class SampleITAMDataSeeder extends Seeder
             'delivery_order_number' => 'DO-HIK-2015',
             'warranty_months' => 36,
             'status' => 'Available',
-            'notes' => 'Pos Security main gate dome camera'
+            'notes' => 'Pos Security main gate dome camera',
         ]);
         $asset6->cctv()->updateOrCreate([], [
             'nvr_channel' => 1,
             'firmware' => 'HIK-IPC-V5.5.82',
             'username' => 'admin',
-            'password' => 'Hikvision_CCTV_Gate_26'
+            'password' => 'Hikvision_CCTV_Gate_26',
         ]);
 
         // 6. Seed IP Addresses linked to VLANs and Assets
         $emp1 = Employee::first();
-        if (!$emp1) {
-            $defaultDepartment = \App\Models\Department::firstOrCreate(['name' => 'General'], ['description' => 'General Department']);
+        if (! $emp1) {
+            $defaultDepartment = Department::firstOrCreate(['name' => 'General'], ['description' => 'General Department']);
             $emp1 = Employee::create([
                 'employee_id' => 'EMP-DEFAULT',
                 'name' => 'Default Employee',
-                'status' => 'Active'
+                'status' => 'Active',
             ]);
         }
         $empId = $emp1->id;
-        
+
         IpAddress::firstOrCreate(['ip_address' => '192.168.2.10'], [
             'mac_address' => 'AA:BB:CC:11:22:33',
             'asset_id' => $asset1->id,
@@ -342,7 +356,7 @@ class SampleITAMDataSeeder extends Seeder
             'gateway' => '192.168.2.1',
             'dns' => '8.8.8.8, 8.8.4.4',
             'status' => 'Used',
-            'notes' => 'Assigned to lab PC'
+            'notes' => 'Assigned to lab PC',
         ]);
 
         IpAddress::firstOrCreate(['ip_address' => '192.168.2.15'], [
@@ -353,7 +367,7 @@ class SampleITAMDataSeeder extends Seeder
             'gateway' => '192.168.2.1',
             'dns' => '8.8.8.8, 8.8.4.4',
             'status' => 'Used',
-            'notes' => 'Assigned to HRD laptop'
+            'notes' => 'Assigned to HRD laptop',
         ]);
 
         IpAddress::firstOrCreate(['ip_address' => '192.168.5.50'], [
@@ -364,7 +378,7 @@ class SampleITAMDataSeeder extends Seeder
             'gateway' => '192.168.5.1',
             'dns' => '8.8.8.8',
             'status' => 'Used',
-            'notes' => 'Switch Core Management IP'
+            'notes' => 'Switch Core Management IP',
         ]);
 
         IpAddress::firstOrCreate(['ip_address' => '192.168.6.100'], [
@@ -375,15 +389,15 @@ class SampleITAMDataSeeder extends Seeder
             'gateway' => '192.168.6.1',
             'dns' => '8.8.8.8',
             'status' => 'Used',
-            'notes' => 'Pos Security CCTV camera IP'
+            'notes' => 'Pos Security CCTV camera IP',
         ]);
-        
+
         // 7. Seed assignments history
         $asset1->assignments()->create([
             'employee_id' => $empId,
             'assigned_date' => Carbon::now()->subYears(2)->format('Y-m-d'),
             'status' => 'Assigned',
-            'notes' => 'Initial assign on receive'
+            'notes' => 'Initial assign on receive',
         ]);
 
         // 8. Seed some maintenance logs
@@ -393,7 +407,7 @@ class SampleITAMDataSeeder extends Seeder
             'cost' => 850000,
             'start_date' => Carbon::now()->subMonths(6)->format('Y-m-d'),
             'end_date' => Carbon::now()->subMonths(6)->addDays(1)->format('Y-m-d'),
-            'status' => 'Completed'
+            'status' => 'Completed',
         ]);
 
         $asset1->maintenances()->create([
@@ -402,7 +416,7 @@ class SampleITAMDataSeeder extends Seeder
             'cost' => 150000,
             'start_date' => Carbon::now()->subMonths(1)->format('Y-m-d'),
             'end_date' => Carbon::now()->subMonths(1)->format('Y-m-d'),
-            'status' => 'Completed'
+            'status' => 'Completed',
         ]);
     }
 }

@@ -16,11 +16,11 @@ class NetworkDetail extends Model
         'backup_config_path',
         'ssid',
         'wifi_password',
-        'controller'
+        'controller',
     ];
 
     protected $casts = [
-        'wifi_password' => 'encrypted'
+        'wifi_password' => 'encrypted',
     ];
 
     public function asset()

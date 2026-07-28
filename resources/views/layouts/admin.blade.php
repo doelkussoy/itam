@@ -19,6 +19,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
   <!-- Select2 -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+  <!-- Flatpickr -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
   <!-- ═══════════════════════════════════════════════════════
        Hallmark · Tally Theme — Admin Adaptation
@@ -862,6 +864,51 @@
       background: var(--color-paper-1) !important;
       color: var(--color-ink-0) !important;
     }
+    /* Dark mode Flatpickr */
+    body.dark-mode .flatpickr-calendar {
+      background: var(--color-paper-1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--color-paper-2);
+    }
+    body.dark-mode .flatpickr-calendar::before,
+    body.dark-mode .flatpickr-calendar::after {
+      border-bottom-color: var(--color-paper-1);
+    }
+    body.dark-mode .flatpickr-day,
+    body.dark-mode .flatpickr-weekday,
+    body.dark-mode .flatpickr-current-month .flatpickr-monthDropdown-months,
+    body.dark-mode .flatpickr-current-month input.cur-year,
+    body.dark-mode .flatpickr-time input,
+    body.dark-mode .flatpickr-time .flatpickr-time-separator,
+    body.dark-mode .flatpickr-time .flatpickr-am-pm {
+      color: var(--color-ink-1);
+    }
+    body.dark-mode .flatpickr-day.prevMonthDay,
+    body.dark-mode .flatpickr-day.nextMonthDay {
+      color: var(--color-ink-3);
+    }
+    body.dark-mode .flatpickr-day:hover,
+    body.dark-mode .flatpickr-day:focus {
+      background: var(--color-paper-2);
+      border-color: var(--color-paper-2);
+    }
+    body.dark-mode .flatpickr-day.selected {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: white;
+    }
+    body.dark-mode .flatpickr-months .flatpickr-prev-month svg,
+    body.dark-mode .flatpickr-months .flatpickr-next-month svg {
+      fill: var(--color-ink-1);
+    }
+    body.dark-mode .flatpickr-months .flatpickr-prev-month:hover svg,
+    body.dark-mode .flatpickr-months .flatpickr-next-month:hover svg {
+      fill: var(--color-accent);
+    }
+    body.dark-mode .flatpickr-time input:hover,
+    body.dark-mode .flatpickr-time input:focus {
+      background: var(--color-paper-2);
+    }
   </style>
   @stack('styles')
 </head>
@@ -1059,6 +1106,12 @@
               <p>{{ __('messages.ticket') ?? 'Ticket' }}</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{{ route('pics.index') }}" class="nav-link {{ request()->routeIs('pics.*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-user-tie"></i>
+              <p>Data PIC</p>
+            </a>
+          </li>
           @endcan
 
           <!-- Network -->
@@ -1199,10 +1252,20 @@
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
   $(document).ready(function() {
     $('.select2').select2({ width: 'resolve' });
+    
+    // Initialize Flatpickr for elements with .flatpickr-datetime
+    flatpickr(".flatpickr-datetime", {
+        enableTime: true,
+        dateFormat: "Y-m-d\\TH:i",
+        time_24hr: true,
+        altInput: true,
+        altFormat: "d M Y H:i",
+    });
     $(document).on('select2:open', () => {
       document.querySelector('.select2-search__field').focus();
     });

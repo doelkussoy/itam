@@ -1,4 +1,5 @@
 <?php
+
 return [
     'dashboard' => 'Beranda',
     'master_data' => 'Data Induk',
@@ -305,7 +306,7 @@ return [
     'no_ips_mapped' => 'Tidak ada alamat IP yang secara eksplisit dipetakan ke user ini.',
     'managed_software' => 'Lisensi Perangkat Lunak (Tanggung Jawab)',
     'no_software_pic' => 'Tidak ada lisensi software yang ditugaskan sebagai PIC untuk user ini.',
-    
+
     // Sidebar
     'it_assets' => 'Aset IT',
     'all_assets' => 'Semua Aset',
@@ -322,7 +323,7 @@ return [
     'ping_online' => 'Ping Berhasil! Perangkat Online.',
     'ping_offline' => 'Ping Gagal! Perangkat Offline.',
     'ping_error' => 'Gagal mengeksekusi perintah ping.',
-    
+
     // Settings groups
     'general_settings' => 'Pengaturan Umum',
     'email_settings' => 'Pengaturan Email',

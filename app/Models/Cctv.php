@@ -13,11 +13,11 @@ class Cctv extends Model
         'nvr_channel',
         'firmware',
         'username',
-        'password'
+        'password',
     ];
 
     protected $casts = [
-        'password' => 'encrypted'
+        'password' => 'encrypted',
     ];
 
     public function asset()

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Department;
+use Illuminate\Database\Seeder;
 
 class UpdateDepartmentSeeder extends Seeder
 {
@@ -32,7 +32,7 @@ class UpdateDepartmentSeeder extends Seeder
             'Warehouse' => 'Gudang Penyimpanan',
             'Maintenance' => 'Divisi Pemeliharaan Aset',
             'HRD' => 'Human Resources Development (Pengembangan Sumber Daya Manusia)',
-            'Purchasing' => 'Divisi Pembelian dan Pengadaan'
+            'Purchasing' => 'Divisi Pembelian dan Pengadaan',
         ];
 
         foreach ($descriptions as $name => $desc) {

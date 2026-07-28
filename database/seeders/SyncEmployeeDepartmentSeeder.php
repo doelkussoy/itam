@@ -31,8 +31,9 @@ class SyncEmployeeDepartmentSeeder extends Seeder
                 ->select('department_id')
                 ->first();
 
-            if (!$position || !$position->department_id) {
+            if (! $position || ! $position->department_id) {
                 $skipped++;
+
                 continue;
             }
 

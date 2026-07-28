@@ -2,9 +2,13 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Gate;
+use App\Models\Setting;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive();
 
         if (env('APP_ENV') !== 'local' || request()->header('x-forwarded-proto') === 'https') {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
+            URL::forceScheme('https');
         }
 
         // Implicitly grant "Super Admin" role all permissions
@@ -33,12 +37,12 @@ class AppServiceProvider extends ServiceProvider
         });
 
         try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
-                $settings = \App\Models\Setting::pluck('value', 'key')->toArray();
-                \Illuminate\Support\Facades\View::share('settings', $settings);
-                \Illuminate\Support\Facades\View::share('app_name', $settings['app_name'] ?? 'ITAM Enterprise');
-                \Illuminate\Support\Facades\View::share('company_name', $settings['company_name'] ?? 'PT CBA Chemical Industry');
-                \Illuminate\Support\Facades\View::share('company_email', $settings['company_email'] ?? 'itcbachemical23@gmail.com');
+            if (Schema::hasTable('settings')) {
+                $settings = Setting::pluck('value', 'key')->toArray();
+                View::share('settings', $settings);
+                View::share('app_name', $settings['app_name'] ?? 'ITAM Enterprise');
+                View::share('company_name', $settings['company_name'] ?? 'PT CBA Chemical Industry');
+                View::share('company_email', $settings['company_email'] ?? 'itcbachemical23@gmail.com');
 
                 // Dynamic Mail Configuration
                 if (($settings['email_notification'] ?? '0') == '1') {
@@ -52,14 +56,14 @@ class AppServiceProvider extends ServiceProvider
                     ]);
                 }
             } else {
-                \Illuminate\Support\Facades\View::share('app_name', 'ITAM Enterprise');
-                \Illuminate\Support\Facades\View::share('company_name', 'PT CBA Chemical Industry');
-                \Illuminate\Support\Facades\View::share('company_email', 'itcbachemical23@gmail.com');
+                View::share('app_name', 'ITAM Enterprise');
+                View::share('company_name', 'PT CBA Chemical Industry');
+                View::share('company_email', 'itcbachemical23@gmail.com');
             }
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\View::share('app_name', 'ITAM Enterprise');
-            \Illuminate\Support\Facades\View::share('company_name', 'PT CBA Chemical Industry');
-            \Illuminate\Support\Facades\View::share('company_email', 'itcbachemical23@gmail.com');
+            View::share('app_name', 'ITAM Enterprise');
+            View::share('company_name', 'PT CBA Chemical Industry');
+            View::share('company_email', 'itcbachemical23@gmail.com');
         }
     }
 }

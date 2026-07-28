@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CategoryExport;
+use App\Imports\CategoryImport;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CategoryExport;
-use App\Imports\CategoryImport;
 
 class CategoryController extends Controller
 {
@@ -15,12 +15,13 @@ class CategoryController extends Controller
         $query = Category::query();
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                  ->orWhere('description', 'like', "%$search%");
+                    ->orWhere('description', 'like', "%$search%");
             });
         }
         $categories = $query->orderBy('name')->paginate(10)->appends($request->all());
+
         return view('master.categories.index', compact('categories'));
     }
 
@@ -43,6 +44,7 @@ class CategoryController extends Controller
         }
 
         Category::create($data);
+
         return redirect()->route('categories.index', request()->query())->with('success', __('messages.created_success'));
     }
 
@@ -54,7 +56,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'name' => 'required|string|max:255|unique:categories,name,'.$category->id,
             'description' => 'nullable|string',
             'spec_definitions' => 'nullable|string',
         ]);
@@ -65,12 +67,14 @@ class CategoryController extends Controller
         }
 
         $category->update($data);
+
         return redirect()->route('categories.index', request()->query())->with('success', __('messages.updated_success'));
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
+
         return redirect()->route('categories.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 
@@ -87,9 +91,10 @@ class CategoryController extends Controller
 
         try {
             Excel::import(new CategoryImport, $request->file('file'));
+
             return redirect()->route('categories.index', request()->query())->with('success', 'Data imported successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('categories.index', request()->query())->with('error', 'Error importing data: ' . $e->getMessage());
+            return redirect()->route('categories.index', request()->query())->with('error', 'Error importing data: '.$e->getMessage());
         }
     }
 }

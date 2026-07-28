@@ -10,6 +10,7 @@ class VendorController extends Controller
     public function index()
     {
         $vendors = Vendor::orderBy('name')->paginate(10);
+
         return view('master.vendors.index', compact('vendors'));
     }
 
@@ -29,6 +30,7 @@ class VendorController extends Controller
         ]);
 
         Vendor::create($request->all());
+
         return redirect()->route('vendors.index', request()->query())->with('success', __('messages.created_success'));
     }
 
@@ -48,12 +50,14 @@ class VendorController extends Controller
         ]);
 
         $vendor->update($request->all());
+
         return redirect()->route('vendors.index', request()->query())->with('success', __('messages.updated_success'));
     }
 
     public function destroy(Vendor $vendor)
     {
         $vendor->delete();
+
         return redirect()->route('vendors.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 }

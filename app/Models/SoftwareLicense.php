@@ -15,11 +15,11 @@ class SoftwareLicense extends Model
         'expiry_date',
         'total_seats',
         'pic_id',
-        'notes'
+        'notes',
     ];
 
     protected $casts = [
-        'expiry_date' => 'date'
+        'expiry_date' => 'date',
     ];
 
     public function pic()

@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -17,7 +17,7 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
         $permissions = [
@@ -46,7 +46,7 @@ class RolePermissionSeeder extends Seeder
             'manage assignments',
             'manage maintenance',
             'manage tickets',
-            'manage network'
+            'manage network',
         ]);
 
         // Admin
@@ -59,7 +59,7 @@ class RolePermissionSeeder extends Seeder
 
         // Create Default Users
         $superAdmin = User::firstOrCreate([
-            'email' => 'superadmin@cba.co.id'
+            'email' => 'superadmin@cba.co.id',
         ], [
             'name' => 'Super Admin',
             'username' => 'superadmin',
@@ -69,7 +69,7 @@ class RolePermissionSeeder extends Seeder
         $superAdmin->assignRole('Super Admin');
 
         $admin = User::firstOrCreate([
-            'email' => 'admin@cba.co.id'
+            'email' => 'admin@cba.co.id',
         ], [
             'name' => 'Admin',
             'username' => 'admin',
@@ -79,7 +79,7 @@ class RolePermissionSeeder extends Seeder
         $admin->assignRole('Admin');
 
         $user = User::firstOrCreate([
-            'email' => 'user@cba.co.id'
+            'email' => 'user@cba.co.id',
         ], [
             'name' => 'User Operation',
             'username' => 'user',

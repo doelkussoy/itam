@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\IpAddress;
+use App\Exports\IpAddressExport;
 use App\Models\Asset;
 use App\Models\Employee;
+use App\Models\IpAddress;
 use App\Models\Vlan;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\IpAddressExport;
 
 class IpAddressController extends Controller
 {
@@ -43,6 +44,7 @@ class IpAddressController extends Controller
         }
 
         $ips = $query->orderByRaw('INET_ATON(ip_address)')->paginate(15)->appends($request->all());
+
         return view('ips.index', compact('ips'));
     }
 
@@ -51,13 +53,14 @@ class IpAddressController extends Controller
         $assets = Asset::orderBy('name')->get();
         $employees = Employee::orderBy('name')->get();
         $vlans = Vlan::orderBy('vlan_number')->get();
+
         return view('ips.create', compact('assets', 'employees', 'vlans'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'ip_address' => ['required', 'ip', \Illuminate\Validation\Rule::unique('ip_addresses')->whereNull('deleted_at')],
+            'ip_address' => ['required', 'ip', Rule::unique('ip_addresses')->whereNull('deleted_at')],
             'mac_address' => 'nullable|string|max:17',
             'asset_id' => 'nullable|exists:assets,id',
             'employee_id' => 'nullable|exists:employees,id',
@@ -65,7 +68,7 @@ class IpAddressController extends Controller
             'gateway' => 'nullable|ip',
             'dns' => 'nullable|string',
             'status' => 'required|in:Available,Used,Reserved',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ]);
 
         IpAddress::create($request->all());
@@ -78,13 +81,14 @@ class IpAddressController extends Controller
         $assets = Asset::orderBy('name')->get();
         $employees = Employee::orderBy('name')->get();
         $vlans = Vlan::orderBy('vlan_number')->get();
+
         return view('ips.edit', compact('ip', 'assets', 'employees', 'vlans'));
     }
 
     public function update(Request $request, IpAddress $ip)
     {
         $request->validate([
-            'ip_address' => ['required', 'ip', \Illuminate\Validation\Rule::unique('ip_addresses')->ignore($ip->id)->whereNull('deleted_at')],
+            'ip_address' => ['required', 'ip', Rule::unique('ip_addresses')->ignore($ip->id)->whereNull('deleted_at')],
             'mac_address' => 'nullable|string|max:17',
             'asset_id' => 'nullable|exists:assets,id',
             'employee_id' => 'nullable|exists:employees,id',
@@ -92,7 +96,7 @@ class IpAddressController extends Controller
             'gateway' => 'nullable|ip',
             'dns' => 'nullable|string',
             'status' => 'required|in:Available,Used,Reserved',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ]);
 
         $ip->update($request->all());
@@ -103,14 +107,14 @@ class IpAddressController extends Controller
     public function destroy(IpAddress $ip)
     {
         $ip->delete();
+
         return redirect()->route('ips.index', request()->query())->with('success', 'IP Address deleted successfully.');
     }
 
-    
     public function updateStatus(Request $request, IpAddress $ip)
     {
         $request->validate([
-            'status' => 'required|in:Available,Used,Reserved'
+            'status' => 'required|in:Available,Used,Reserved',
         ]);
 
         $ip->update(['status' => $request->status]);
@@ -129,9 +133,9 @@ class IpAddressController extends Controller
 
         $str = PHP_OS;
         if (stristr($str, 'win')) {
-            $command = 'ping -n 1 -w 1000 ' . escapeshellarg($ipAddress);
+            $command = 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress);
         } else {
-            $command = 'ping -c 1 -W 1 ' . escapeshellarg($ipAddress);
+            $command = 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
         }
 
         exec($command, $outcome, $status);
@@ -142,7 +146,7 @@ class IpAddressController extends Controller
             'ip' => $ipAddress,
             'online' => $online,
             'status' => $online ? 'Online' : 'Offline',
-            'output' => implode("\n", $outcome)
+            'output' => implode("\n", $outcome),
         ]);
     }
 }

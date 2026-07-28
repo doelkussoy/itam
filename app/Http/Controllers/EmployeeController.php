@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
+use App\Exports\EmployeeExport;
+use App\Http\Requests\StoreEmployeeRequest;
+use App\Http\Requests\UpdateEmployeeRequest;
+use App\Imports\EmployeeImport;
 use App\Models\Department;
+use App\Models\Employee;
 use App\Models\Location;
 use Illuminate\Http\Request;
-use App\Imports\EmployeeImport;
-use App\Exports\EmployeeExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EmployeeController extends Controller
@@ -18,12 +20,12 @@ class EmployeeController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                  ->orWhere('employee_id', 'like', "%$search%")
-                  ->orWhere('email', 'like', "%$search%")
-                  ->orWhere('anydesk_id', 'like', "%$search%")
-                  ->orWhere('login_username', 'like', "%$search%");
+                    ->orWhere('employee_id', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%")
+                    ->orWhere('anydesk_id', 'like', "%$search%")
+                    ->orWhere('login_username', 'like', "%$search%");
             });
         }
         if ($request->has('department_id') && $request->department_id != '') {
@@ -39,9 +41,9 @@ class EmployeeController extends Controller
         $departments = Department::orderBy('name')->get();
         // Get only employees who are supervisors
         $supervisors = Employee::whereIn('id', Employee::whereNotNull('supervisor_id')->pluck('supervisor_id')->unique())->orderBy('name')->get();
-        
+
         $employees = $query->orderBy('name')->paginate(10)->appends($request->all());
-        
+
         return view('employee.index', compact('employees', 'departments', 'supervisors'));
     }
 
@@ -50,16 +52,18 @@ class EmployeeController extends Controller
         $departments = Department::orderBy('name')->get();
         $locations = Location::orderBy('name')->get();
         $supervisors = Employee::orderBy('name')->get();
+
         return view('employee.create', compact('departments', 'locations', 'supervisors'));
     }
 
-    public function store(\App\Http\Requests\StoreEmployeeRequest $request)
+    public function store(StoreEmployeeRequest $request)
     {
         try {
             Employee::create($request->all());
+
             return redirect()->route('employees.index', request()->query())->with('success', __('messages.created_success'));
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Failed to create employee: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to create employee: '.$e->getMessage());
         }
     }
 
@@ -73,8 +77,9 @@ class EmployeeController extends Controller
             'assignments.asset.brand',
             'assignments.asset.location',
             'ipAddresses',
-            'softwareLicenses'
+            'softwareLicenses',
         ]);
+
         return view('employee.show', compact('employee'));
     }
 
@@ -83,44 +88,47 @@ class EmployeeController extends Controller
         $departments = Department::orderBy('name')->get();
         $locations = Location::orderBy('name')->get();
         $supervisors = Employee::where('id', '!=', $employee->id)->orderBy('name')->get();
+
         return view('employee.edit', compact('employee', 'departments', 'locations', 'supervisors'));
     }
 
-    public function update(\App\Http\Requests\UpdateEmployeeRequest $request, Employee $employee)
+    public function update(UpdateEmployeeRequest $request, Employee $employee)
     {
         try {
             $employee->update($request->all());
+
             return redirect()->route('employees.index', request()->query())->with('success', __('messages.updated_success'));
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Failed to update employee: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to update employee: '.$e->getMessage());
         }
     }
 
     public function destroy(Employee $employee)
     {
         $employee->delete();
+
         return redirect()->route('employees.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 
     public function importExcel(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv'
+            'file' => 'required|mimes:xlsx,xls,csv',
         ]);
 
         try {
             Excel::import(new EmployeeImport, $request->file('file'));
+
             return redirect()->route('employees.index', request()->query())->with('success', 'Employees imported successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('employees.index', request()->query())->with('error', 'Failed to import data: ' . $e->getMessage());
+            return redirect()->route('employees.index', request()->query())->with('error', 'Failed to import data: '.$e->getMessage());
         }
     }
 
-    
     public function updateStatus(Request $request, Employee $emp)
     {
         $request->validate([
-            'status' => 'required|in:Active,Inactive'
+            'status' => 'required|in:Active,Inactive',
         ]);
 
         $emp->update(['status' => $request->status]);

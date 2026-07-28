@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LocationExport;
+use App\Imports\LocationImport;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\LocationExport;
-use App\Imports\LocationImport;
 
 class LocationController extends Controller
 {
@@ -15,12 +15,13 @@ class LocationController extends Controller
         $query = Location::query();
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                  ->orWhere('description', 'like', "%$search%");
+                    ->orWhere('description', 'like', "%$search%");
             });
         }
         $locations = $query->orderBy('name')->paginate(10)->appends($request->all());
+
         return view('master.locations.index', compact('locations'));
     }
 
@@ -38,6 +39,7 @@ class LocationController extends Controller
         ]);
 
         Location::create($request->all());
+
         return redirect()->route('locations.index', request()->query())->with('success', __('messages.created_success'));
     }
 
@@ -49,18 +51,20 @@ class LocationController extends Controller
     public function update(Request $request, Location $location)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:locations,name,' . $location->id,
+            'name' => 'required|string|max:255|unique:locations,name,'.$location->id,
             'address' => 'nullable|string',
             'description' => 'nullable|string',
         ]);
 
         $location->update($request->all());
+
         return redirect()->route('locations.index', request()->query())->with('success', __('messages.updated_success'));
     }
 
     public function destroy(Location $location)
     {
         $location->delete();
+
         return redirect()->route('locations.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 
@@ -77,9 +81,10 @@ class LocationController extends Controller
 
         try {
             Excel::import(new LocationImport, $request->file('file'));
+
             return redirect()->route('locations.index', request()->query())->with('success', 'Data imported successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('locations.index', request()->query())->with('error', 'Error importing data: ' . $e->getMessage());
+            return redirect()->route('locations.index', request()->query())->with('error', 'Error importing data: '.$e->getMessage());
         }
     }
 }

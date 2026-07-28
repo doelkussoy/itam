@@ -19,7 +19,7 @@ class IpAddress extends Model
         'gateway',
         'dns',
         'status',
-        'notes'
+        'notes',
     ];
 
     public function asset()

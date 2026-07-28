@@ -2,14 +2,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasColumn('users', 'username')) {
+        if (! Schema::hasColumn('users', 'username')) {
             // 1. Add column as nullable
             Schema::table('users', function (Blueprint $table) {
                 $table->string('username')->nullable()->after('name');
@@ -24,11 +24,11 @@ return new class extends Migration
                 if (empty($baseUsername)) {
                     $baseUsername = 'user';
                 }
-                
+
                 $username = $baseUsername;
                 $counter = 1;
                 while (DB::table('users')->where('username', $username)->exists()) {
-                    $username = $baseUsername . $counter;
+                    $username = $baseUsername.$counter;
                     $counter++;
                 }
                 DB::table('users')->where('id', $user->id)->update(['username' => $username]);

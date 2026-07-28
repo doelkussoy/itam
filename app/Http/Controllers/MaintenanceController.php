@@ -2,37 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Maintenance;
+use App\Exports\MaintenanceExport;
 use App\Models\Asset;
+use App\Models\Maintenance;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\MaintenanceExport;
 
 class MaintenanceController extends Controller
 {
     public function index(Request $request)
     {
         $query = Maintenance::with('asset');
-        
+
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->whereHas('asset', function($q) use ($search) {
+            $query->whereHas('asset', function ($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                  ->orWhere('asset_tag', 'like', "%$search%");
+                    ->orWhere('asset_tag', 'like', "%$search%");
             })->orWhere('description', 'like', "%$search%");
         }
-        
+
         if ($request->has('status') && $request->status != '') {
             $query->where('status', $request->status);
         }
 
         $maintenances = $query->latest()->paginate(10)->appends($request->all());
+
         return view('maintenances.index', compact('maintenances'));
     }
 
     public function create()
     {
         $assets = Asset::orderBy('name')->get();
+
         return view('maintenances.create', compact('assets'));
     }
 
@@ -43,7 +45,7 @@ class MaintenanceController extends Controller
             'type' => 'required|in:Routine,Repair,Upgrade',
             'description' => 'required|string',
             'cost' => 'nullable|numeric|min:0',
-            'start_date' => 'required|date'
+            'start_date' => 'required|date',
         ]);
 
         $maintenance = Maintenance::create([
@@ -52,7 +54,7 @@ class MaintenanceController extends Controller
             'description' => $request->description,
             'cost' => $request->cost,
             'start_date' => $request->start_date,
-            'status' => 'Ongoing'
+            'status' => 'Ongoing',
         ]);
 
         // Update asset status
@@ -64,6 +66,7 @@ class MaintenanceController extends Controller
     public function edit(Maintenance $maintenance)
     {
         $assets = Asset::orderBy('name')->get();
+
         return view('maintenances.edit', compact('maintenance', 'assets'));
     }
 
@@ -74,7 +77,7 @@ class MaintenanceController extends Controller
             'description' => 'required|string',
             'cost' => 'nullable|numeric|min:0',
             'start_date' => 'required|date',
-            'status' => 'required|in:Ongoing,Completed,Cancelled'
+            'status' => 'required|in:Ongoing,Completed,Cancelled',
         ]);
 
         $maintenance->update([
@@ -82,7 +85,7 @@ class MaintenanceController extends Controller
             'description' => $request->description,
             'cost' => $request->cost,
             'start_date' => $request->start_date,
-            'status' => $request->status
+            'status' => $request->status,
         ]);
 
         // If completed or cancelled, make asset available again
@@ -99,20 +102,20 @@ class MaintenanceController extends Controller
     public function destroy(Maintenance $maintenance)
     {
         $maintenance->delete();
+
         return redirect()->route('maintenances.index', request()->query())->with('success', 'Maintenance record deleted successfully.');
     }
 
-    
     public function updateStatus(Request $request, Maintenance $maintenance)
     {
         $request->validate([
-            'status' => 'required|in:Ongoing,Completed,Cancelled'
+            'status' => 'required|in:Ongoing,Completed,Cancelled',
         ]);
 
         $maintenance->update(['status' => $request->status]);
 
         if (in_array($request->status, ['Completed', 'Cancelled'])) {
-            if ($request->status === 'Completed' && !$maintenance->end_date) {
+            if ($request->status === 'Completed' && ! $maintenance->end_date) {
                 $maintenance->update(['end_date' => date('Y-m-d')]);
             }
             $maintenance->asset->update(['status' => 'Available']);
@@ -134,7 +137,7 @@ class MaintenanceController extends Controller
     public function complete(Request $request, Maintenance $maintenance)
     {
         $request->validate([
-            'end_date' => 'required|date'
+            'end_date' => 'required|date',
         ]);
 
         if ($maintenance->status !== 'Ongoing') {
@@ -143,7 +146,7 @@ class MaintenanceController extends Controller
 
         $maintenance->update([
             'end_date' => $request->end_date,
-            'status' => 'Completed'
+            'status' => 'Completed',
         ]);
 
         $maintenance->asset->update(['status' => 'Available']);

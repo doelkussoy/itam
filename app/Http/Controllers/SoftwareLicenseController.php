@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SoftwareLicense;
 use App\Models\Employee;
+use App\Models\SoftwareLicense;
 use Illuminate\Http\Request;
 
 class SoftwareLicenseController extends Controller
@@ -14,19 +14,21 @@ class SoftwareLicenseController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                  ->orWhere('license_key', 'like', "%$search%");
+                    ->orWhere('license_key', 'like', "%$search%");
             });
         }
 
         $software_licenses = $query->orderBy('name')->paginate(10)->appends($request->all());
+
         return view('software_licenses.index', compact('software_licenses'));
     }
 
     public function create()
     {
         $employees = Employee::orderBy('name')->get();
+
         return view('software_licenses.create', compact('employees'));
     }
 
@@ -38,20 +40,22 @@ class SoftwareLicenseController extends Controller
             'expiry_date' => 'nullable|date',
             'total_seats' => 'required|integer|min:1',
             'pic_id' => 'nullable|exists:employees,id',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ]);
 
         try {
             SoftwareLicense::create($request->all());
+
             return redirect()->route('software_licenses.index', request()->query())->with('success', __('messages.created_success'));
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Failed to create Software License: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to create Software License: '.$e->getMessage());
         }
     }
 
     public function edit(SoftwareLicense $softwareLicense)
     {
         $employees = Employee::orderBy('name')->get();
+
         return view('software_licenses.edit', compact('softwareLicense', 'employees'));
     }
 
@@ -63,20 +67,22 @@ class SoftwareLicenseController extends Controller
             'expiry_date' => 'nullable|date',
             'total_seats' => 'required|integer|min:1',
             'pic_id' => 'nullable|exists:employees,id',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ]);
 
         try {
             $softwareLicense->update($request->all());
+
             return redirect()->route('software_licenses.index', request()->query())->with('success', __('messages.updated_success'));
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Failed to update Software License: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to update Software License: '.$e->getMessage());
         }
     }
 
     public function destroy(SoftwareLicense $softwareLicense)
     {
         $softwareLicense->delete();
+
         return redirect()->route('software_licenses.index', request()->query())->with('success', __('messages.deleted_success'));
     }
 }

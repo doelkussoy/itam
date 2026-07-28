@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Brand;
+use Illuminate\Database\Seeder;
 
 class BrandDataSeeder extends Seeder
 {
@@ -27,14 +27,14 @@ class BrandDataSeeder extends Seeder
             'PowerColor',
             'Samsung',
             'V-Gen',
-            'Western Digital (WDC)'
+            'Western Digital (WDC)',
         ];
 
         foreach ($brands as $brand) {
             Brand::firstOrCreate([
-                'name' => $brand
+                'name' => $brand,
             ], [
-                'description' => 'Merek ' . $brand
+                'description' => 'Merek '.$brand,
             ]);
         }
     }

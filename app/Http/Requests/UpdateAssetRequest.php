@@ -23,9 +23,9 @@ class UpdateAssetRequest extends FormRequest
     public function rules(): array
     {
         $assetId = $this->route('asset')->id;
-        
+
         return [
-            'asset_tag' => 'required|string|max:255|unique:assets,asset_tag,' . $assetId,
+            'asset_tag' => 'required|string|max:255|unique:assets,asset_tag,'.$assetId,
             'name' => 'required|string|max:255',
             'serial_number' => 'nullable|string|max:255',
             'category_id' => 'nullable|exists:categories,id',

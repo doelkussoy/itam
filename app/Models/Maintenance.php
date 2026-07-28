@@ -17,7 +17,7 @@ class Maintenance extends Model
         'cost',
         'start_date',
         'end_date',
-        'status'
+        'status',
     ];
 
     public function asset()

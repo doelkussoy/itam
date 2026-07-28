@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Department;
 use Illuminate\Database\Seeder;
 
 class DepartmentSeeder extends Seeder
@@ -28,11 +28,11 @@ class DepartmentSeeder extends Seeder
             'HC & GA',
             'HSE',
             'R&D',
-            'Security'
+            'Security',
         ];
 
         foreach ($departments as $dept) {
-            \App\Models\Department::firstOrCreate(['name' => $dept]);
+            Department::firstOrCreate(['name' => $dept]);
         }
     }
 }

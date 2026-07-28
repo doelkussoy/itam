@@ -2,33 +2,39 @@
 
 namespace App\Models;
 
+use Database\Factories\EmployeeFactory;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Crypt;
 
 class Employee extends Model
 {
-    /** @use HasFactory<\Database\Factories\EmployeeFactory> */
+    /** @use HasFactory<EmployeeFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'employee_id', 'name', 'email', 'phone', 'department_id', 
+        'employee_id', 'name', 'email', 'phone', 'department_id',
         'status', 'supervisor_id', 'location_id', 'anydesk_id', 'anydesk_password',
-        'login_username', 'login_password'
+        'login_username', 'login_password',
     ];
 
-    protected function loginPassword(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function loginPassword(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+        return Attribute::make(
             get: function ($value) {
-                if (empty($value)) return null;
+                if (empty($value)) {
+                    return null;
+                }
                 try {
-                    return \Illuminate\Support\Facades\Crypt::decryptString($value);
-                } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                    return Crypt::decryptString($value);
+                } catch (DecryptException $e) {
                     return '[Decryption Failed]';
                 }
             },
-            set: fn ($value) => empty($value) ? null : \Illuminate\Support\Facades\Crypt::encryptString($value),
+            set: fn ($value) => empty($value) ? null : Crypt::encryptString($value),
         );
     }
 

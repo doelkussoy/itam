@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Category;
+use Illuminate\Database\Seeder;
 
 class CategoryDataSeeder extends Seeder
 {
@@ -26,14 +26,14 @@ class CategoryDataSeeder extends Seeder
             'HDD',
             'SSD',
             'RAM',
-            'Motherboard'
+            'Motherboard',
         ];
 
         foreach ($categories as $cat) {
             Category::firstOrCreate([
-                'name' => $cat
+                'name' => $cat,
             ], [
-                'description' => 'Kategori ' . $cat
+                'description' => 'Kategori '.$cat,
             ]);
         }
     }

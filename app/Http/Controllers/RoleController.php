@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -12,6 +12,7 @@ class RoleController extends Controller
     {
         // Don't let them edit Super Admin permissions
         $roles = Role::where('name', '!=', 'Super Admin')->get();
+
         return view('roles.index', compact('roles'));
     }
 
@@ -34,11 +35,11 @@ class RoleController extends Controller
         }
 
         $request->validate([
-            'permissions' => 'array'
+            'permissions' => 'array',
         ]);
 
         $permissions = $request->input('permissions', []);
-        
+
         $role->syncPermissions($permissions);
 
         return redirect()->route('roles.index')->with('success', 'Hak akses berhasil diperbarui.');
@@ -51,7 +52,7 @@ class RoleController extends Controller
         ], [
             'name.required' => 'Nama peran wajib diisi.',
             'name.unique' => 'Nama peran sudah ada.',
-            'name.max' => 'Nama peran maksimal 255 karakter.'
+            'name.max' => 'Nama peran maksimal 255 karakter.',
         ]);
 
         Role::create(['name' => $request->name]);
@@ -67,7 +68,7 @@ class RoleController extends Controller
 
         // Check if role is assigned to any users before deleting (optional, depends on requirement, but safe to do)
         if ($role->users()->count() > 0) {
-             return redirect()->route('roles.index')->with('error', 'Peran tidak dapat dihapus karena masih digunakan oleh pengguna.');
+            return redirect()->route('roles.index')->with('error', 'Peran tidak dapat dihapus karena masih digunakan oleh pengguna.');
         }
 
         $role->delete();

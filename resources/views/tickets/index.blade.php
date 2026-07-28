@@ -49,9 +49,11 @@
                         <th>{{ __('messages.ticket_number') }}</th>
                         <th>{{ __('messages.title') }}</th>
                         <th>{{ __('messages.reporter') }}</th>
+                        <th>Kategori</th>
+                        <th>PIC</th>
                         <th>{{ __('messages.priority') }}</th>
                         <th>{{ __('messages.status') }}</th>
-                        <th>{{ __('messages.created') }}</th>
+                        <th>TIMELINE</th>
                         <th width="150" class="text-center">{{ __('messages.actions') }}</th>
                     </tr>
                 </thead>
@@ -67,6 +69,8 @@
                             @endif
                         </td>
                         <td class="theme-text">{{ $ticket->employee->name ?? '-' }}</td>
+                        <td class="theme-text"><small class="text-info">{{ $ticket->category ?? '-' }}</small></td>
+                        <td class="theme-text">{{ $ticket->pic->name ?? 'Belum di-assign' }}</td>
                         <td class="theme-text">
                             @switch($ticket->priority)
                                 @case('Low') <span class="badge badge-info">{{ __('messages.low') }}</span> @break
@@ -93,7 +97,12 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="theme-text"><small>{{ $ticket->created_at->format('Y-m-d H:i') }}</small></td>
+                        <td class="theme-text" style="white-space: nowrap;">
+                            <small class="d-block text-muted" style="margin-bottom: 2px;" title="Dibuat pada"><i class="fas fa-plus-circle text-primary" style="width:14px"></i> {{ $ticket->created_at->format('Y-m-d H:i') }}</small>
+                            @if($ticket->completed_at)
+                                <small class="d-block text-success" title="Selesai pada"><i class="fas fa-check-circle" style="width:14px"></i> {{ $ticket->completed_at->format('Y-m-d H:i') }}</small>
+                            @endif
+                        </td>
                         <td class="theme-text">
                             <div class="d-flex justify-content-center" style="gap: 8px;">
                                 <a href="{{ route('tickets.edit', array_merge(['ticket' => $ticket->id], request()->query())) }}" class="btn action-btn btn-outline-warning" style="border: 1px solid rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.15); color: #ffc107;"  title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
@@ -106,7 +115,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center text-muted py-4">{{ __('messages.no_data') }}</td>
+                        <td colspan="10" class="text-center text-muted py-4">{{ __('messages.no_data') }}</td>
                     </tr>
                     @endforelse
                 </tbody>
