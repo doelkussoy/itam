@@ -38,9 +38,14 @@ class TicketController extends Controller
             $query->where('priority', $request->priority);
         }
 
-        $tickets = $query->latest()->paginate(10)->appends($request->all());
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
 
-        return view('tickets.index', compact('tickets'));
+        $tickets = $query->latest()->paginate(10)->appends($request->all());
+        $categories = $this->getJobdeskCategories();
+
+        return view('tickets.index', compact('tickets', 'categories'));
     }
 
     public function create()

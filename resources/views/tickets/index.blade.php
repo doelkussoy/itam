@@ -9,6 +9,14 @@
             <div class="d-flex flex-wrap gap-2" style="gap: 10px;">
                 <input type="text" name="search" class="form-control theme-input" placeholder="{{ __('messages.search_ticket') }}" value="{{ request('search') }}" style="width: 250px;" >
                 
+                <select name="category" class="form-control select2 theme-input" style="width: 200px;">
+                    <option value="">{{ __('messages.all_category') }}</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat['name'] }}" {{ request('category') == $cat['name'] ? 'selected' : '' }}>
+                            {{ $cat['name'] }}
+                        </option>
+                    @endforeach
+                </select>
                 <select name="status" class="form-control select2 theme-input" style="width: 150px;">
                     <option value="" >{{ __('messages.all_status') }}</option>
                     <option value="Open"  {{ str_contains(request('status') ?? '', 'Open') ? 'selected' : '' }}>{{ __('messages.open') }}</option>
@@ -26,7 +34,7 @@
                 </select>
                 
                 <button type="submit" class="btn btn-outline-info" ><i class="fas fa-search"></i></button>
-                @if(request()->anyFilled(['search', 'status', 'priority']))
+                @if(request()->anyFilled(['search', 'status', 'priority', 'category']))
                     <a href="{{ route('tickets.index') }}" class="btn btn-outline-secondary" ><i class="fas fa-undo"></i> {{ __('messages.reset') }}</a>
                 @endif
             </div>
@@ -49,7 +57,7 @@
                         <th>{{ __('messages.ticket_number') }}</th>
                         <th>{{ __('messages.title') }}</th>
                         <th>{{ __('messages.reporter') }}</th>
-                        <th>Kategori</th>
+                        <th>{{ __('messages.category') }}</th>
                         <th>PIC</th>
                         <th>{{ __('messages.priority') }}</th>
                         <th>{{ __('messages.status') }}</th>
