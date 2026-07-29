@@ -204,19 +204,32 @@ class IpAddressController extends Controller
             $canExec = function_exists('exec') && ! in_array('exec', $disabledFunctions);
 
             if ($canExec) {
-                $command = stristr(PHP_OS, 'win')
-                    ? 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress)
-                    : 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
+                // Try standard ping command with -w 2 deadline
+                if (stristr(PHP_OS, 'win')) {
+                    $command = 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress);
+                } else {
+                    $command = 'ping -c 1 -w 2 '.escapeshellarg($ipAddress);
+                }
 
                 @exec($command, $outcome, $status);
                 if ($status === 0) {
                     $online = true;
+                } else {
+                    // Try fping fallback if available on Linux
+                    if (! stristr(PHP_OS, 'win')) {
+                        $fpingCmd = 'fping -c 1 -t 300 '.escapeshellarg($ipAddress).' 2>&1';
+                        @exec($fpingCmd, $fpingOutcome, $fpingStatus);
+                        if ($fpingStatus === 0) {
+                            $online = true;
+                            $outcome[] = 'Reachable via fping';
+                        }
+                    }
                 }
             }
 
-            // Fallback to socket port connection if exec is disabled or ping ICMP is blocked
+            // Fallback 1: Multi-port socket connection if ICMP ping is blocked
             if (! $online) {
-                $ports = [80, 443, 22, 445, 8080, 139, 3389, 53];
+                $ports = [80, 443, 22, 445, 8080, 139, 3389, 53, 8000, 8443, 21, 23, 161, 5000];
                 foreach ($ports as $port) {
                     $connection = @fsockopen($ipAddress, $port, $errno, $errstr, 0.4);
                     if (is_resource($connection)) {
@@ -228,7 +241,18 @@ class IpAddressController extends Controller
                 }
             }
 
-            // If direct cloud ping failed for a Private LAN IP (192.168.x.x), check if Agent synced status recently
+            // Fallback 2: Linux kernel ARP table check (/proc/net/arp) for LAN IPs
+            if (! $online && file_exists('/proc/net/arp')) {
+                $arpData = @file_get_contents('/proc/net/arp');
+                if ($arpData && preg_match('/^'.preg_quote($ipAddress, '/').'\s+\S+\s+\S+\s+([0-9a-fA-F:]{17})/m', $arpData, $m)) {
+                    if (strtolower($m[1]) !== '00:00:00:00:00:00') {
+                        $online = true;
+                        $outcome[] = "Reachable via ARP table (MAC: {$m[1]})";
+                    }
+                }
+            }
+
+            // Fallback 3: Agent Sync status if updated recently
             if (! $online && $ipModel && $ipModel->is_online && $this->isPrivateIp($ipAddress)) {
                 if ($ipModel->last_ping_at && $ipModel->last_ping_at->gt(now()->subMinutes(30))) {
                     $online = true;
