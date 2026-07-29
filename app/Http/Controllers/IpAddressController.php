@@ -268,6 +268,18 @@ class IpAddressController extends Controller
                 }
             }
 
+            // Fallback 3: Windows ARP cache (arp -a) for Windows localhost LAN IPs
+            if (! $online && stristr(PHP_OS, 'win') && $canExec) {
+                @exec('arp -a '.escapeshellarg($ipAddress), $arpOut, $arpStatus);
+                $arpStr = implode("\n", $arpOut);
+                if (preg_match('/([0-9a-fA-F]{2}[-:][0-9a-fA-F]{2}[-:][0-9a-fA-F]{2}[-:][0-9a-fA-F]{2}[-:][0-9a-fA-F]{2}[-:][0-9a-fA-F]{2})/i', $arpStr, $m)) {
+                    if (strtolower($m[1]) !== '00-00-00-00-00-00') {
+                        $online = true;
+                        $outcome[] = "Reachable via Windows ARP (MAC: {$m[1]})";
+                    }
+                }
+            }
+
             // Fallback 3: Agent Sync status if updated recently
             if (! $online && $ipModel && $ipModel->is_online && $this->isPrivateIp($ipAddress)) {
                 if ($ipModel->last_ping_at && $ipModel->last_ping_at->gt(now()->subMinutes(30))) {
