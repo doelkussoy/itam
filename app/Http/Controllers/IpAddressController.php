@@ -129,6 +129,10 @@ class IpAddressController extends Controller
 
     public function ping(Request $request, IpAddress $ip)
     {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+
         try {
             $result = $this->pingSingleIp($ip->ip_address, $ip);
             $online = $result['online'];
@@ -158,6 +162,10 @@ class IpAddressController extends Controller
 
     public function pingBatch(Request $request)
     {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+
         try {
             $ipIds = $request->input('ip_ids', []);
             if (empty($ipIds)) {

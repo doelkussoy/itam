@@ -163,13 +163,15 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
+            // Track active manual pings to prevent race conditions from batch scanning/polling
+            window.activeManualPings = {};
 
             // Fast 3-second live database status polling (instant zero-delay reflection)
             function pollLiveStatus() {
                 var ipIds = [];
                 $('.ip-row').each(function () {
                     var id = $(this).data('ip-id');
-                    if (id) ipIds.push(id);
+                    if (id && !window.activeManualPings[id]) ipIds.push(id);
                 });
 
                 if (ipIds.length === 0) return;
@@ -181,6 +183,7 @@
                     success: function (response) {
                         if (response.success && response.ips) {
                             response.ips.forEach(function (item) {
+                                if (window.activeManualPings[item.id]) return;
                                 var statusContainer = $('.ping-status-badge-' + item.id);
                                 if (item.online === true) {
                                     statusContainer.html('<span class="badge badge-success px-2 py-1" style="box-shadow: 0 0 8px rgba(40,167,69,0.5); font-size: 0.7rem;" title="' + item.last_ping_at + '"><i class="fas fa-circle text-xs mr-1"></i> Online</span>');
@@ -198,7 +201,7 @@
                 var ipIds = [];
                 $('.ip-row').each(function () {
                     var id = $(this).data('ip-id');
-                    if (id) {
+                    if (id && !window.activeManualPings[id]) {
                         ipIds.push(id);
                         var statusContainer = $('.ping-status-badge-' + id);
                         if (statusContainer.find('.badge-secondary').length > 0) {
@@ -223,6 +226,7 @@
                         btnIcon.removeClass('fa-spin');
                         if (response.success && response.results) {
                             response.results.forEach(function (item) {
+                                if (window.activeManualPings[item.id]) return;
                                 var statusContainer = $('.ping-status-badge-' + item.id);
                                 if (item.online) {
                                     statusContainer.html('<span class="badge badge-success px-2 py-1" style="box-shadow: 0 0 8px rgba(40,167,69,0.5); font-size: 0.7rem;" title="Just now"><i class="fas fa-circle text-xs mr-1"></i> Online</span>');
@@ -257,9 +261,13 @@
                 var pingUrl = button.data('ping-url');
                 var statusContainer = $('.ping-status-badge-' + ipId);
 
+                // Lock manual ping status for this IP to prevent background overwrites
+                window.activeManualPings[ipId] = true;
+
                 // Show spinner
                 icon.attr('class', 'fas fa-spinner fa-spin');
                 button.prop('disabled', true);
+                statusContainer.html('<span class="badge badge-info px-2 py-1" style="font-size: 0.7rem;"><i class="fas fa-spinner fa-spin text-xs mr-1"></i> Pinging...</span>');
 
                 $.ajax({
                     url: pingUrl,
@@ -305,10 +313,12 @@
                         setTimeout(function () {
                             icon.attr('class', originalClass);
                             button.removeAttr('style');
-                        }, 3000);
+                            delete window.activeManualPings[ipId];
+                        }, 4000);
                     },
                     error: function (xhr) {
                         button.prop('disabled', false);
+                        delete window.activeManualPings[ipId];
                         icon.attr('class', 'fas fa-exclamation-triangle');
                         button.css({
                             'background': 'rgba(255, 193, 7, 0.4)',
