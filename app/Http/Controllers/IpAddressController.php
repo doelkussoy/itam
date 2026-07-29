@@ -129,18 +129,8 @@ class IpAddressController extends Controller
 
     public function ping(Request $request, IpAddress $ip)
     {
-        $ipAddress = $ip->ip_address;
-
-        $str = PHP_OS;
-        if (stristr($str, 'win')) {
-            $command = 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress);
-        } else {
-            $command = 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
-        }
-
-        exec($command, $outcome, $status);
-
-        $online = ($status === 0);
+        $result = $this->pingSingleIp($ip->ip_address);
+        $online = $result['online'];
 
         $ip->update([
             'is_online' => $online,
@@ -148,11 +138,11 @@ class IpAddressController extends Controller
         ]);
 
         return response()->json([
-            'ip' => $ipAddress,
+            'ip' => $ip->ip_address,
             'online' => $online,
             'status' => $online ? 'Online' : 'Offline',
             'last_ping_at' => $ip->last_ping_at ? $ip->last_ping_at->diffForHumans() : 'Just now',
-            'output' => implode("\n", $outcome),
+            'output' => $result['output'],
         ]);
     }
 
@@ -165,18 +155,10 @@ class IpAddressController extends Controller
 
         $ips = IpAddress::whereIn('id', $ipIds)->get();
         $results = [];
-        $str = PHP_OS;
 
         foreach ($ips as $ip) {
-            $ipAddress = $ip->ip_address;
-            if (stristr($str, 'win')) {
-                $command = 'ping -n 1 -w 800 '.escapeshellarg($ipAddress);
-            } else {
-                $command = 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
-            }
-
-            exec($command, $outcome, $status);
-            $online = ($status === 0);
+            $result = $this->pingSingleIp($ip->ip_address);
+            $online = $result['online'];
 
             $ip->update([
                 'is_online' => $online,
@@ -185,7 +167,7 @@ class IpAddressController extends Controller
 
             $results[] = [
                 'id' => $ip->id,
-                'ip' => $ipAddress,
+                'ip' => $ip->ip_address,
                 'online' => $online,
                 'status' => $online ? 'Online' : 'Offline',
                 'last_ping_at' => 'Just now',
@@ -196,6 +178,46 @@ class IpAddressController extends Controller
             'success' => true,
             'results' => $results,
         ]);
+    }
+
+    private function pingSingleIp(string $ipAddress): array
+    {
+        $outcome = [];
+        $online = false;
+
+        try {
+            $disabledFunctions = array_map('trim', explode(',', strtolower(ini_get('disable_functions') ?: '')));
+            $canExec = function_exists('exec') && ! in_array('exec', $disabledFunctions);
+
+            if ($canExec) {
+                $command = stristr(PHP_OS, 'win')
+                    ? 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress)
+                    : 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
+
+                @exec($command, $outcome, $status);
+                $online = ($status === 0);
+            } else {
+                // Fallback to socket test if exec is disabled on aaPanel
+                $ports = [80, 443, 22, 445, 8080];
+                foreach ($ports as $port) {
+                    $connection = @fsockopen($ipAddress, $port, $errno, $errstr, 0.4);
+                    if (is_resource($connection)) {
+                        fclose($connection);
+                        $online = true;
+                        break;
+                    }
+                }
+                $outcome[] = 'Exec disabled, used socket fallback';
+            }
+        } catch (\Throwable $e) {
+            $online = false;
+            $outcome[] = 'Ping note: '.$e->getMessage();
+        }
+
+        return [
+            'online' => $online,
+            'output' => implode("\n", $outcome),
+        ];
     }
 
     public function liveStatus(Request $request)
