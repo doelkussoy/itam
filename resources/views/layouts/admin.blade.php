@@ -534,40 +534,63 @@
     .badge-secondary { background: var(--color-paper-2) !important; color: var(--color-ink-2) !important; }
 
     /* ── Modals & Mobile Responsiveness Fix ─────────────── */
+    body.modal-open {
+      overflow: hidden !important;
+    }
     .modal {
+      position: fixed !important;
+      top: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
       z-index: 1060 !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
       padding-right: 0 !important;
     }
     .modal-backdrop {
+      position: fixed !important;
+      top: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
       z-index: 1050 !important;
-      background-color: rgba(0, 0, 0, 0.65) !important;
-      -webkit-backdrop-filter: blur(4px);
-      backdrop-filter: blur(4px);
+      background-color: rgba(0, 0, 0, 0.7) !important;
+      -webkit-backdrop-filter: blur(5px);
+      backdrop-filter: blur(5px);
     }
     .modal-dialog {
+      position: relative !important;
+      z-index: 1061 !important;
       margin: 1rem auto !important;
       max-width: 500px !important;
       width: calc(100% - 1.5rem) !important;
+      pointer-events: auto !important;
+    }
+    .modal-dialog-centered {
+      display: flex !important;
+      align-items: center !important;
+      min-height: calc(100% - 2rem) !important;
     }
     @media (max-width: 575.98px) {
       .modal-dialog {
-        margin: 0.75rem auto !important;
+        margin: 0.5rem auto !important;
         max-width: calc(100% - 1rem) !important;
         width: calc(100% - 1rem) !important;
       }
       .modal-dialog-centered {
-        min-height: calc(100% - 1.5rem) !important;
-        display: flex !important;
-        align-items: center !important;
+        min-height: calc(100% - 1rem) !important;
       }
     }
     .modal-content {
       background: var(--color-paper-0) !important;
       border: var(--rule-soft) !important;
       border-radius: var(--radius-xl) !important;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35) !important;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5) !important;
       color: var(--color-ink-0) !important;
       overflow: hidden;
+      pointer-events: auto !important;
     }
     .modal-header {
       border-bottom: var(--rule-soft) !important;
@@ -595,6 +618,9 @@
       cursor: pointer;
       position: relative;
       transition: all var(--dur-fast) var(--ease-out);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
     .file-dropzone:hover, .file-dropzone.active {
       border-color: var(--color-accent);
@@ -608,7 +634,8 @@
       height: 100%;
       opacity: 0;
       cursor: pointer;
-      z-index: 5;
+      z-index: 10;
+      display: block !important;
     }
     .file-dropzone .icon-box {
       width: 48px;
@@ -1715,6 +1742,19 @@
     }).then((result) => {
       if (result.isConfirmed) { form.submit(); }
     });
+  });
+
+  // Fix modal stacking context & positioning by appending to document.body on open
+  $(document).on('show.bs.modal', '.modal', function() {
+    if (!$(this).parent().is('body')) {
+      $(this).appendTo('body');
+    }
+  });
+
+  $(document).on('click', '.file-dropzone', function(e) {
+    if (!$(e.target).is('input[type="file"]')) {
+      $(this).find('input[type="file"]').trigger('click');
+    }
   });
 
   $(document).on('change', '.import-file-input', function(e) {
