@@ -147,4 +147,6 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+Route::post('api/ips/agent-sync', [IpAddressController::class, 'agentSync']);
+
 require __DIR__.'/auth.php';

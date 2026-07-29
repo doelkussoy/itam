@@ -278,4 +278,31 @@ class IpAddressController extends Controller
             'ips' => $ips,
         ]);
     }
+
+    public function agentSync(Request $request)
+    {
+        $statuses = $request->input('statuses', []);
+        $updated = 0;
+
+        foreach ($statuses as $item) {
+            if (! empty($item['id'])) {
+                IpAddress::where('id', $item['id'])->update([
+                    'is_online' => (bool) $item['online'],
+                    'last_ping_at' => now(),
+                ]);
+                $updated++;
+            } elseif (! empty($item['ip'])) {
+                IpAddress::where('ip_address', $item['ip'])->update([
+                    'is_online' => (bool) $item['online'],
+                    'last_ping_at' => now(),
+                ]);
+                $updated++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'updated' => $updated,
+        ]);
+    }
 }
