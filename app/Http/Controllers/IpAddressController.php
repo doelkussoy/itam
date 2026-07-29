@@ -204,34 +204,50 @@ class IpAddressController extends Controller
             $canExec = function_exists('exec') && ! in_array('exec', $disabledFunctions);
 
             if ($canExec) {
-                // Try standard ping command with -w 2 deadline
                 if (stristr(PHP_OS, 'win')) {
                     $command = 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress);
+                    @exec($command, $outcome, $status);
+                    if ($status === 0) {
+                        $online = true;
+                    }
                 } else {
-                    $command = 'ping -c 1 -w 2 '.escapeshellarg($ipAddress);
-                }
-
-                @exec($command, $outcome, $status);
-                if ($status === 0) {
-                    $online = true;
-                } else {
-                    // Try fping fallback if available on Linux
-                    if (! stristr(PHP_OS, 'win')) {
-                        $fpingCmd = 'fping -c 1 -t 300 '.escapeshellarg($ipAddress).' 2>&1';
-                        @exec($fpingCmd, $fpingOutcome, $fpingStatus);
-                        if ($fpingStatus === 0) {
+                    // 1. Try Linux standard ping with -W 2 (timeout 2s)
+                    $command1 = 'ping -c 1 -W 2 '.escapeshellarg($ipAddress).' 2>&1';
+                    @exec($command1, $outcome, $status);
+                    if ($status === 0) {
+                        $online = true;
+                    } else {
+                        // 2. Try ping with -w 2 (deadline 2s)
+                        $command2 = 'ping -c 1 -w 2 '.escapeshellarg($ipAddress).' 2>&1';
+                        @exec($command2, $outcome2, $status2);
+                        if ($status2 === 0) {
                             $online = true;
-                            $outcome[] = 'Reachable via fping';
+                        } else {
+                            // 3. Try arping (Layer 2 ARP ping - bypasses Windows Firewall!)
+                            $arpCmd = 'arping -c 1 -w 1 '.escapeshellarg($ipAddress).' 2>&1';
+                            @exec($arpCmd, $arpOutcome, $arpStatus);
+                            if ($arpStatus === 0) {
+                                $online = true;
+                                $outcome[] = 'Reachable via arping';
+                            } else {
+                                // 4. Try fping fallback
+                                $fpingCmd = 'fping -c 1 -t 300 '.escapeshellarg($ipAddress).' 2>&1';
+                                @exec($fpingCmd, $fpingOutcome, $fpingStatus);
+                                if ($fpingStatus === 0) {
+                                    $online = true;
+                                    $outcome[] = 'Reachable via fping';
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            // Fallback 1: Multi-port socket connection if ICMP ping is blocked
+            // Fallback 1: Multi-port socket connection (TCP & NetBIOS ports for Windows PCs & CCTV)
             if (! $online) {
-                $ports = [80, 443, 22, 445, 8080, 139, 3389, 53, 8000, 8443, 21, 23, 161, 5000];
+                $ports = [135, 139, 445, 80, 443, 22, 8080, 3389, 53, 8000, 8443, 21, 23, 161, 5000, 554, 8081];
                 foreach ($ports as $port) {
-                    $connection = @fsockopen($ipAddress, $port, $errno, $errstr, 0.4);
+                    $connection = @fsockopen($ipAddress, $port, $errno, $errstr, 0.3);
                     if (is_resource($connection)) {
                         fclose($connection);
                         $online = true;
@@ -241,13 +257,13 @@ class IpAddressController extends Controller
                 }
             }
 
-            // Fallback 2: Linux kernel ARP table check (/proc/net/arp) for LAN IPs
+            // Fallback 2: Linux kernel ARP cache (/proc/net/arp) for LAN IPs
             if (! $online && file_exists('/proc/net/arp')) {
                 $arpData = @file_get_contents('/proc/net/arp');
                 if ($arpData && preg_match('/^'.preg_quote($ipAddress, '/').'\s+\S+\s+\S+\s+([0-9a-fA-F:]{17})/m', $arpData, $m)) {
                     if (strtolower($m[1]) !== '00:00:00:00:00:00') {
                         $online = true;
-                        $outcome[] = "Reachable via ARP table (MAC: {$m[1]})";
+                        $outcome[] = "Reachable via ARP cache (MAC: {$m[1]})";
                     }
                 }
             }
