@@ -202,27 +202,11 @@ class IpAddressController extends Controller
         try {
             $disabledFunctions = array_map('trim', explode(',', strtolower(ini_get('disable_functions') ?: '')));
             $canExec = function_exists('exec') && ! in_array('exec', $disabledFunctions);
-            $canShellExec = function_exists('shell_exec') && ! in_array('shell_exec', $disabledFunctions);
 
             if ($canExec) {
-                if (stristr(PHP_OS, 'win')) {
-                    $command = 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress);
-                } else {
-                    $pingBin = '';
-                    if ($canShellExec) {
-                        $pingBin = trim(@shell_exec('which ping 2>/dev/null') ?: '');
-                    }
-                    if (empty($pingBin) || ! is_executable($pingBin)) {
-                        if (file_exists('/bin/ping')) {
-                            $pingBin = '/bin/ping';
-                        } elseif (file_exists('/usr/bin/ping')) {
-                            $pingBin = '/usr/bin/ping';
-                        } else {
-                            $pingBin = 'ping';
-                        }
-                    }
-                    $command = escapeshellcmd($pingBin).' -c 1 -W 1 '.escapeshellarg($ipAddress);
-                }
+                $command = stristr(PHP_OS, 'win')
+                    ? 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress)
+                    : 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
 
                 @exec($command, $outcome, $status);
                 if ($status === 0) {
@@ -230,7 +214,7 @@ class IpAddressController extends Controller
                 }
             }
 
-            // Fallback to socket port connection if exec is disabled or ping ICMP is blocked by firewall
+            // Fallback to socket port connection if exec is disabled or ping ICMP is blocked
             if (! $online) {
                 $ports = [80, 443, 22, 445, 8080, 139, 3389, 53];
                 foreach ($ports as $port) {
@@ -238,14 +222,14 @@ class IpAddressController extends Controller
                     if (is_resource($connection)) {
                         fclose($connection);
                         $online = true;
-                        $outcome[] = "Device reachable via port $port";
+                        $outcome[] = "Reachable via port $port";
                         break;
                     }
                 }
             }
         } catch (\Throwable $e) {
             $online = false;
-            $outcome[] = 'Ping execution note: '.$e->getMessage();
+            $outcome[] = 'Ping note: '.$e->getMessage();
         }
 
         return [
