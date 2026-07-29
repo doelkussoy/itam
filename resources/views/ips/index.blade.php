@@ -29,9 +29,6 @@
         </div>
 
         <div class="col-12 d-flex justify-content-end align-items-center flex-wrap" style="gap: 10px;">
-            <button type="button" id="scan-page-btn" class="btn btn-sm btn-outline-info">
-                <i class="fas fa-sync-alt"></i> <span>Scan Status Live</span>
-            </button>
             <a href="{{ route('ips.export') }}" class="btn btn-sm btn-success"><i class="fas fa-file-excel"></i>
                 {{ __('messages.export') }}</a>
             <a href="{{ route('ips.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i>
@@ -163,96 +160,6 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
-            // Track active manual pings to prevent race conditions from batch scanning/polling
-            window.activeManualPings = {};
-
-            // Fast 3-second live database status polling (instant zero-delay reflection)
-            function pollLiveStatus() {
-                var ipIds = [];
-                $('.ip-row').each(function () {
-                    var id = $(this).data('ip-id');
-                    if (id && !window.activeManualPings[id]) ipIds.push(id);
-                });
-
-                if (ipIds.length === 0) return;
-
-                $.ajax({
-                    url: '{{ route("ips.live-status") }}',
-                    method: 'GET',
-                    data: { ip_ids: ipIds },
-                    success: function (response) {
-                        if (response.success && response.ips) {
-                            response.ips.forEach(function (item) {
-                                if (window.activeManualPings[item.id]) return;
-                                var statusContainer = $('.ping-status-badge-' + item.id);
-                                if (item.online === true) {
-                                    statusContainer.html('<span class="badge badge-success px-2 py-1" style="box-shadow: 0 0 8px rgba(40,167,69,0.5); font-size: 0.7rem;" title="' + item.last_ping_at + '"><i class="fas fa-circle text-xs mr-1"></i> Online</span>');
-                                } else if (item.online === false) {
-                                    statusContainer.html('<span class="badge badge-danger px-2 py-1" style="box-shadow: 0 0 8px rgba(220,53,69,0.5); font-size: 0.7rem;" title="' + item.last_ping_at + '"><i class="fas fa-circle text-xs mr-1"></i> Offline</span>');
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-
-            // Automatic batch scanner for displayed IPs
-            function scanDisplayedIps() {
-                var ipIds = [];
-                $('.ip-row').each(function () {
-                    var id = $(this).data('ip-id');
-                    if (id && !window.activeManualPings[id]) {
-                        ipIds.push(id);
-                        var statusContainer = $('.ping-status-badge-' + id);
-                        if (statusContainer.find('.badge-secondary').length > 0) {
-                            statusContainer.html('<span class="badge badge-secondary px-2 py-1" style="opacity: 0.8; font-size: 0.7rem;"><i class="fas fa-spinner fa-spin text-xs mr-1"></i> Checking...</span>');
-                        }
-                    }
-                });
-
-                if (ipIds.length === 0) return;
-
-                var btnIcon = $('#scan-page-btn i');
-                btnIcon.addClass('fa-spin');
-
-                $.ajax({
-                    url: '{{ route("ips.ping-batch") }}',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        ip_ids: ipIds
-                    },
-                    success: function (response) {
-                        btnIcon.removeClass('fa-spin');
-                        if (response.success && response.results) {
-                            response.results.forEach(function (item) {
-                                if (window.activeManualPings[item.id]) return;
-                                var statusContainer = $('.ping-status-badge-' + item.id);
-                                if (item.online) {
-                                    statusContainer.html('<span class="badge badge-success px-2 py-1" style="box-shadow: 0 0 8px rgba(40,167,69,0.5); font-size: 0.7rem;" title="Just now"><i class="fas fa-circle text-xs mr-1"></i> Online</span>');
-                                } else {
-                                    statusContainer.html('<span class="badge badge-danger px-2 py-1" style="box-shadow: 0 0 8px rgba(220,53,69,0.5); font-size: 0.7rem;" title="Just now"><i class="fas fa-circle text-xs mr-1"></i> Offline</span>');
-                                }
-                            });
-                        }
-                    },
-                    error: function () {
-                        btnIcon.removeClass('fa-spin');
-                    }
-                });
-            }
-
-            // Auto scan live status when page loads
-            scanDisplayedIps();
-
-            // Instant 3-second live status polling
-            setInterval(pollLiveStatus, 3000);
-
-            // Trigger manual scan on button click
-            $('#scan-page-btn').click(function () {
-                scanDisplayedIps();
-            });
-
             $('.ping-btn').click(function () {
                 var button = $(this);
                 var ipId = button.data('id');
@@ -260,9 +167,6 @@
                 var originalClass = icon.attr('class');
                 var pingUrl = button.data('ping-url');
                 var statusContainer = $('.ping-status-badge-' + ipId);
-
-                // Lock manual ping status for this IP to prevent background overwrites
-                window.activeManualPings[ipId] = true;
 
                 // Show spinner
                 icon.attr('class', 'fas fa-spinner fa-spin');
@@ -313,12 +217,10 @@
                         setTimeout(function () {
                             icon.attr('class', originalClass);
                             button.removeAttr('style');
-                            delete window.activeManualPings[ipId];
                         }, 4000);
                     },
                     error: function (xhr) {
                         button.prop('disabled', false);
-                        delete window.activeManualPings[ipId];
                         icon.attr('class', 'fas fa-exclamation-triangle');
                         button.css({
                             'background': 'rgba(255, 193, 7, 0.4)',

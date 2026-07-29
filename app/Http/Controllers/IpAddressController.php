@@ -155,7 +155,7 @@ class IpAddressController extends Controller
                 'online' => false,
                 'status' => 'Offline',
                 'last_ping_at' => 'Error',
-                'output' => 'Ping error: '.$e->getMessage(),
+                'output' => 'Ping error: ' . $e->getMessage(),
             ], 200);
         }
     }
@@ -167,7 +167,7 @@ class IpAddressController extends Controller
         }
 
         try {
-            $ipIds = $request->input('ip_ids', []);
+            $ipIds = array_slice($request->input('ip_ids', []), 0, 15);
             if (empty($ipIds)) {
                 return response()->json(['success' => false, 'results' => []]);
             }
@@ -209,37 +209,38 @@ class IpAddressController extends Controller
 
         try {
             $disabledFunctions = array_map('trim', explode(',', strtolower(ini_get('disable_functions') ?: '')));
-            $canExec = function_exists('exec') && ! in_array('exec', $disabledFunctions);
+            $canExec = function_exists('exec') && !in_array('exec', $disabledFunctions);
 
             if ($canExec) {
                 if (stristr(PHP_OS, 'win')) {
-                    $command = 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress);
+                    $command = 'ping -n 1 -w 1000 ' . escapeshellarg($ipAddress);
                     @exec($command, $outcome, $status);
-                    if ($status === 0) {
+                    $fullOut = implode("\n", $outcome);
+                    if ($status === 0 && (stristr($fullOut, 'TTL=') || stristr($fullOut, 'bytes='))) {
                         $online = true;
                     }
                 } else {
                     // 1. Try Linux standard ping with -W 2 (timeout 2s)
-                    $command1 = 'ping -c 1 -W 2 '.escapeshellarg($ipAddress).' 2>&1';
+                    $command1 = 'ping -c 1 -W 2 ' . escapeshellarg($ipAddress) . ' 2>&1';
                     @exec($command1, $outcome, $status);
                     if ($status === 0) {
                         $online = true;
                     } else {
                         // 2. Try ping with -w 2 (deadline 2s)
-                        $command2 = 'ping -c 1 -w 2 '.escapeshellarg($ipAddress).' 2>&1';
+                        $command2 = 'ping -c 1 -w 2 ' . escapeshellarg($ipAddress) . ' 2>&1';
                         @exec($command2, $outcome2, $status2);
                         if ($status2 === 0) {
                             $online = true;
                         } else {
                             // 3. Try arping (Layer 2 ARP ping - bypasses Windows Firewall!)
-                            $arpCmd = 'arping -c 1 -w 1 '.escapeshellarg($ipAddress).' 2>&1';
+                            $arpCmd = 'arping -c 1 -w 1 ' . escapeshellarg($ipAddress) . ' 2>&1';
                             @exec($arpCmd, $arpOutcome, $arpStatus);
                             if ($arpStatus === 0) {
                                 $online = true;
                                 $outcome[] = 'Reachable via arping';
                             } else {
                                 // 4. Try fping fallback
-                                $fpingCmd = 'fping -c 1 -t 300 '.escapeshellarg($ipAddress).' 2>&1';
+                                $fpingCmd = 'fping -c 1 -t 300 ' . escapeshellarg($ipAddress) . ' 2>&1';
                                 @exec($fpingCmd, $fpingOutcome, $fpingStatus);
                                 if ($fpingStatus === 0) {
                                     $online = true;
@@ -252,7 +253,7 @@ class IpAddressController extends Controller
             }
 
             // Fallback 1: Multi-port socket connection (TCP & NetBIOS ports for Windows PCs & CCTV)
-            if (! $online) {
+            if (!$online) {
                 $ports = [135, 139, 445, 80, 443, 22, 8080, 3389, 53, 8000, 8443, 21, 23, 161, 5000, 554, 8081];
                 foreach ($ports as $port) {
                     $connection = @fsockopen($ipAddress, $port, $errno, $errstr, 0.3);
@@ -266,9 +267,9 @@ class IpAddressController extends Controller
             }
 
             // Fallback 2: Linux kernel ARP cache (/proc/net/arp) for LAN IPs
-            if (! $online && file_exists('/proc/net/arp')) {
+            if (!$online && file_exists('/proc/net/arp')) {
                 $arpData = @file_get_contents('/proc/net/arp');
-                if ($arpData && preg_match('/^'.preg_quote($ipAddress, '/').'\s+\S+\s+\S+\s+([0-9a-fA-F:]{17})/m', $arpData, $m)) {
+                if ($arpData && preg_match('/^' . preg_quote($ipAddress, '/') . '\s+\S+\s+\S+\s+([0-9a-fA-F:]{17})/m', $arpData, $m)) {
                     if (strtolower($m[1]) !== '00:00:00:00:00:00') {
                         $online = true;
                         $outcome[] = "Reachable via ARP cache (MAC: {$m[1]})";
@@ -277,8 +278,8 @@ class IpAddressController extends Controller
             }
 
             // Fallback 3: Windows ARP cache (arp -a) for Windows localhost LAN IPs
-            if (! $online && stristr(PHP_OS, 'win') && $canExec) {
-                @exec('arp -a '.escapeshellarg($ipAddress), $arpOut, $arpStatus);
+            if (!$online && stristr(PHP_OS, 'win') && $canExec) {
+                @exec('arp -a ' . escapeshellarg($ipAddress), $arpOut, $arpStatus);
                 $arpStr = implode("\n", $arpOut);
                 if (preg_match('/([0-9a-fA-F]{2}[-:][0-9a-fA-F]{2}[-:][0-9a-fA-F]{2}[-:][0-9a-fA-F]{2}[-:][0-9a-fA-F]{2}[-:][0-9a-fA-F]{2})/i', $arpStr, $m)) {
                     if (strtolower($m[1]) !== '00-00-00-00-00-00') {
@@ -289,15 +290,15 @@ class IpAddressController extends Controller
             }
 
             // Fallback 3: Agent Sync status if updated recently
-            if (! $online && $ipModel && $ipModel->is_online && $this->isPrivateIp($ipAddress)) {
+            if (!$online && $ipModel && $ipModel->is_online && $this->isPrivateIp($ipAddress)) {
                 if ($ipModel->last_ping_at && $ipModel->last_ping_at->gt(now()->subMinutes(30))) {
                     $online = true;
-                    $outcome[] = 'Reachable via Agent Sync ('.$ipModel->last_ping_at->diffForHumans().')';
+                    $outcome[] = 'Reachable via Agent Sync (' . $ipModel->last_ping_at->diffForHumans() . ')';
                 }
             }
         } catch (\Throwable $e) {
             $online = false;
-            $outcome[] = 'Ping note: '.$e->getMessage();
+            $outcome[] = 'Ping note: ' . $e->getMessage();
         }
 
         return [
@@ -308,7 +309,7 @@ class IpAddressController extends Controller
 
     private function isPrivateIp(string $ip): bool
     {
-        return ! filter_var(
+        return !filter_var(
             $ip,
             FILTER_VALIDATE_IP,
             FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
@@ -317,10 +318,10 @@ class IpAddressController extends Controller
 
     public function liveStatus(Request $request)
     {
-        $ipIds = $request->input('ip_ids', []);
+        $ipIds = array_slice($request->input('ip_ids', []), 0, 15);
         $query = IpAddress::select('id', 'ip_address', 'is_online', 'last_ping_at');
 
-        if (! empty($ipIds)) {
+        if (!empty($ipIds)) {
             $query->whereIn('id', $ipIds);
         }
 
@@ -346,13 +347,13 @@ class IpAddressController extends Controller
         $updated = 0;
 
         foreach ($statuses as $item) {
-            if (! empty($item['id'])) {
+            if (!empty($item['id'])) {
                 IpAddress::where('id', $item['id'])->update([
                     'is_online' => (bool) $item['online'],
                     'last_ping_at' => now(),
                 ]);
                 $updated++;
-            } elseif (! empty($item['ip'])) {
+            } elseif (!empty($item['ip'])) {
                 IpAddress::where('ip_address', $item['ip'])->update([
                     'is_online' => (bool) $item['online'],
                     'last_ping_at' => now(),

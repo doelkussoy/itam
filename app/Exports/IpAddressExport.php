@@ -11,7 +11,7 @@ class IpAddressExport implements FromCollection, WithHeadings, WithMapping
 {
     public function collection()
     {
-        return IpAddress::with(['asset', 'location'])->get();
+        return IpAddress::with(['asset', 'employee', 'vlan'])->orderByRaw('INET_ATON(ip_address)')->get();
     }
 
     public function headings(): array
@@ -19,12 +19,15 @@ class IpAddressExport implements FromCollection, WithHeadings, WithMapping
         return [
             'ID',
             'IP Address',
-            'Subnet Mask',
+            'MAC Address',
+            'Assigned Asset',
+            'User / Employee',
+            'VLAN',
             'Gateway',
-            'Asset',
-            'Location',
+            'DNS',
             'Status',
-            'Description',
+            'Ping Status',
+            'Notes',
         ];
     }
 
@@ -33,12 +36,15 @@ class IpAddressExport implements FromCollection, WithHeadings, WithMapping
         return [
             $ip->id,
             $ip->ip_address,
-            $ip->subnet_mask,
-            $ip->gateway,
+            $ip->mac_address ?: '-',
             $ip->asset ? $ip->asset->name : '-',
-            $ip->location ? $ip->location->name : '-',
+            $ip->employee ? $ip->employee->name : '-',
+            $ip->vlan ? 'VLAN ' . $ip->vlan->vlan_number : '-',
+            $ip->gateway ?: '-',
+            $ip->dns ?: '-',
             $ip->status,
-            $ip->description,
+            $ip->is_online === true ? 'Online' : ($ip->is_online === false ? 'Offline' : 'Unchecked'),
+            $ip->notes ?: '-',
         ];
     }
 }
