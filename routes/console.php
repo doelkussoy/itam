@@ -22,5 +22,5 @@ try {
     // Ignore if table doesn't exist yet
 }
 
-// Ping all IP Addresses at 08:00 every day
-Schedule::command('ips:ping-all')->dailyAt('08:00');
+// Ping all IP Addresses every 5 minutes for real-time offline detection
+Schedule::command('ips:ping-all')->everyFiveMinutes();

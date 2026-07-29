@@ -909,6 +909,355 @@
     body.dark-mode .flatpickr-time input:focus {
       background: var(--color-paper-2);
     }
+
+    /* ══════════════════════════════════════════════════════
+       Mobile & Tablet Responsive UI/UX Overhaul
+       ═════════════════════════════════════════════════════ */
+    
+    /* Smooth Touch Scrolling for Horizontal Containers & Tables */
+    .table-responsive,
+    .card-body.p-0 {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius-md);
+      position: relative;
+    }
+
+    .table-responsive::-webkit-scrollbar,
+    .card-body.p-0::-webkit-scrollbar {
+      height: 6px;
+    }
+    .table-responsive::-webkit-scrollbar-thumb,
+    .card-body.p-0::-webkit-scrollbar-thumb {
+      background: color-mix(in oklch, var(--color-accent) 50%, transparent);
+      border-radius: var(--radius-pill);
+    }
+
+    /* Sticky Table Headers on Scroll */
+    .table-responsive table.table thead th,
+    .card-body.p-0 > table.table thead th {
+      position: sticky;
+      top: 0;
+      background: var(--color-paper-0) !important;
+      z-index: 5;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    body.dark-mode .table-responsive table.table thead th,
+    body.dark-mode .card-body.p-0 > table.table thead th {
+      background: var(--color-paper-1) !important;
+    }
+
+    /* Prevent mobile browser zoom on focus (minimum 16px font-size on mobile inputs) */
+    @media (max-width: 767.98px) {
+      input[type="text"],
+      input[type="number"],
+      input[type="search"],
+      input[type="email"],
+      input[type="password"],
+      input[type="date"],
+      select,
+      textarea,
+      .form-control,
+      .custom-select {
+        font-size: 16px !important;
+      }
+
+      /* Navbar Mobile Optimizations */
+      .main-header.navbar {
+        padding: 0 8px !important;
+        min-height: 56px;
+      }
+
+      .main-header .navbar-nav {
+        align-items: center;
+      }
+
+      .main-header .nav-link[data-widget="pushmenu"] {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0 !important;
+        border-radius: var(--radius-pill);
+      }
+
+      .nav-pill-btn {
+        height: 38px;
+        padding: 6px 10px;
+        font-size: 0.75rem;
+      }
+
+      /* User name hide long text on phone screens */
+      .user-name-text {
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* Content Header Mobile Spacing */
+      .content-header {
+        padding: 12px 14px !important;
+      }
+      .content-header h1 {
+        font-size: 1.25rem !important;
+        margin-bottom: 6px;
+      }
+
+      /* Sticky First Column & Sticky Action Column on Mobile Tables */
+      .table-responsive table.table th:first-child,
+      .table-responsive table.table td:first-child,
+      .card-body.p-0 > table.table th:first-child,
+      .card-body.p-0 > table.table td:first-child {
+        position: sticky;
+        left: 0;
+        background: var(--color-paper-0) !important;
+        z-index: 4;
+        box-shadow: 3px 0 6px -2px rgba(0,0,0,0.1);
+      }
+      body.dark-mode .table-responsive table.table th:first-child,
+      body.dark-mode .table-responsive table.table td:first-child,
+      body.dark-mode .card-body.p-0 > table.table th:first-child,
+      body.dark-mode .card-body.p-0 > table.table td:first-child {
+        background: var(--color-paper-1) !important;
+      }
+
+      .table-responsive table.table th:last-child,
+      .table-responsive table.table td:last-child,
+      .card-body.p-0 > table.table th:last-child,
+      .card-body.p-0 > table.table td:last-child {
+        position: sticky;
+        right: 0;
+        background: var(--color-paper-0) !important;
+        z-index: 4;
+        box-shadow: -3px 0 6px -2px rgba(0,0,0,0.1);
+      }
+      body.dark-mode .table-responsive table.table th:last-child,
+      body.dark-mode .table-responsive table.table td:last-child,
+      body.dark-mode .card-body.p-0 > table.table th:last-child,
+      body.dark-mode .card-body.p-0 > table.table td:last-child {
+        background: var(--color-paper-1) !important;
+      }
+
+      /* Card Headers & Toolbars Stacking */
+      .card-header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px;
+        padding: 14px !important;
+      }
+      .card-header .card-tools,
+      .card-header .card-title {
+        width: 100%;
+        margin-left: 0 !important;
+        float: none !important;
+      }
+      .card-header .card-tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .card-header .card-tools .input-group {
+        width: 100% !important;
+      }
+
+      .card-body {
+        padding: 14px !important;
+      }
+
+      /* Filter forms & flex-wrap containers on mobile across all pages */
+      form .d-flex,
+      .row.mb-3 form .d-flex {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+      }
+      form .d-flex > input,
+      form .d-flex > select,
+      form .d-flex > .select2-container,
+      .d-flex.flex-wrap > input,
+      .d-flex.flex-wrap > select,
+      .d-flex.flex-wrap > .select2-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 1 1 100% !important;
+      }
+      .select2-container {
+        width: 100% !important;
+      }
+
+      /* Action buttons row stacking on mobile */
+      .row.mb-3 .col-12.text-right,
+      .row.mb-3 .col-sm-6.text-right,
+      .row.mb-3 .col-md-4.text-md-right,
+      .row.mb-3 .col-12.d-flex {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        justify-content: stretch !important;
+        text-align: left !important;
+        margin-top: 8px !important;
+      }
+      .row.mb-3 .col-12.text-right > .btn,
+      .row.mb-3 .col-sm-6.text-right > .btn,
+      .row.mb-3 .col-md-4.text-md-right > .btn,
+      .row.mb-3 .col-12.d-flex > .btn,
+      .row.mb-3 .col-12.d-flex > a {
+        flex: 1 1 auto !important;
+        margin-right: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 40px !important;
+      }
+
+      /* Small stat box compact mobile styling */
+      .small-box > .inner {
+        padding: 14px !important;
+      }
+      .small-box > .inner h3 {
+        font-size: 1.75rem !important;
+      }
+      .small-box > .inner p {
+        font-size: 0.75rem !important;
+      }
+      .small-box > .icon > i {
+        font-size: 48px !important;
+        top: 10px;
+        right: 10px;
+      }
+
+      .d-flex.flex-wrap > input,
+      .d-flex.flex-wrap > select,
+      .d-flex.flex-wrap > .select2-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 1 1 100% !important;
+      }
+      .d-flex.flex-wrap {
+        gap: 8px !important;
+      }
+      .select2-container {
+        width: 100% !important;
+      }
+      
+      /* Card Body Table Auto-Scroll */
+      .card-body.p-0 {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Filter action row stacking */
+      .col-12.text-right,
+      .col-12.d-flex.justify-content-end {
+        text-align: left !important;
+        justify-content: flex-start !important;
+        flex-wrap: wrap;
+        gap: 8px !important;
+      }
+      .col-12.text-right > .btn,
+      .col-12.d-flex.justify-content-end > .btn,
+      .col-12.d-flex.justify-content-end > a {
+        flex: 1 1 auto;
+        margin-right: 0 !important;
+        text-align: center;
+      }
+
+      /* Modals Responsive */
+      .modal-dialog {
+        margin: 12px auto !important;
+        max-width: 95% !important;
+      }
+      .modal-content {
+        border-radius: var(--radius-lg) !important;
+      }
+      .modal-header, .modal-footer {
+        padding: 14px !important;
+      }
+
+      /* Mobile Data Table Cell Compact Styling */
+      .table thead th {
+        padding: 8px 10px;
+        font-size: 0.65rem;
+      }
+      .table tbody td {
+        padding: 8px 10px;
+        font-size: 0.8125rem;
+      }
+
+      /* Lightweight GPU & Paint performance optimization for Mobile screens */
+      *, *::before, *::after {
+        text-rendering: optimizeSpeed;
+      }
+
+      /* Disable heavy realtime backdrop blur on mobile topbar for 60fps scrolling */
+      .main-header.navbar {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        background: var(--color-paper-0) !important;
+      }
+      body.dark-mode .main-header.navbar {
+        background: var(--color-paper-1) !important;
+      }
+
+      /* Disable hover transitions on mobile to prevent paint lags */
+      .card, .info-box, .small-box, .cat-mini-card, .btn {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        transition: none !important;
+      }
+
+      /* Enable GPU Hardware Acceleration for mobile table & container scroll */
+      .table-responsive,
+      .card-body.p-0,
+      .content-wrapper {
+        transform: translateZ(0);
+        will-change: scroll-position;
+      }
+
+      /* Simplify card shadows on mobile screens */
+      .card, .small-box, .cat-mini-card {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      }
+
+      /* Mobile Drawer Backdrop overlay */
+      .sidebar-open .wrapper::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 1037;
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      .nav-pill-btn span {
+        display: inline-block;
+      }
+      .user-name-text {
+        display: none !important;
+      }
+      .user-info-pill {
+        padding: 0 6px !important;
+      }
+
+      /* Mini category grid adjustments */
+      .cat-mini-card {
+        padding: 12px 8px !important;
+      }
+      .cat-mini-card h3, .cat-mini-card .cat-count {
+        font-size: 1.25rem !important;
+      }
+      .cat-mini-card span, .cat-mini-card .cat-label {
+        font-size: 0.7rem !important;
+      }
+    }
   </style>
   @stack('styles')
 </head>
@@ -951,9 +1300,9 @@
       @auth
       <!-- User Info -->
       <li class="nav-item">
-        <span style="display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; font-size: 0.8125rem; font-weight: 500; color: var(--color-ink-1);">
+        <span class="user-info-pill" style="display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; font-size: 0.8125rem; font-weight: 500; color: var(--color-ink-1);">
           <i class="far fa-user" style="font-size: 0.8rem; color: var(--color-ink-3);"></i>
-          {{ Auth::user()?->name ?? __('messages.guest') ?? 'Guest' }}
+          <span class="user-name-text">{{ Auth::user()?->name ?? __('messages.guest') ?? 'Guest' }}</span>
         </span>
       </li>
 
@@ -974,7 +1323,7 @@
   <aside class="main-sidebar sidebar-light-primary elevation-0">
     <!-- Brand -->
     <a href="{{ route('dashboard') }}" class="brand-link" style="text-decoration: none;">
-      <img src="{{ asset('logo.png') }}" alt="Logo"
+      <img src="{{ asset('logo.png') }}" alt="Logo" loading="lazy" decoding="async"
            style="max-height: 30px; max-width: 52px; object-fit: contain; margin-right: 12px;">
       <span class="brand-text">{{ $app_name ?? 'ITAM Enterprise' }}</span>
     </a>

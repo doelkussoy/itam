@@ -33,28 +33,67 @@ class PingAllIps extends Command
 
         $this->info('Starting ping for '.$ips->count().' IP addresses...');
 
-        foreach ($ips as $ip) {
-            $ipAddress = $ip->ip_address;
-            $str = PHP_OS;
+        // Check if fping is available on Linux for ultra-fast parallel pinging (hundreds of IPs per second)
+        $hasFping = ! stristr(PHP_OS, 'win') && ! empty(shell_exec('which fping 2>/dev/null'));
 
-            // Limit ping to 1 packet, 1s timeout to make it fast
-            if (stristr($str, 'win')) {
-                $command = 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress);
-            } else {
-                $command = 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
+        if ($hasFping && $ips->count() > 0) {
+            $this->info('Using parallel fping for fast multi-IP scanning...');
+            $ipList = $ips->pluck('ip_address')->unique()->toArray();
+            $tempFile = storage_path('app/ip_ping_list.txt');
+            file_put_contents($tempFile, implode("\n", $ipList));
+
+            // fping -a (alive IPs only) -t 300 (300ms timeout)
+            $fpingOutput = shell_exec('fping -a -t 300 < '.escapeshellarg($tempFile).' 2>&1');
+            $aliveIps = array_filter(array_map('trim', explode("\n", $fpingOutput ?? '')));
+            $aliveMap = array_flip($aliveIps);
+
+            @unlink($tempFile);
+
+            foreach ($ips as $ip) {
+                $isOnline = isset($aliveMap[$ip->ip_address]);
+                $ip->update([
+                    'is_online' => $isOnline,
+                    'last_ping_at' => now(),
+                ]);
+
+                if (! $isOnline) {
+                    $offlineIps[] = [
+                        'ip_address' => $ip->ip_address,
+                        'name' => $ip->asset ? $ip->asset->name : ($ip->notes ?? 'Unknown'),
+                    ];
+                    $this->error("IP {$ip->ip_address} is OFFLINE");
+                } else {
+                    $this->info("IP {$ip->ip_address} is ONLINE");
+                }
             }
+        } else {
+            foreach ($ips as $ip) {
+                $ipAddress = $ip->ip_address;
+                $str = PHP_OS;
 
-            exec($command, $outcome, $status);
+                if (stristr($str, 'win')) {
+                    $command = 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress);
+                } else {
+                    $command = 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
+                }
 
-            if ($status !== 0) {
-                // Offline
-                $offlineIps[] = [
-                    'ip_address' => $ipAddress,
-                    'name' => $ip->asset ? $ip->asset->name : ($ip->notes ?? 'Unknown'),
-                ];
-                $this->error("IP $ipAddress is OFFLINE");
-            } else {
-                $this->info("IP $ipAddress is ONLINE");
+                exec($command, $outcome, $status);
+                $isOnline = ($status === 0);
+
+                $ip->update([
+                    'is_online' => $isOnline,
+                    'last_ping_at' => now(),
+                ]);
+
+                if (! $isOnline) {
+                    $offlineIps[] = [
+                        'ip_address' => $ipAddress,
+                        'name' => $ip->asset ? $ip->asset->name : ($ip->notes ?? 'Unknown'),
+                    ];
+                    $this->error("IP $ipAddress is OFFLINE");
+                } else {
+                    $this->info("IP $ipAddress is ONLINE");
+                }
             }
         }
 

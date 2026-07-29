@@ -142,11 +142,84 @@ class IpAddressController extends Controller
 
         $online = ($status === 0);
 
+        $ip->update([
+            'is_online' => $online,
+            'last_ping_at' => now(),
+        ]);
+
         return response()->json([
             'ip' => $ipAddress,
             'online' => $online,
             'status' => $online ? 'Online' : 'Offline',
+            'last_ping_at' => $ip->last_ping_at ? $ip->last_ping_at->diffForHumans() : 'Just now',
             'output' => implode("\n", $outcome),
+        ]);
+    }
+
+    public function pingBatch(Request $request)
+    {
+        $ipIds = $request->input('ip_ids', []);
+        if (empty($ipIds)) {
+            return response()->json(['success' => false, 'results' => []]);
+        }
+
+        $ips = IpAddress::whereIn('id', $ipIds)->get();
+        $results = [];
+        $str = PHP_OS;
+
+        foreach ($ips as $ip) {
+            $ipAddress = $ip->ip_address;
+            if (stristr($str, 'win')) {
+                $command = 'ping -n 1 -w 800 '.escapeshellarg($ipAddress);
+            } else {
+                $command = 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
+            }
+
+            exec($command, $outcome, $status);
+            $online = ($status === 0);
+
+            $ip->update([
+                'is_online' => $online,
+                'last_ping_at' => now(),
+            ]);
+
+            $results[] = [
+                'id' => $ip->id,
+                'ip' => $ipAddress,
+                'online' => $online,
+                'status' => $online ? 'Online' : 'Offline',
+                'last_ping_at' => 'Just now',
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'results' => $results,
+        ]);
+    }
+
+    public function liveStatus(Request $request)
+    {
+        $ipIds = $request->input('ip_ids', []);
+        $query = IpAddress::select('id', 'ip_address', 'is_online', 'last_ping_at');
+
+        if (! empty($ipIds)) {
+            $query->whereIn('id', $ipIds);
+        }
+
+        $ips = $query->get()->map(function ($ip) {
+            return [
+                'id' => $ip->id,
+                'ip' => $ip->ip_address,
+                'online' => $ip->is_online,
+                'status' => $ip->is_online === true ? 'Online' : ($ip->is_online === false ? 'Offline' : 'Unchecked'),
+                'last_ping_at' => $ip->last_ping_at ? $ip->last_ping_at->diffForHumans() : 'Never',
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'ips' => $ips,
         ]);
     }
 }

@@ -19,7 +19,14 @@ class IpAddress extends Model
         'gateway',
         'dns',
         'status',
+        'is_online',
+        'last_ping_at',
         'notes',
+    ];
+
+    protected $casts = [
+        'is_online' => 'boolean',
+        'last_ping_at' => 'datetime',
     ];
 
     public function asset()

@@ -139,6 +139,8 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['permission:menu_ips'])->group(function () {
         Route::get('ips/export', [IpAddressController::class, 'exportExcel'])->name('ips.export');
+        Route::get('ips/live-status', [IpAddressController::class, 'liveStatus'])->name('ips.live-status');
+        Route::post('ips/ping-batch', [IpAddressController::class, 'pingBatch'])->name('ips.ping-batch');
         Route::post('ips/{ip}/ping', [IpAddressController::class, 'ping'])->name('ips.ping');
         Route::patch('ips/{ip}/status', [IpAddressController::class, 'updateStatus'])->name('ips.updateStatus');
         Route::resource('ips', IpAddressController::class);

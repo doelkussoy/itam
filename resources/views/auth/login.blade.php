@@ -278,6 +278,121 @@
       margin-bottom: 24px;
       text-align: left;
     }
+
+    /* ══════════════════════════════════════════════════════
+       Mobile Responsiveness & Touch Optimization
+       ═════════════════════════════════════════════════════ */
+    @media (max-width: 575.98px) {
+      body {
+        padding: 16px 12px;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        overflow-y: auto;
+      }
+
+      body::before, body::after {
+        width: 320px;
+        height: 320px;
+        filter: none !important;
+        animation: none !important;
+        opacity: 0.12;
+      }
+
+      .login-container {
+        padding: 0;
+        max-width: 100%;
+      }
+
+      .glass-card {
+        padding: 32px 20px;
+        border-radius: 20px;
+        backdrop-filter: none !important;
+        background: rgba(30, 41, 59, 0.94) !important;
+        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+      }
+
+      .brand-header {
+        margin-bottom: 24px;
+      }
+
+      .brand-header img {
+        height: 44px;
+        margin-bottom: 12px;
+      }
+
+      .brand-header h1 {
+        font-size: 1.35rem;
+      }
+
+      .brand-header p {
+        font-size: 0.8125rem;
+      }
+
+      /* Mobile Input Sizing (Min 16px to prevent iOS Safari Auto-Zoom) */
+      .form-control {
+        font-size: 16px !important;
+        padding: 14px 16px 14px 44px;
+        height: 48px;
+        border-radius: 12px;
+      }
+
+      .input-icon {
+        left: 14px;
+        font-size: 1rem;
+      }
+
+      .toggle-password {
+        right: 12px;
+        padding: 8px;
+        font-size: 1rem;
+      }
+
+      /* Touch-friendly Actions Row */
+      .actions-row {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 18px;
+        margin-bottom: 24px;
+        font-size: 0.8125rem;
+      }
+
+      .remember-me {
+        font-size: 0.8125rem;
+        gap: 8px;
+      }
+
+      .remember-me input {
+        width: 18px;
+        height: 18px;
+      }
+
+      .forgot-link {
+        font-size: 0.8125rem;
+        white-space: nowrap;
+      }
+
+      /* Touch-friendly Submit Button */
+      .btn-submit {
+        height: 50px;
+        font-size: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+      }
+    }
+
+    @media (max-width: 380px) {
+      .glass-card {
+        padding: 24px 16px;
+      }
+      .actions-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -287,7 +402,7 @@
     
     <!-- Brand Info Inside Card -->
     <div class="brand-header">
-      <img src="{{ asset('logo.png') }}" alt="ITAM Logo">
+      <img src="{{ asset('logo.png') }}" alt="ITAM Logo" loading="lazy" decoding="async">
       <h1>ITAM <span>Enterprise</span></h1>
       <p>Sign in to your account</p>
     </div>

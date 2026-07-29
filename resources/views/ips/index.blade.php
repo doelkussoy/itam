@@ -28,7 +28,10 @@
             </form>
         </div>
 
-        <div class="col-12 d-flex justify-content-end" style="gap: 10px;">
+        <div class="col-12 d-flex justify-content-end align-items-center flex-wrap" style="gap: 10px;">
+            <button type="button" id="scan-page-btn" class="btn btn-sm btn-outline-info">
+                <i class="fas fa-sync-alt"></i> <span>Scan Status Live</span>
+            </button>
             <a href="{{ route('ips.export') }}" class="btn btn-sm btn-success"><i class="fas fa-file-excel"></i>
                 {{ __('messages.export') }}</a>
             <a href="{{ route('ips.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i>
@@ -53,10 +56,28 @@
                     </thead>
                     <tbody>
                         @forelse($ips as $ip)
-                            <tr>
+                            <tr class="ip-row" data-ip-id="{{ $ip->id }}">
                                 <td class="theme-text">{{ ($ips->currentPage() - 1) * $ips->perPage() + $loop->iteration }}</td>
-                                <td class="font-weight-bold"><i class="fas fa-network-wired text-muted"></i>
-                                    {{ $ip->ip_address }}</td>
+                                <td class="font-weight-bold">
+                                    <div class="d-flex align-items-center flex-wrap" style="gap: 6px;">
+                                        <span><i class="fas fa-network-wired text-muted"></i> {{ $ip->ip_address }}</span>
+                                        <span class="ping-status-badge-{{ $ip->id }}">
+                                            @if($ip->is_online === true)
+                                                <span class="badge badge-success px-2 py-1" style="box-shadow: 0 0 8px rgba(40,167,69,0.5); font-size: 0.7rem;" title="{{ $ip->last_ping_at ? 'Last ping: ' . $ip->last_ping_at->diffForHumans() : '' }}">
+                                                    <i class="fas fa-circle text-xs mr-1"></i> Online
+                                                </span>
+                                            @elseif($ip->is_online === false)
+                                                <span class="badge badge-danger px-2 py-1" style="box-shadow: 0 0 8px rgba(220,53,69,0.5); font-size: 0.7rem;" title="{{ $ip->last_ping_at ? 'Last ping: ' . $ip->last_ping_at->diffForHumans() : '' }}">
+                                                    <i class="fas fa-circle text-xs mr-1"></i> Offline
+                                                </span>
+                                            @else
+                                                <span class="badge badge-secondary px-2 py-1" style="opacity: 0.6; font-size: 0.7rem;" title="Unchecked">
+                                                    <i class="far fa-circle text-xs mr-1"></i> Unchecked
+                                                </span>
+                                            @endif
+                                        </span>
+                                    </div>
+                                </td>
                                 <td class="theme-text">
                                     @if($ip->asset)
                                         <a href="{{ route('assets.show', $ip->asset_id) }}"
@@ -104,6 +125,7 @@
                                 <td class="theme-text">
                                     <div class="d-flex justify-content-center" style="gap: 8px;">
                                         <button type="button" class="btn action-btn btn-outline-success ping-btn"
+                                            data-id="{{ $ip->id }}"
                                             data-ping-url="{{ route('ips.ping', $ip) }}" title="{{ __('messages.ping_device') ?? 'Ping Device' }}"
                                             style="border: 1px solid rgba(40, 167, 69, 0.3); background: rgba(40, 167, 69, 0.15); color: #28a745;"><i
                                                 class="fas fa-play"></i></button>
@@ -141,11 +163,99 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
+
+            // Fast 3-second live database status polling (instant zero-delay reflection)
+            function pollLiveStatus() {
+                var ipIds = [];
+                $('.ip-row').each(function () {
+                    var id = $(this).data('ip-id');
+                    if (id) ipIds.push(id);
+                });
+
+                if (ipIds.length === 0) return;
+
+                $.ajax({
+                    url: '{{ route("ips.live-status") }}',
+                    method: 'GET',
+                    data: { ip_ids: ipIds },
+                    success: function (response) {
+                        if (response.success && response.ips) {
+                            response.ips.forEach(function (item) {
+                                var statusContainer = $('.ping-status-badge-' + item.id);
+                                if (item.online === true) {
+                                    statusContainer.html('<span class="badge badge-success px-2 py-1" style="box-shadow: 0 0 8px rgba(40,167,69,0.5); font-size: 0.7rem;" title="' + item.last_ping_at + '"><i class="fas fa-circle text-xs mr-1"></i> Online</span>');
+                                } else if (item.online === false) {
+                                    statusContainer.html('<span class="badge badge-danger px-2 py-1" style="box-shadow: 0 0 8px rgba(220,53,69,0.5); font-size: 0.7rem;" title="' + item.last_ping_at + '"><i class="fas fa-circle text-xs mr-1"></i> Offline</span>');
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+
+            // Automatic batch scanner for displayed IPs
+            function scanDisplayedIps() {
+                var ipIds = [];
+                $('.ip-row').each(function () {
+                    var id = $(this).data('ip-id');
+                    if (id) {
+                        ipIds.push(id);
+                        var statusContainer = $('.ping-status-badge-' + id);
+                        if (statusContainer.find('.badge-secondary').length > 0) {
+                            statusContainer.html('<span class="badge badge-secondary px-2 py-1" style="opacity: 0.8; font-size: 0.7rem;"><i class="fas fa-spinner fa-spin text-xs mr-1"></i> Checking...</span>');
+                        }
+                    }
+                });
+
+                if (ipIds.length === 0) return;
+
+                var btnIcon = $('#scan-page-btn i');
+                btnIcon.addClass('fa-spin');
+
+                $.ajax({
+                    url: '{{ route("ips.ping-batch") }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        ip_ids: ipIds
+                    },
+                    success: function (response) {
+                        btnIcon.removeClass('fa-spin');
+                        if (response.success && response.results) {
+                            response.results.forEach(function (item) {
+                                var statusContainer = $('.ping-status-badge-' + item.id);
+                                if (item.online) {
+                                    statusContainer.html('<span class="badge badge-success px-2 py-1" style="box-shadow: 0 0 8px rgba(40,167,69,0.5); font-size: 0.7rem;" title="Just now"><i class="fas fa-circle text-xs mr-1"></i> Online</span>');
+                                } else {
+                                    statusContainer.html('<span class="badge badge-danger px-2 py-1" style="box-shadow: 0 0 8px rgba(220,53,69,0.5); font-size: 0.7rem;" title="Just now"><i class="fas fa-circle text-xs mr-1"></i> Offline</span>');
+                                }
+                            });
+                        }
+                    },
+                    error: function () {
+                        btnIcon.removeClass('fa-spin');
+                    }
+                });
+            }
+
+            // Auto scan live status when page loads
+            scanDisplayedIps();
+
+            // Instant 3-second live status polling
+            setInterval(pollLiveStatus, 3000);
+
+            // Trigger manual scan on button click
+            $('#scan-page-btn').click(function () {
+                scanDisplayedIps();
+            });
+
             $('.ping-btn').click(function () {
                 var button = $(this);
+                var ipId = button.data('id');
                 var icon = button.find('i');
                 var originalClass = icon.attr('class');
                 var pingUrl = button.data('ping-url');
+                var statusContainer = $('.ping-status-badge-' + ipId);
 
                 // Show spinner
                 icon.attr('class', 'fas fa-spinner fa-spin');
@@ -166,6 +276,7 @@
                                 'color': '#28a745',
                                 'border-color': '#28a745'
                             });
+                            statusContainer.html('<span class="badge badge-success px-2 py-1" style="box-shadow: 0 0 8px rgba(40,167,69,0.5); font-size: 0.7rem;" title="Just now"><i class="fas fa-circle text-xs mr-1"></i> Online</span>');
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
@@ -181,6 +292,7 @@
                                 'color': '#dc3545',
                                 'border-color': '#dc3545'
                             });
+                            statusContainer.html('<span class="badge badge-danger px-2 py-1" style="box-shadow: 0 0 8px rgba(220,53,69,0.5); font-size: 0.7rem;" title="Just now"><i class="fas fa-circle text-xs mr-1"></i> Offline</span>');
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',

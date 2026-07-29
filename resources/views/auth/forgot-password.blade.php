@@ -244,6 +244,72 @@
       margin-bottom: 24px;
       text-align: left;
     }
+
+    /* ══════════════════════════════════════════════════════
+       Mobile Responsiveness & Touch Optimization
+       ═════════════════════════════════════════════════════ */
+    @media (max-width: 575.98px) {
+      body {
+        padding: 16px 12px;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        overflow-y: auto;
+      }
+
+      body::before, body::after {
+        width: 320px;
+        height: 320px;
+        filter: blur(60px);
+      }
+
+      .login-container {
+        padding: 0;
+        max-width: 100%;
+      }
+
+      .glass-card {
+        padding: 32px 20px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+      }
+
+      .brand-header {
+        margin-bottom: 24px;
+      }
+
+      .brand-header img {
+        height: 44px;
+        margin-bottom: 12px;
+      }
+
+      .brand-header h1 {
+        font-size: 1.35rem;
+      }
+
+      .brand-header p {
+        font-size: 0.8125rem;
+      }
+
+      .form-control {
+        font-size: 16px !important;
+        padding: 14px 16px 14px 44px;
+        height: 48px;
+        border-radius: 12px;
+      }
+
+      .input-icon {
+        left: 14px;
+        font-size: 1rem;
+      }
+
+      .btn-submit {
+        height: 50px;
+        font-size: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+      }
+    }
   </style>
 </head>
 <body>
