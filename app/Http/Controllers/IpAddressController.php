@@ -130,7 +130,7 @@ class IpAddressController extends Controller
     public function ping(Request $request, IpAddress $ip)
     {
         try {
-            $result = $this->pingSingleIp($ip->ip_address);
+            $result = $this->pingSingleIp($ip->ip_address, $ip);
             $online = $result['online'];
 
             $ip->update([
@@ -168,7 +168,7 @@ class IpAddressController extends Controller
             $results = [];
 
             foreach ($ips as $ip) {
-                $result = $this->pingSingleIp($ip->ip_address);
+                $result = $this->pingSingleIp($ip->ip_address, $ip);
                 $online = $result['online'];
 
                 $ip->update([
@@ -194,7 +194,7 @@ class IpAddressController extends Controller
         }
     }
 
-    private function pingSingleIp(string $ipAddress): array
+    private function pingSingleIp(string $ipAddress, ?IpAddress $ipModel = null): array
     {
         $outcome = [];
         $online = false;
@@ -227,6 +227,14 @@ class IpAddressController extends Controller
                     }
                 }
             }
+
+            // If direct cloud ping failed for a Private LAN IP (192.168.x.x), check if Agent synced status recently
+            if (! $online && $ipModel && $ipModel->is_online && $this->isPrivateIp($ipAddress)) {
+                if ($ipModel->last_ping_at && $ipModel->last_ping_at->gt(now()->subMinutes(30))) {
+                    $online = true;
+                    $outcome[] = 'Reachable via Agent Sync ('.$ipModel->last_ping_at->diffForHumans().')';
+                }
+            }
         } catch (\Throwable $e) {
             $online = false;
             $outcome[] = 'Ping note: '.$e->getMessage();
@@ -236,6 +244,15 @@ class IpAddressController extends Controller
             'online' => $online,
             'output' => implode("\n", $outcome),
         ];
+    }
+
+    private function isPrivateIp(string $ip): bool
+    {
+        return ! filter_var(
+            $ip,
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+        );
     }
 
     public function liveStatus(Request $request)
