@@ -91,15 +91,19 @@ class AgentSync extends Command
             // Push to remote server if server option is specified and different from local
             if ($this->option('server')) {
                 try {
-                    Http::post("{$serverUrl}/api/ips/agent-sync", [
+                    $res = Http::withoutVerifying()->timeout(5)->post("{$serverUrl}/api/ips/agent-sync", [
                         'statuses' => $statuses,
                     ]);
-                    $this->info("Synced ".count($statuses)." IPs status to {$serverUrl}");
+                    if ($res->successful()) {
+                        $this->info("[".now()->format('H:i:s')."] Synced ".count($statuses)." LAN IPs to {$serverUrl}");
+                    } else {
+                        $this->error("[".now()->format('H:i:s')."] Sync HTTP {$res->status()}: {$res->body()}");
+                    }
                 } catch (\Throwable $e) {
-                    $this->error("Sync error: ".$e->getMessage());
+                    $this->error("[".now()->format('H:i:s')."] Sync error: ".$e->getMessage());
                 }
             } else {
-                $this->info("Updated ".count($statuses)." local LAN IPs status");
+                $this->info("[".now()->format('H:i:s')."] Updated ".count($statuses)." local LAN IPs status");
             }
 
             sleep($interval);
