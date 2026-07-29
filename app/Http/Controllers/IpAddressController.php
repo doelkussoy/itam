@@ -129,34 +129,7 @@ class IpAddressController extends Controller
 
     public function ping(Request $request, IpAddress $ip)
     {
-        $result = $this->pingSingleIp($ip->ip_address);
-        $online = $result['online'];
-
-        $ip->update([
-            'is_online' => $online,
-            'last_ping_at' => now(),
-        ]);
-
-        return response()->json([
-            'ip' => $ip->ip_address,
-            'online' => $online,
-            'status' => $online ? 'Online' : 'Offline',
-            'last_ping_at' => $ip->last_ping_at ? $ip->last_ping_at->diffForHumans() : 'Just now',
-            'output' => $result['output'],
-        ]);
-    }
-
-    public function pingBatch(Request $request)
-    {
-        $ipIds = $request->input('ip_ids', []);
-        if (empty($ipIds)) {
-            return response()->json(['success' => false, 'results' => []]);
-        }
-
-        $ips = IpAddress::whereIn('id', $ipIds)->get();
-        $results = [];
-
-        foreach ($ips as $ip) {
+        try {
             $result = $this->pingSingleIp($ip->ip_address);
             $online = $result['online'];
 
@@ -165,19 +138,60 @@ class IpAddressController extends Controller
                 'last_ping_at' => now(),
             ]);
 
-            $results[] = [
-                'id' => $ip->id,
+            return response()->json([
                 'ip' => $ip->ip_address,
                 'online' => $online,
                 'status' => $online ? 'Online' : 'Offline',
-                'last_ping_at' => 'Just now',
-            ];
+                'last_ping_at' => $ip->last_ping_at ? $ip->last_ping_at->diffForHumans() : 'Just now',
+                'output' => $result['output'],
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'ip' => $ip->ip_address,
+                'online' => false,
+                'status' => 'Offline',
+                'last_ping_at' => 'Error',
+                'output' => 'Ping error: '.$e->getMessage(),
+            ], 200);
         }
+    }
 
-        return response()->json([
-            'success' => true,
-            'results' => $results,
-        ]);
+    public function pingBatch(Request $request)
+    {
+        try {
+            $ipIds = $request->input('ip_ids', []);
+            if (empty($ipIds)) {
+                return response()->json(['success' => false, 'results' => []]);
+            }
+
+            $ips = IpAddress::whereIn('id', $ipIds)->get();
+            $results = [];
+
+            foreach ($ips as $ip) {
+                $result = $this->pingSingleIp($ip->ip_address);
+                $online = $result['online'];
+
+                $ip->update([
+                    'is_online' => $online,
+                    'last_ping_at' => now(),
+                ]);
+
+                $results[] = [
+                    'id' => $ip->id,
+                    'ip' => $ip->ip_address,
+                    'online' => $online,
+                    'status' => $online ? 'Online' : 'Offline',
+                    'last_ping_at' => 'Just now',
+                ];
+            }
+
+            return response()->json([
+                'success' => true,
+                'results' => $results,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
     }
 
     private function pingSingleIp(string $ipAddress): array
@@ -188,15 +202,24 @@ class IpAddressController extends Controller
         try {
             $disabledFunctions = array_map('trim', explode(',', strtolower(ini_get('disable_functions') ?: '')));
             $canExec = function_exists('exec') && ! in_array('exec', $disabledFunctions);
+            $canShellExec = function_exists('shell_exec') && ! in_array('shell_exec', $disabledFunctions);
 
             if ($canExec) {
                 if (stristr(PHP_OS, 'win')) {
                     $command = 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress);
                 } else {
-                    // Search for ping or fping binary path on Linux
-                    $pingBin = trim(@shell_exec('which ping 2>/dev/null') ?: '');
+                    $pingBin = '';
+                    if ($canShellExec) {
+                        $pingBin = trim(@shell_exec('which ping 2>/dev/null') ?: '');
+                    }
                     if (empty($pingBin) || ! is_executable($pingBin)) {
-                        $pingBin = file_exists('/bin/ping') ? '/bin/ping' : '/usr/bin/ping';
+                        if (file_exists('/bin/ping')) {
+                            $pingBin = '/bin/ping';
+                        } elseif (file_exists('/usr/bin/ping')) {
+                            $pingBin = '/usr/bin/ping';
+                        } else {
+                            $pingBin = 'ping';
+                        }
                     }
                     $command = escapeshellcmd($pingBin).' -c 1 -W 1 '.escapeshellarg($ipAddress);
                 }

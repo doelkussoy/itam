@@ -307,7 +307,7 @@
                             button.removeAttr('style');
                         }, 3000);
                     },
-                    error: function () {
+                    error: function (xhr) {
                         button.prop('disabled', false);
                         icon.attr('class', 'fas fa-exclamation-triangle');
                         button.css({
@@ -319,13 +319,23 @@
                             icon.attr('class', originalClass);
                             button.removeAttr('style');
                         }, 3000);
+
+                        var msg = "{{ __('messages.ping_error') ?? 'Error executing ping command.' }}";
+                        if (xhr.status === 419) {
+                            msg = "Sesi halaman kedaluwarsa (419 CSRF). Silakan refresh halaman.";
+                        } else if (xhr.status === 403) {
+                            msg = "Akses ditolak (403 Forbidden).";
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
                             showConfirmButton: false,
-                            timer: 3000,
+                            timer: 4000,
                             icon: 'warning',
-                            title: "{{ __('messages.ping_error') ?? 'Error executing ping command.' }}"
+                            title: msg
                         });
                     }
                 });
