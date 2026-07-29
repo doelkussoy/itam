@@ -71,7 +71,10 @@ class IpAddressController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        IpAddress::create($request->all());
+        $data = $request->all();
+        $data['gateway'] = $this->resolveGateway($data);
+
+        IpAddress::create($data);
 
         return redirect()->route('ips.index', request()->query())->with('success', 'IP Address added successfully.');
     }
@@ -99,9 +102,32 @@ class IpAddressController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $ip->update($request->all());
+        $data = $request->all();
+        $data['gateway'] = $this->resolveGateway($data);
+
+        $ip->update($data);
 
         return redirect()->route('ips.index', request()->query())->with('success', 'IP Address updated successfully.');
+    }
+
+    private function resolveGateway(array $data): ?string
+    {
+        if (!empty($data['gateway'])) {
+            return $data['gateway'];
+        }
+
+        if (!empty($data['vlan_id'])) {
+            $vlan = Vlan::find($data['vlan_id']);
+            if ($vlan) {
+                return $vlan->gateway ?: "192.168.{$vlan->vlan_number}.254";
+            }
+        }
+
+        if (!empty($data['ip_address']) && preg_match('/^(\d+\.\d+\.\d+)\.\d+$/', $data['ip_address'], $m)) {
+            return "{$m[1]}.254";
+        }
+
+        return null;
     }
 
     public function destroy(IpAddress $ip)

@@ -28,10 +28,10 @@
 
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">VLAN</label>
-                    <select name="vlan_id" class="form-control select2 @error('vlan_id') is-invalid @enderror" >
-                        <option value="" >None / Standard</option>
+                    <select name="vlan_id" id="vlan_select" class="form-control select2 @error('vlan_id') is-invalid @enderror" >
+                        <option value="" data-vlan-number="" data-gateway="">None / Standard</option>
                         @foreach($vlans as $vlan)
-                            <option value="{{ $vlan->id }}"  {{ old('vlan_id') == $vlan->id ? 'selected' : '' }}>
+                            <option value="{{ $vlan->id }}" data-vlan-number="{{ $vlan->vlan_number }}" data-gateway="{{ $vlan->gateway ?: '192.168.'.$vlan->vlan_number.'.254' }}" {{ old('vlan_id') == $vlan->id ? 'selected' : '' }}>
                                 VLAN {{ $vlan->vlan_number }} - {{ $vlan->name }}
                             </option>
                         @endforeach
@@ -42,7 +42,7 @@
             <div class="row">
                 <div class="col-md-6 form-group">
                     <label  class="theme-text">Gateway</label>
-                    <input type="text" name="gateway" class="form-control @error('gateway') is-invalid @enderror" value="{{ old('gateway') }}" placeholder="192.168.1.1" >
+                    <input type="text" name="gateway" id="gateway_input" class="form-control @error('gateway') is-invalid @enderror" value="{{ old('gateway') }}" placeholder="192.168.1.254" >
                     @error('gateway') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-6 form-group">
@@ -92,3 +92,27 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#vlan_select').on('change', function() {
+            var selected = $(this).find(':selected');
+            var gw = selected.data('gateway');
+            if (gw) {
+                $('#gateway_input').val(gw);
+            }
+        });
+
+        $('input[name="ip_address"]').on('blur change', function() {
+            var ip = $(this).val().trim();
+            if (ip && !$('#gateway_input').val()) {
+                var parts = ip.split('.');
+                if (parts.length === 4) {
+                    $('#gateway_input').val(parts[0] + '.' + parts[1] + '.' + parts[2] + '.254');
+                }
+            }
+        });
+    });
+</script>
+@endpush
