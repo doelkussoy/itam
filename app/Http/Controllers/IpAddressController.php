@@ -190,28 +190,39 @@ class IpAddressController extends Controller
             $canExec = function_exists('exec') && ! in_array('exec', $disabledFunctions);
 
             if ($canExec) {
-                $command = stristr(PHP_OS, 'win')
-                    ? 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress)
-                    : 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
+                if (stristr(PHP_OS, 'win')) {
+                    $command = 'ping -n 1 -w 1000 '.escapeshellarg($ipAddress);
+                } else {
+                    // Search for ping or fping binary path on Linux
+                    $pingBin = trim(@shell_exec('which ping 2>/dev/null') ?: '');
+                    if (empty($pingBin) || ! is_executable($pingBin)) {
+                        $pingBin = file_exists('/bin/ping') ? '/bin/ping' : '/usr/bin/ping';
+                    }
+                    $command = escapeshellcmd($pingBin).' -c 1 -W 1 '.escapeshellarg($ipAddress);
+                }
 
                 @exec($command, $outcome, $status);
-                $online = ($status === 0);
-            } else {
-                // Fallback to socket test if exec is disabled on aaPanel
-                $ports = [80, 443, 22, 445, 8080];
+                if ($status === 0) {
+                    $online = true;
+                }
+            }
+
+            // Fallback to socket port connection if exec is disabled or ping ICMP is blocked by firewall
+            if (! $online) {
+                $ports = [80, 443, 22, 445, 8080, 139, 3389, 53];
                 foreach ($ports as $port) {
                     $connection = @fsockopen($ipAddress, $port, $errno, $errstr, 0.4);
                     if (is_resource($connection)) {
                         fclose($connection);
                         $online = true;
+                        $outcome[] = "Device reachable via port $port";
                         break;
                     }
                 }
-                $outcome[] = 'Exec disabled, used socket fallback';
             }
         } catch (\Throwable $e) {
             $online = false;
-            $outcome[] = 'Ping note: '.$e->getMessage();
+            $outcome[] = 'Ping execution note: '.$e->getMessage();
         }
 
         return [
