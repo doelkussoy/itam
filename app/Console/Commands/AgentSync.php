@@ -63,47 +63,92 @@ class AgentSync extends Command
                         'online' => $isOnline,
                     ];
                 }
-            } else {
-                foreach ($ips as $ip) {
-                    $ipAddress = $ip->ip_address;
-                    $str = PHP_OS;
-                    $command = stristr($str, 'win')
-                        ? 'ping -n 1 -w 500 '.escapeshellarg($ipAddress)
-                        : 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
 
-                    exec($command, $outcome, $status);
-                    $statuses[] = [
-                        'id' => $ip->id,
-                        'ip' => $ipAddress,
-                        'online' => ($status === 0),
-                    ];
+                // Sync to local DB directly if running on local DB, or push via HTTP API
+                foreach ($statuses as $st) {
+                    IpAddress::where('id', $st['id'])->update([
+                        'is_online' => $st['online'],
+                        'last_ping_at' => now(),
+                    ]);
                 }
-            }
 
-            // Sync to local DB directly if running on local DB, or push via HTTP API
-            foreach ($statuses as $st) {
-                IpAddress::where('id', $st['id'])->update([
-                    'is_online' => $st['online'],
+                // Push to remote server if server option is specified and different from local
+                if ($this->option('server')) {
+                    try {
+                        $res = Http::withoutVerifying()->timeout(5)->post("{$serverUrl}/api/ips/agent-sync", [
+                            'statuses' => $statuses,
+                        ]);
+                        if ($res->successful()) {
+                            $this->info("[".now()->format('H:i:s')."] Synced ".count($statuses)." LAN IPs to {$serverUrl}");
+                        } else {
+                            $this->error("[".now()->format('H:i:s')."] Sync HTTP {$res->status()}: {$res->body()}");
+                        }
+                    } catch (\Throwable $e) {
+                        $this->error("[".now()->format('H:i:s')."] Sync error: ".$e->getMessage());
+                    }
+                } else {
+                    $this->info("[".now()->format('H:i:s')."] Updated ".count($statuses)." local LAN IPs status");
+                }
+            } else {
+            $chunkSize = 30;
+            $currentChunk = [];
+            $totalSynced = 0;
+
+            foreach ($ips as $ip) {
+                $ipAddress = $ip->ip_address;
+                $str = PHP_OS;
+                $command = stristr($str, 'win')
+                    ? 'ping -n 1 -w 250 '.escapeshellarg($ipAddress)
+                    : 'ping -c 1 -W 1 '.escapeshellarg($ipAddress);
+
+                @exec($command, $outcome, $status);
+                $isOnline = ($status === 0);
+
+                $item = [
+                    'id' => $ip->id,
+                    'ip' => $ipAddress,
+                    'online' => $isOnline,
+                ];
+
+                $currentChunk[] = $item;
+
+                // Sync directly to local DB
+                IpAddress::where('id', $ip->id)->update([
+                    'is_online' => $isOnline,
                     'last_ping_at' => now(),
                 ]);
+
+                // Flush chunk to cloud server every 30 IPs for instant real-time reflection
+                if (count($currentChunk) >= $chunkSize) {
+                    if ($this->option('server')) {
+                        try {
+                            Http::withoutVerifying()->timeout(4)->post("{$serverUrl}/api/ips/agent-sync", [
+                                'statuses' => $currentChunk,
+                            ]);
+                            $totalSynced += count($currentChunk);
+                            $this->info("[".now()->format('H:i:s')."] Synced {$totalSynced}/{$ips->count()} LAN IPs to {$serverUrl}");
+                        } catch (\Throwable $e) {
+                            $this->error("[".now()->format('H:i:s')."] Sync error: ".$e->getMessage());
+                        }
+                    }
+                    $currentChunk = [];
+                }
             }
 
-            // Push to remote server if server option is specified and different from local
-            if ($this->option('server')) {
-                try {
-                    $res = Http::withoutVerifying()->timeout(5)->post("{$serverUrl}/api/ips/agent-sync", [
-                        'statuses' => $statuses,
-                    ]);
-                    if ($res->successful()) {
-                        $this->info("[".now()->format('H:i:s')."] Synced ".count($statuses)." LAN IPs to {$serverUrl}");
-                    } else {
-                        $this->error("[".now()->format('H:i:s')."] Sync HTTP {$res->status()}: {$res->body()}");
-                    }
-                } catch (\Throwable $e) {
-                    $this->error("[".now()->format('H:i:s')."] Sync error: ".$e->getMessage());
+            // Flush remaining items
+            if (! empty($currentChunk)) {
+                if ($this->option('server')) {
+                    try {
+                        Http::withoutVerifying()->timeout(4)->post("{$serverUrl}/api/ips/agent-sync", [
+                            'statuses' => $currentChunk,
+                        ]);
+                        $totalSynced += count($currentChunk);
+                        $this->info("[".now()->format('H:i:s')."] Synced {$totalSynced}/{$ips->count()} LAN IPs to {$serverUrl}");
+                    } catch (\Throwable $e) {}
                 }
-            } else {
-                $this->info("[".now()->format('H:i:s')."] Updated ".count($statuses)." local LAN IPs status");
+            }
+
+            $this->info("[".now()->format('H:i:s')."] Cycle complete. Sleeping {$interval}s...");
             }
 
             sleep($interval);
