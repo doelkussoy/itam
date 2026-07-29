@@ -160,7 +160,7 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
-            $('.ping-btn').click(function () {
+            $(document).on('click', '.ping-btn', function () {
                 var button = $(this);
                 var ipId = button.data('id');
                 var icon = button.find('i');

@@ -109,7 +109,7 @@
 <script>
 $(document).ready(function() {
     // Toggle Password Visibility
-    $('.toggle-password-btn').click(function() {
+    $(document).on('click', '.toggle-password-btn', function() {
         var input = $(this).siblings('.password-field');
         var icon = $(this).find('i');
         if (input.attr('type') === 'password') {
@@ -122,7 +122,7 @@ $(document).ready(function() {
     });
 
     // Copy Password to Clipboard
-    $('.copy-password-btn').click(function() {
+    $(document).on('click', '.copy-password-btn', function() {
         var pwd = $(this).data('password');
         var button = $(this);
         var icon = button.find('i');
