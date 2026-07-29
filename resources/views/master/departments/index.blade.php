@@ -67,25 +67,33 @@
 
 <!-- Import Modal -->
 <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content theme-card">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
       <form action="{{ route('departments.import') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <div class="modal-header border-0">
-          <h5 class="modal-title theme-text" id="importModalLabel">{{ __('messages.import_excel') }} {{ __('messages.department') }}</h5>
-          <button type="button" class="close theme-text" data-dismiss="modal" aria-label="Close">
+        <div class="modal-header">
+          <h5 class="modal-title" id="importModalLabel"><i class="fas fa-file-import text-info mr-2"></i> {{ __('messages.import_excel') }} {{ __('messages.department') }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <div class="form-group">
-            <label class="theme-text">{{ __('messages.import_excel') }} (.xlsx, .xls, .csv)</label>
-            <input type="file" name="file" class="form-control-file theme-text" required accept=".xlsx,.xls,.csv">
+          <div class="file-dropzone">
+            <input type="file" name="file" class="import-file-input" accept=".xlsx,.xls,.csv" required>
+            <div class="icon-box">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div class="file-label-text font-weight-bold text-main mb-1">
+              {{ __('messages.import_excel') }} (.xlsx, .xls, .csv)
+            </div>
+            <div class="text-muted small file-name-display">
+              Sentuh di sini untuk memilih file
+            </div>
           </div>
         </div>
-        <div class="modal-footer border-0">
+        <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('messages.cancel') }}</button>
-          <button type="submit" class="btn btn-primary">{{ __('messages.import_excel') }}</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-upload mr-1"></i> {{ __('messages.import_excel') }}</button>
         </div>
       </form>
     </div>

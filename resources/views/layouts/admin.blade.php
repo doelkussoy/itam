@@ -533,24 +533,95 @@
     .badge-info      { background: var(--color-accent-tint) !important; color: var(--color-accent) !important; }
     .badge-secondary { background: var(--color-paper-2) !important; color: var(--color-ink-2) !important; }
 
-    /* ── Modals ─────────────────────────────────────────── */
+    /* ── Modals & Mobile Responsiveness Fix ─────────────── */
+    .modal {
+      z-index: 1060 !important;
+      padding-right: 0 !important;
+    }
+    .modal-backdrop {
+      z-index: 1050 !important;
+      background-color: rgba(0, 0, 0, 0.65) !important;
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+    }
+    .modal-dialog {
+      margin: 1rem auto !important;
+      max-width: 500px !important;
+      width: calc(100% - 1.5rem) !important;
+    }
+    @media (max-width: 575.98px) {
+      .modal-dialog {
+        margin: 0.75rem auto !important;
+        max-width: calc(100% - 1rem) !important;
+        width: calc(100% - 1rem) !important;
+      }
+      .modal-dialog-centered {
+        min-height: calc(100% - 1.5rem) !important;
+        display: flex !important;
+        align-items: center !important;
+      }
+    }
     .modal-content {
       background: var(--color-paper-0) !important;
       border: var(--rule-soft) !important;
       border-radius: var(--radius-xl) !important;
-      box-shadow: 0 20px 60px rgba(20,30,80,0.18) !important;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35) !important;
+      color: var(--color-ink-0) !important;
+      overflow: hidden;
     }
     .modal-header {
       border-bottom: var(--rule-soft) !important;
-      padding: var(--space-lg);
+      padding: var(--space-md) var(--space-lg) !important;
+      align-items: center;
+    }
+    .modal-body {
+      padding: var(--space-lg) !important;
     }
     .modal-footer {
       border-top: var(--rule-soft) !important;
-      padding: var(--space-md) var(--space-lg);
+      padding: var(--space-md) var(--space-lg) !important;
     }
-    .modal-title { color: var(--color-ink-0) !important; font-weight: 600; }
-    .close { color: var(--color-ink-2) !important; }
-    .close:hover { color: var(--color-ink-0) !important; }
+    .modal-title { color: var(--color-ink-0) !important; font-weight: 600; font-size: 1.1rem; }
+    .close { color: var(--color-ink-2) !important; opacity: 0.8; }
+    .close:hover { color: var(--color-ink-0) !important; opacity: 1; }
+
+    /* Custom Mobile-Friendly File Upload Dropzone */
+    .file-dropzone {
+      border: 2px dashed color-mix(in oklch, var(--color-accent) 40%, var(--color-paper-2));
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      background: color-mix(in oklch, var(--color-accent) 4%, transparent);
+      cursor: pointer;
+      position: relative;
+      transition: all var(--dur-fast) var(--ease-out);
+    }
+    .file-dropzone:hover, .file-dropzone.active {
+      border-color: var(--color-accent);
+      background: color-mix(in oklch, var(--color-accent) 10%, transparent);
+    }
+    .file-dropzone input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .file-dropzone .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-pill);
+      background: var(--color-accent-tint);
+      color: var(--color-accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
 
     /* ── Alerts ─────────────────────────────────────────── */
     .alert {
@@ -1644,6 +1715,13 @@
     }).then((result) => {
       if (result.isConfirmed) { form.submit(); }
     });
+  });
+
+  $(document).on('change', '.import-file-input', function(e) {
+    var fileName = e.target.files[0] ? e.target.files[0].name : 'Sentuh di sini untuk memilih file';
+    var dropzone = $(this).closest('.file-dropzone');
+    dropzone.find('.file-name-display').text(fileName).addClass('text-info font-weight-bold').removeClass('text-muted');
+    dropzone.addClass('active');
   });
 
   // Seamless AJAX search and pagination
