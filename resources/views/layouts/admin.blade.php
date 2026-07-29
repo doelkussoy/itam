@@ -661,24 +661,67 @@
     .alert-warning { background: oklch(95% 0.050 50) !important;  color: oklch(38% 0.160 50) !important; }
     .alert-info    { background: var(--color-accent-tint) !important; color: var(--color-accent) !important; }
 
-    /* ── Pagination ─────────────────────────────────────── */
+    /* ── Pagination Spacing & Modern Pill Style ───────────── */
+    .pagination {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 6px !important;
+      justify-content: center !important;
+      align-items: center !important;
+      margin: 0.5rem 0 !important;
+      padding: 0 !important;
+      list-style: none !important;
+    }
+    .pagination .page-item {
+      margin: 0 !important;
+    }
     .pagination .page-link {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-width: 36px !important;
+      height: 36px !important;
+      padding: 0 12px !important;
       color: var(--color-ink-1) !important;
       background: var(--color-paper-0) !important;
       border: var(--rule-soft) !important;
       border-radius: var(--radius-md) !important;
-      font-size: 0.875rem;
-      transition: all var(--dur-fast);
+      font-size: 0.875rem !important;
+      font-weight: 500 !important;
+      transition: all var(--dur-fast) var(--ease-out) !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     }
     .pagination .page-link:hover {
       background: var(--color-accent-tint) !important;
       color: var(--color-accent) !important;
-      border-color: color-mix(in oklch, var(--color-accent) 25%, transparent) !important;
+      border-color: color-mix(in oklch, var(--color-accent) 30%, transparent) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 3px 8px color-mix(in oklch, var(--color-accent) 15%, transparent) !important;
     }
     .pagination .page-item.active .page-link {
       background: var(--color-accent) !important;
       border-color: var(--color-accent) !important;
-      color: white !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 12px color-mix(in oklch, var(--color-accent) 35%, transparent) !important;
+    }
+    .pagination .page-item.disabled .page-link {
+      background: var(--color-paper-1) !important;
+      color: var(--color-ink-3) !important;
+      opacity: 0.5 !important;
+      cursor: not-allowed !important;
+      box-shadow: none !important;
+    }
+    @media (max-width: 575.98px) {
+      .pagination {
+        gap: 4px !important;
+      }
+      .pagination .page-link {
+        min-width: 32px !important;
+        height: 32px !important;
+        padding: 0 8px !important;
+        font-size: 0.8125rem !important;
+        border-radius: var(--radius-sm) !important;
+      }
     }
 
     /* ── Select2 ────────────────────────────────────────── */
